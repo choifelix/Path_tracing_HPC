@@ -56,48 +56,48 @@ struct Sphere spheres[] = {
 
 
 /********** micro BLAS LEVEL-1 + quelques fonctions non-standard **************/
-static inline void copy(const double *x, double *y)
+static inline void copy(const double *x, double *y) // copy x dans y. x et y etant des vecteurs de dim3
 {
 	for (int i = 0; i < 3; i++)
 		y[i] = x[i];
 } 
 
-static inline void zero(double *x)
+static inline void zero(double *x) //x = 0. x vecteur 3D
 {
 	for (int i = 0; i < 3; i++)
 		x[i] = 0;
 } 
 
-static inline void axpy(double alpha, const double *x, double *y)
+static inline void axpy(double alpha, const double *x, double *y) // y = y+ ax
 {
 	for (int i = 0; i < 3; i++)
 		y[i] += alpha * x[i];
 } 
 
-static inline void scal(double alpha, double *x)
+static inline void scal(double alpha, double *x) // x = ax
 {
 	for (int i = 0; i < 3; i++)
 		x[i] *= alpha;
 } 
 
-static inline double dot(const double *a, const double *b)
+static inline double dot(const double *a, const double *b) //multiplication de vecteurs
 { 
 	return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 } 
 
-static inline double nrm2(const double *a)
+static inline double nrm2(const double *a) // norme du vecteur
 {
 	return sqrt(dot(a, a));
 }
 
 /********* fonction non-standard *************/
-static inline void mul(const double *x, const double *y, double *z)
+static inline void mul(const double *x, const double *y, double *z)// multiplication element par element
 {
 	for (int i = 0; i < 3; i++)
 		z[i] = x[i] * y[i];
 } 
 
-static inline void normalize(double *x)
+static inline void normalize(double *x) // normalisation de X
 {
 	scal(1 / nrm2(x), x);
 }
@@ -111,7 +111,7 @@ static inline void cross(const double *a, const double *b, double *c)
 }
 
 /****** tronque *************/
-static inline void clamp(double *x)
+static inline void clamp(double *x) // encadrement des valeurs des elements de X entre 0 et 1.
 {
 	for (int i = 0; i < 3; i++) {
 		if (x[i] < 0)
@@ -124,12 +124,13 @@ static inline void clamp(double *x)
 /******************************* calcul des intersections rayon / sphere *************************************/
    
 // returns distance, 0 if nohit 
-double sphere_intersect(const struct Sphere *s, const double *ray_origin, const double *ray_direction)
+double sphere_intersect(const struct Sphere *s, const double *ray_origin, const double *ray_direction) // renvoie la distance entre l'origine de rayon et le point d'intersection avec la sphere
+																									   //nous permettant de connaitre le point d'intersection (point ray_origine + distance + ray_direction)
 { 
 	double op[3];
 	// Solve t^2*d.d + 2*t*(o-p).d + (o-p).(o-p)-R^2 = 0 
-	copy(s->position, op);
-	axpy(-1, ray_origin, op);
+	copy(s->position, op);    // op devient la position de la sphere
+	axpy(-1, ray_origin, op); //op est modifié, opn devient la distance entre s et ray origine
 	double eps = 1e-4;
 	double b = dot(op, ray_direction);
 	double discriminant = b * b - dot(op, op) + s->radius * s->radius; 
