@@ -358,6 +358,7 @@ void version1_nul(int argc, char **argv){
 	int h = 200;
 	int samples = 200;
 	int nb_line = h/size;
+	printf("hello i am %d", rank);
 
 	/* Gros cas test (big, slow and pretty): */
 	/* int w = 3840; */
