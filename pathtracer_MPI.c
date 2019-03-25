@@ -352,13 +352,14 @@ void version1_nul(int argc, char **argv){
 	int rank,size;
 	MPI_Comm_size(MPI_COMM_WORLD,&size);
 	MPI_Comm_rank(MPI_COMM_WORLD,&rank);
+	printf("MPI init DONE \n");
 
 	/* Petit cas test (small, quick and dirty): */
 	int w = 320;
 	int h = 200;
 	int samples = 200;
 	int nb_line = h/size;
-	printf("hello i am %d", rank);
+	printf("hello i am %d\n", rank);
 
 	/* Gros cas test (big, slow and pretty): */
 	/* int w = 3840; */
@@ -411,7 +412,7 @@ void version1_nul(int argc, char **argv){
 	for (int i = nb_line *rank; i < nb_line *(rank+1); i++) {
  		unsigned short PRNG_state[3] = {0, 0, i*i*i};
 		for (unsigned short j = 0; j < w; j++) {
-			printf(" precessus %d, pixel : %d - %d",rank,i,j);
+			printf(" precessus %d, pixel : %d - %d \n",rank,i,j);
 			/* calcule la luminance d'un pixel, avec sur-échantillonnage 2x2 */
 			double pixel_radiance[3] = {0, 0, 0};
 			for (int sub_i = 0; sub_i < 2; sub_i++) {
@@ -492,6 +493,7 @@ void version1_nul(int argc, char **argv){
 
 int main(int argc, char **argv)
 {
+	printf("BEGIN\n");
 
 	version1_nul(argc, argv);
 	return 0;
