@@ -97,11 +97,12 @@ void version1_nul(int argc, char **argv){
 	}
 
 	/* boucle principale */
+	double * image ;
 	if(rank>0){
-		double *image = malloc(3 * w * nb_line * sizeof(*image));
+		image = malloc(3 * w * nb_line * sizeof(*image));
 	}
 	else{
-		double *image = malloc(3 * w * h * sizeof(*image));
+		image = malloc(3 * w * h * sizeof(*image));
 	}
 
 	if (image == NULL) {
@@ -150,12 +151,12 @@ void version1_nul(int argc, char **argv){
 	}
 
 	if (rank>0){
-    	MPI_Send(image,3*w*nb_line,MPI_UNSIGNED_DOUBLE,0,0,MPI_COMM_WORLD);
+    	MPI_Send(image,3*w*nb_line,MPI_DOUBLE,0,0,MPI_COMM_WORLD);
     }
     else {
 	    for(int k=1;k<size;k++){
 
-	       MPI_Recv(image+ (nb_line*w*3),3*w*nb_line,MPI_UNSIGNED_DOUBLE,k,0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+	       MPI_Recv(image+ (nb_line*w*3),3*w*nb_line,MPI_DOUBLE,k,0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
 
 	    }
 	}
