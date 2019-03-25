@@ -20,11 +20,11 @@ double my_gettimeofday(){
   return tmp_time.tv_sec + (tmp_time.tv_usec * 1.0e-6L);
 }
 
-double * sub_pixel_calc(double[3] PRNG_state,int sub_i, int sub_j, double[3] camera_direction, int samples){
+/*double * sub_pixel_calc(double[3] PRNG_state,int sub_i, int sub_j, double[3] camera_direction, int samples){
 	double subpixel_radiance[3] = {0, 0, 0};
-	/* simulation de monte-carlo : on effectue plein de lancers de rayons et on moyenne */
+	// simulation de monte-carlo : on effectue plein de lancers de rayons et on moyenne 
 	for (int s = 0; s < samples; s++) { 
-		/* tire un rayon aléatoire dans une zone de la caméra qui correspond à peu près au pixel à calculer */
+		// tire un rayon aléatoire dans une zone de la caméra qui correspond à peu près au pixel à calculer 
 		double r1 = 2 * erand48(PRNG_state);
 		double dx = (r1 < 1) ? sqrt(r1) - 1 : 1 - sqrt(2 - r1); 
 		double r2 = 2 * erand48(PRNG_state);
@@ -39,17 +39,17 @@ double * sub_pixel_calc(double[3] PRNG_state,int sub_i, int sub_j, double[3] cam
 		copy(camera_position, ray_origin);
 		axpy(140, ray_direction, ray_origin);
 		
-		/* estime la lumiance qui arrive sur la caméra par ce rayon */
+		// estime la lumiance qui arrive sur la caméra par ce rayon 
 		double sample_radiance[3];
 		radiance(ray_origin, ray_direction, 0, PRNG_state, sample_radiance);
-		/* fait la moyenne sur tous les rayons */
+		// fait la moyenne sur tous les rayons 
 		axpy(1. / samples, sample_radiance, subpixel_radiance);
 	}
 	clamp(subpixel_radiance);
 	return subpixel_radiance
-}
+}*/
 
-void version1_nul(){
+void version1_nul(int argc, char **argv){
 
 	MPI_Init(&argc,&argv);
 	int rank,size;
@@ -60,7 +60,7 @@ void version1_nul(){
 	int w = 320;
 	int h = 200;
 	int samples = 200;
-	nb_line = h/size;
+	int nb_line = h/size;
 
 	/* Gros cas test (big, slow and pretty): */
 	/* int w = 3840; */
@@ -179,6 +179,7 @@ void version1_nul(){
 
 	free(image);
 
+	MPI_Finalize();
 }
 
 
@@ -192,8 +193,9 @@ void version1_nul(){
 int main(int argc, char **argv)
 {
 
-
-	MPI_Init(&argc,&argv);
+	version1_nul(argc, argv);
+	return 0;
+	/*MPI_Init(&argc,&argv);
 	int rank,size;
 	MPI_Comm_size(MPI_COMM_WORLD,&size);
 	MPI_Comm_rank(MPI_COMM_WORLD,&rank);
@@ -214,7 +216,7 @@ int main(int argc, char **argv)
 	    }
 	}
 	
-	/* debut du chronometrage */
+	/* debut du chronometrage 
   	debut = my_gettimeofday();
 
   	fin = my_gettimeofday();
@@ -222,5 +224,5 @@ int main(int argc, char **argv)
   	fprintf( stdout, "%g\n", fin - debut);
  
 
-  	MPI_Finalize();
+  	MPI_Finalize();*/
 }
