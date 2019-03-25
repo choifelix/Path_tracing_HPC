@@ -109,7 +109,7 @@ void version1_nul(int argc, char **argv){
 		exit(1);
 	}
 
-	for (int i = nb_line *rank; i < nb_line *(rang+1); i++) {
+	for (int i = nb_line *rank; i < nb_line *(rank+1); i++) {
  		unsigned short PRNG_state[3] = {0, 0, i*i*i};
 		for (unsigned short j = 0; j < w; j++) {
 			/* calcule la luminance d'un pixel, avec sur-échantillonnage 2x2 */
@@ -155,7 +155,7 @@ void version1_nul(int argc, char **argv){
     else {
 	    for(int k=1;k<size;k++){
 
-	       MPI_Recv(image+ (nb_lin*w*3),3*w*nb_line,MPI_UNSIGNED_DOUBLE,k,0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+	       MPI_Recv(image+ (nb_line*w*3),3*w*nb_line,MPI_UNSIGNED_DOUBLE,k,0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
 
 	    }
 	}
