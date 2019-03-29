@@ -352,7 +352,7 @@ void version1_nul(int argc, char **argv){
 	int rank,size;
 	MPI_Comm_size(MPI_COMM_WORLD,&size);
 	MPI_Comm_rank(MPI_COMM_WORLD,&rank);
-	printf("MPI init DONE \n");
+	printf("%d : MPI init DONE \n", rank);
 
 	/* Petit cas test (small, quick and dirty): */
 	int w = 320;
@@ -397,12 +397,11 @@ void version1_nul(int argc, char **argv){
 
 	/* boucle principale */
 	double * image ;
-	if(rank>0){
-		image = malloc(3 * w * nb_line * sizeof(*image));
-	}
-	else{
-		image = malloc(3 * w * h * sizeof(*image));
-	}
+	if(rank == 0)
+		image = malloc(3 * w * h * sizeof(double));
+	else
+		image = malloc(3 * w * nb_line * sizeof(double));
+		
 
 	if (image == NULL) {
 		perror("Impossible d'allouer l'image");
@@ -412,7 +411,7 @@ void version1_nul(int argc, char **argv){
 	for (int i = nb_line *rank; i < nb_line *(rank+1); i++) {
  		unsigned short PRNG_state[3] = {0, 0, i*i*i};
 		for (unsigned short j = 0; j < w; j++) {
-			printf(" precessus %d, pixel : %d - %d \n",rank,i,j);
+			printf(" precessus %d, pixel : %d - %d   -----  ",rank,i,j);
 			/* calcule la luminance d'un pixel, avec sur-échantillonnage 2x2 */
 			double pixel_radiance[3] = {0, 0, 0};
 			for (int sub_i = 0; sub_i < 2; sub_i++) {
@@ -444,39 +443,46 @@ void version1_nul(int argc, char **argv){
 					clamp(subpixel_radiance);
 					/* fait la moyenne sur les 4 sous-pixels */
 					axpy(0.25, subpixel_radiance, pixel_radiance);
+					
 				}
 			}
-			copy(pixel_radiance, image + 3 * ((h - 1 - i) * w + j)); // <-- retournement vertical
+			printf("%f %f %f \n",pixel_radiance[0], pixel_radiance[1], pixel_radiance[2]);
+			//copy(pixel_radiance, image + 3 * ((h - 1 - (i - rank*nb_line) * w + j))); // <-- retournement vertical
+			copy(pixel_radiance, image + 3 * ((nb_line - 1 - (i - rank*nb_line)) * w + j)); // <-- retournement vertical
 		}
 	}
 
-	if (rank>0){
-    	MPI_Send(image,3*w*nb_line,MPI_DOUBLE,0,0,MPI_COMM_WORLD);
-    }
+
+	if (rank == 0){
+		for(int k=size-1;k>0;k--){
+			printf("%d : recieving image from %d \n",rank,k);
+	       	MPI_Recv(&image[ nb_line* (size-1-k)*w*3],3*w*nb_line,MPI_DOUBLE,k,0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+	       }
+	       //   stocke l'image dans un fichier au format NetPbm 
+		{
+			struct passwd *pass; 
+			char nom_sortie[100] = "";
+			char nom_rep[100] = "";
+
+			pass = getpwuid(getuid()); 
+			sprintf(nom_rep, "/nfs/home/sasl/eleves/main/3520621/Documents/HPC/Path_tracing_HPC/%s", pass->pw_name);
+			mkdir(nom_rep, S_IRWXU);
+			sprintf(nom_sortie, "%s/image.ppm", nom_rep);
+			
+			FILE *f = fopen(nom_sortie, "w");
+			fprintf(f, "P3\n%d %d\n%d\n", w, h, 255); 
+			for (int i = 0; i < w * h; i++) 
+		  		fprintf(f,"%d %d %d ", toInt(image[3 * i]), toInt(image[3 * i + 1]), toInt(image[3 * i + 2])); 
+			fclose(f); 
+		}
+	}
     else {
-	    for(int k=1;k<size;k++){
-
-	       MPI_Recv(image+ (nb_line*w*3),3*w*nb_line,MPI_DOUBLE,k,0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
-
-	    }
-	}
-	    /* stocke l'image dans un fichier au format NetPbm */
-	{
-		struct passwd *pass; 
-		char nom_sortie[100] = "";
-		char nom_rep[30] = "";
-
-		pass = getpwuid(getuid()); 
-		sprintf(nom_rep, "/tmp/%s", pass->pw_name);
-		mkdir(nom_rep, S_IRWXU);
-		sprintf(nom_sortie, "%s/image.ppm", nom_rep);
-		
-		FILE *f = fopen(nom_sortie, "w");
-		fprintf(f, "P3\n%d %d\n%d\n", w, h, 255); 
-		for (int i = 0; i < w * h; i++) 
-	  		fprintf(f,"%d %d %d ", toInt(image[3 * i]), toInt(image[3 * i + 1]), toInt(image[3 * i + 2])); 
-		fclose(f); 
-	}
+    	printf("%d : sending image \n",rank);
+    	MPI_Send(image,3*w*nb_line,MPI_DOUBLE,0,0,MPI_COMM_WORLD);
+    	printf("%d : image send \n",rank);
+    }
+	
+	 
 
 	free(image);
 
