@@ -493,9 +493,9 @@ void version1_static(int argc, char **argv){
 bool verif(int* memory, int h){
 	for(int i=0 ;  i<h ; i++){
 		if (memory[i] == 0)
-			return true
+			return true;
 	}
-	return false
+	return false;
 }
 
 
@@ -563,7 +563,7 @@ void version2_dynamic(int argc, char **argv){
 		exit(1);
 	}
 	int * shared_memory;
-	shared_memory = (int*)calloc(h*sizeof(int));
+	shared_memory = (int*)calloc(h,sizeof(int));
 
 	double * tab;
 	tab = (double*)malloc((3*w + 1)*sizeof(double));
@@ -584,7 +584,7 @@ void version2_dynamic(int argc, char **argv){
 				break;
 			}
 
-		MPI_Ibcast(shared_memory, h, MPI_INT, rank, MPI_COMM_WORLD);
+		MPI_Ibcast(shared_memory, h, MPI_INT, rank, MPI_COMM_WORLD,&req);
 
 
 
