@@ -346,7 +346,7 @@ double my_gettimeofday(){
 	return subpixel_radiance
 }*/
 
-void version1_nul(int argc, char **argv){
+void version1_static(int argc, char **argv){
 
 	MPI_Init(&argc,&argv);
 	int rank,size;
@@ -490,6 +490,179 @@ void version1_nul(int argc, char **argv){
 }
 
 
+void version2_dynamic(int argc, char **argv){
+	MPI_Init(&argc,&argv);
+	int rank,size;
+	MPI_Comm_size(MPI_COMM_WORLD,&size);
+	MPI_Comm_rank(MPI_COMM_WORLD,&rank);
+	printf("%d : MPI init DONE \n", rank);
+
+	/* Petit cas test (small, quick and dirty): */
+	int w = 320;
+	int h = 200;
+	int samples = 200;
+	int line_number = size;
+
+
+
+	printf("hello i am %d\n", rank);
+
+	/* Gros cas test (big, slow and pretty): */
+	/* int w = 3840; */
+	/* int h = 2160; */
+	/* int samples = 5000;  */
+
+	if (argc == 2) 
+		samples = atoi(argv[1]) / 4;
+
+	static const double CST = 0.5135;  /* ceci défini l'angle de vue */
+	double camera_position[3] = {50, 52, 295.6};
+	double camera_direction[3] = {0, -0.042612, -1};
+	normalize(camera_direction);
+
+	/* incréments pour passer d'un pixel à l'autre */
+	double cx[3] = {w * CST / h, 0, 0};    
+	double cy[3];
+	cross(cx, camera_direction, cy);  /* cy est orthogonal à cx ET à la direction dans laquelle regarde la caméra */
+	normalize(cy);
+	scal(CST, cy);
+
+	/* précalcule la norme infinie des couleurs */
+	int n = sizeof(spheres) / sizeof(struct Sphere);
+	for (int i = 0; i < n; i++) {
+		double *f = spheres[i].color;
+		if ((f[0] > f[1]) && (f[0] > f[2]))
+			spheres[i].max_reflexivity = f[0]; 
+		else {
+			if (f[1] > f[2])
+				spheres[i].max_reflexivity = f[1];
+			else
+				spheres[i].max_reflexivity = f[2]; 
+		}
+	}
+
+	/* boucle principale */
+	double * image ;
+	if(rank == 0)
+		image = malloc(3 * w * h * sizeof(double));
+	else
+		image = malloc(3 * w * sizeof(double));
+		
+
+	if (image == NULL) {
+		perror("Impossible d'allouer l'image");
+		exit(1);
+	}
+
+	double * tab;
+	tab = (double*)malloc((3*w + 1)*sizeof(double));
+
+	int i;
+
+	//for (int i = nb_line *rank; i < nb_line *(rank+1); i++) {
+	while(line_number>0){
+		
+		i = line_number;
+		line_number++;
+		
+		
+
+		MPI_Bcast(line_number, 1, MPI_INT, rank, MPI_COMM_WORLD);
+
+		unsigned short PRNG_state[3] = {0, 0, i*i*i};
+		for (unsigned short j = 0; j < w; j++) {
+			printf(" precessus %d, pixel : %d - %d   -----  ",rank,i,j);
+			/* calcule la luminance d'un pixel, avec sur-échantillonnage 2x2 */
+			double pixel_radiance[3] = {0, 0, 0};
+			for (int sub_i = 0; sub_i < 2; sub_i++) {
+				for (int sub_j = 0; sub_j < 2; sub_j++) {
+					double subpixel_radiance[3] = {0, 0, 0};
+					/* simulation de monte-carlo : on effectue plein de lancers de rayons et on moyenne */
+					for (int s = 0; s < samples; s++) { 
+						/* tire un rayon aléatoire dans une zone de la caméra qui correspond à peu près au pixel à calculer */
+						double r1 = 2 * erand48(PRNG_state);
+						double dx = (r1 < 1) ? sqrt(r1) - 1 : 1 - sqrt(2 - r1); 
+						double r2 = 2 * erand48(PRNG_state);
+						double dy = (r2 < 1) ? sqrt(r2) - 1 : 1 - sqrt(2 - r2);
+						double ray_direction[3];
+						copy(camera_direction, ray_direction);
+						axpy(((sub_i + .5 + dy) / 2 + i) / h - .5, cy, ray_direction);
+						axpy(((sub_j + .5 + dx) / 2 + j) / w - .5, cx, ray_direction);
+						normalize(ray_direction);
+
+						double ray_origin[3];
+						copy(camera_position, ray_origin);
+						axpy(140, ray_direction, ray_origin);
+						
+						/* estime la lumiance qui arrive sur la caméra par ce rayon */
+						double sample_radiance[3];
+						radiance(ray_origin, ray_direction, 0, PRNG_state, sample_radiance);
+						/* fait la moyenne sur tous les rayons */
+						axpy(1. / samples, sample_radiance, subpixel_radiance);
+					}
+					clamp(subpixel_radiance);
+					/* fait la moyenne sur les 4 sous-pixels */
+					axpy(0.25, subpixel_radiance, pixel_radiance);
+					
+				}
+			}
+			printf("%f %f %f \n",pixel_radiance[0], pixel_radiance[1], pixel_radiance[2]);
+			copy(pixel_radiance, image + w*3 + j); // <-- retournement vertical
+		}
+
+		
+		tab[1] = double(i);
+		tab[2] = &image;
+
+		MPI_Request req;
+		MPI_Irecv(&line_number,1,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
+
+		if(line_number >= h){
+			line_number = -1;
+		}
+		if (rank == 0){
+
+	       	MPI_Irecv(&tab,3*w+1,MPI_DOUBLE,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
+	       	int line = tab[1];
+	       	image[line*3*w] = &tab +2; //ATTENTION -> EXPERIMENTATION C
+
+	       	printf("%d : recieving image line %d \n",rank,line);
+		}
+		else{
+
+			MPI_Send(tab,3*w+1,MPI_DOUBLE,0,0,MPI_COMM_WORLD);
+			
+		}
+	
+
+
+	if (rank == 0){
+		
+			struct passwd *pass; 
+			char nom_sortie[100] = "";
+			char nom_rep[100] = "";
+
+			pass = getpwuid(getuid()); 
+			sprintf(nom_rep, "/nfs/home/sasl/eleves/main/3520621/Documents/HPC/Path_tracing_HPC/%s", pass->pw_name);
+			mkdir(nom_rep, S_IRWXU);
+			sprintf(nom_sortie, "%s/image.ppm", nom_rep);
+			
+			FILE *f = fopen(nom_sortie, "w");
+			fprintf(f, "P3\n%d %d\n%d\n", w, h, 255); 
+			for (int i = 0; i < w * h; i++) 
+		  		fprintf(f,"%d %d %d ", toInt(image[3 * i]), toInt(image[3 * i + 1]), toInt(image[3 * i + 2])); 
+			fclose(f); 
+	}
+ 
+	
+	 
+
+	free(image);
+	free(tab);
+
+	MPI_Finalize();
+}
+
 
 
 
@@ -501,7 +674,7 @@ int main(int argc, char **argv)
 {
 	printf("BEGIN\n");
 
-	version1_nul(argc, argv);
+	version2_dynamic(argc, argv);
 	return 0;
 	/*MPI_Init(&argc,&argv);
 	int rank,size;
