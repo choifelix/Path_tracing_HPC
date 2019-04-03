@@ -490,6 +490,15 @@ void version1_static(int argc, char **argv){
 }
 
 
+bool verif(int* memory, int h){
+	for(int i=0 ;  i<h ; i++){
+		if (memory[i] == 0)
+			return true
+	}
+	return false
+}
+
+
 void version2_dynamic(int argc, char **argv){
 	MPI_Init(&argc,&argv);
 	int rank,size;
@@ -501,7 +510,7 @@ void version2_dynamic(int argc, char **argv){
 	int w = 320;
 	int h = 200;
 	int samples = 200;
-	int line_number = size;
+	int line_number = 0;
 
 
 
@@ -553,21 +562,37 @@ void version2_dynamic(int argc, char **argv){
 		perror("Impossible d'allouer l'image");
 		exit(1);
 	}
+	int * shared_memory;
+	shared_memory = (int*)calloc(h*sizeof(int));
 
 	double * tab;
 	tab = (double*)malloc((3*w + 1)*sizeof(double));
 
-	int i;
+	int i = rank;
+	bool continuer = true;
 
 	//for (int i = nb_line *rank; i < nb_line *(rank+1); i++) {
-	while(line_number>0){
-		
-		i = line_number;
-		line_number++;
-		
-		
+	while(continuer){
 
-		MPI_Bcast(line_number, 1, MPI_INT, rank, MPI_COMM_WORLD);
+		MPI_Request req;
+		MPI_Irecv($shared_memory,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
+
+		for(int l=size ; l<h ; l++ )
+			if(shared_memory[l] == 0){
+				i = l;
+				shared_memory[l] = 1;
+				break;
+			}
+
+		MPI_Ibcast(shared_memory, h, MPI_INT, rank, MPI_COMM_WORLD);
+
+
+
+	
+		//MPI_Irecv(&line_number,1,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
+
+
+
 
 		unsigned short PRNG_state[3] = {0, 0, i*i*i};
 		for (unsigned short j = 0; j < w; j++) {
@@ -617,8 +642,7 @@ void version2_dynamic(int argc, char **argv){
 			tab[k] = image[k-1];
 		}
 
-		MPI_Request req;
-		MPI_Irecv(&line_number,1,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
+		
 
 		if(line_number >= h){
 			line_number = -1;
@@ -636,39 +660,43 @@ void version2_dynamic(int argc, char **argv){
 		}
 		else{
 
-			MPI_Send(tab,3*w+1,MPI_DOUBLE,0,0,MPI_COMM_WORLD);
+			MPI_Isend(tab,3*w+1,MPI_DOUBLE,0,0,MPI_COMM_WORLD,&req);
 			
 		}
+
+		continuer = verif(shared_memory, h);
+	}
 	
 
 
-		if (rank == 0){
-			
-				struct passwd *pass; 
-				char nom_sortie[100] = "";
-				char nom_rep[100] = "";
-
-				pass = getpwuid(getuid()); 
-				sprintf(nom_rep, "/nfs/home/sasl/eleves/main/3520621/Documents/HPC/Path_tracing_HPC/%s", pass->pw_name);
-				mkdir(nom_rep, S_IRWXU);
-				sprintf(nom_sortie, "%s/image.ppm", nom_rep);
-				
-				FILE *f = fopen(nom_sortie, "w");
-				fprintf(f, "P3\n%d %d\n%d\n", w, h, 255); 
-				for (int i = 0; i < w * h; i++) 
-			  		fprintf(f,"%d %d %d ", toInt(image[3 * i]), toInt(image[3 * i + 1]), toInt(image[3 * i + 2])); 
-				fclose(f); 
-		}
-	 
+	if (rank == 0){
 		
-		 
+			struct passwd *pass; 
+			char nom_sortie[100] = "";
+			char nom_rep[100] = "";
 
-		free(image);
-		free(tab);
-
-		MPI_Finalize();
+			pass = getpwuid(getuid()); 
+			sprintf(nom_rep, "/nfs/home/sasl/eleves/main/3520621/Documents/HPC/Path_tracing_HPC/%s", pass->pw_name);
+			mkdir(nom_rep, S_IRWXU);
+			sprintf(nom_sortie, "%s/image.ppm", nom_rep);
+			
+			FILE *f = fopen(nom_sortie, "w");
+			fprintf(f, "P3\n%d %d\n%d\n", w, h, 255); 
+			for (int i = 0; i < w * h; i++) 
+		  		fprintf(f,"%d %d %d ", toInt(image[3 * i]), toInt(image[3 * i + 1]), toInt(image[3 * i + 2])); 
+			fclose(f); 
 	}
+ 
+	
+	 
+
+	free(image);
+	free(tab);
+	free(shared_memory);
+
+	MPI_Finalize();
 }
+
 
 
 
