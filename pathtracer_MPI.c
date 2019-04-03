@@ -611,8 +611,8 @@ void version2_dynamic(int argc, char **argv){
 		}
 
 		
-		tab[1] = double(i);
-		tab[2] = &image;
+		tab[0] = (double)i;
+		&tab + 1 = image;
 
 		MPI_Request req;
 		MPI_Irecv(&line_number,1,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
@@ -624,7 +624,7 @@ void version2_dynamic(int argc, char **argv){
 
 	       	MPI_Irecv(&tab,3*w+1,MPI_DOUBLE,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
 	       	int line = tab[1];
-	       	image[line*3*w] = &tab +2; //ATTENTION -> EXPERIMENTATION C
+	       	&image + line*3*w = &tab +2; //ATTENTION -> EXPERIMENTATION C
 
 	       	printf("%d : recieving image line %d \n",rank,line);
 		}
@@ -636,33 +636,33 @@ void version2_dynamic(int argc, char **argv){
 	
 
 
-	if (rank == 0){
-		
-			struct passwd *pass; 
-			char nom_sortie[100] = "";
-			char nom_rep[100] = "";
-
-			pass = getpwuid(getuid()); 
-			sprintf(nom_rep, "/nfs/home/sasl/eleves/main/3520621/Documents/HPC/Path_tracing_HPC/%s", pass->pw_name);
-			mkdir(nom_rep, S_IRWXU);
-			sprintf(nom_sortie, "%s/image.ppm", nom_rep);
+		if (rank == 0){
 			
-			FILE *f = fopen(nom_sortie, "w");
-			fprintf(f, "P3\n%d %d\n%d\n", w, h, 255); 
-			for (int i = 0; i < w * h; i++) 
-		  		fprintf(f,"%d %d %d ", toInt(image[3 * i]), toInt(image[3 * i + 1]), toInt(image[3 * i + 2])); 
-			fclose(f); 
-	}
- 
-	
+				struct passwd *pass; 
+				char nom_sortie[100] = "";
+				char nom_rep[100] = "";
+
+				pass = getpwuid(getuid()); 
+				sprintf(nom_rep, "/nfs/home/sasl/eleves/main/3520621/Documents/HPC/Path_tracing_HPC/%s", pass->pw_name);
+				mkdir(nom_rep, S_IRWXU);
+				sprintf(nom_sortie, "%s/image.ppm", nom_rep);
+				
+				FILE *f = fopen(nom_sortie, "w");
+				fprintf(f, "P3\n%d %d\n%d\n", w, h, 255); 
+				for (int i = 0; i < w * h; i++) 
+			  		fprintf(f,"%d %d %d ", toInt(image[3 * i]), toInt(image[3 * i + 1]), toInt(image[3 * i + 2])); 
+				fclose(f); 
+		}
 	 
+		
+		 
 
-	free(image);
-	free(tab);
+		free(image);
+		free(tab);
 
-	MPI_Finalize();
+		MPI_Finalize();
+	}
 }
-
 
 
 
