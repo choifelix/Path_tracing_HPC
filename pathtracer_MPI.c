@@ -568,7 +568,7 @@ void version2_dynamic(int argc, char **argv){
 	double * tab;
 	tab = (double*)malloc((3*w + 1)*sizeof(double));
 
-	int i = rank;
+	int i = 0;
 	bool continuer = true;
 
 	//for (int i = nb_line *rank; i < nb_line *(rank+1); i++) {
@@ -577,7 +577,7 @@ void version2_dynamic(int argc, char **argv){
 		MPI_Request req;
 		MPI_Irecv(shared_memory,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
 
-		for(int l=size ; l<h ; l++ )
+		for(int l=0 ; l<h ; l++ )
 			if(shared_memory[l] == 0){
 				i = l;
 				shared_memory[l] = 1;
