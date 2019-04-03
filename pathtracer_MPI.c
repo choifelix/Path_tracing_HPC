@@ -612,7 +612,10 @@ void version2_dynamic(int argc, char **argv){
 
 		
 		tab[0] = (double)i;
-		&tab + 1 = image;
+
+		for(int k=1 ; k<3*w+1 ; k++){
+			tab[k] = image[k-1];
+		}
 
 		MPI_Request req;
 		MPI_Irecv(&line_number,1,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
@@ -623,8 +626,10 @@ void version2_dynamic(int argc, char **argv){
 		if (rank == 0){
 
 	       	MPI_Irecv(&tab,3*w+1,MPI_DOUBLE,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
-	       	int line = tab[1];
-	       	&image + line*3*w = &tab +2; //ATTENTION -> EXPERIMENTATION C
+	       	int line = tab[0];
+
+	       	for(int k=1; k< 3*w+1; k++){}
+	       	image[line*3*w + k -1] = tab[k]; //ATTENTION -> EXPERIMENTATION C
 
 	       	printf("%d : recieving image line %d \n",rank,line);
 		}
