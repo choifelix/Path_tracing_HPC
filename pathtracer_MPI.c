@@ -569,6 +569,9 @@ void version2_dynamic(int argc, char **argv){
 	tab = (double*)malloc((3*w + 1)*sizeof(double));
 
 	int i = rank;
+	for(int k =0 ; k<size ; k++){
+		shared_memory[k] = 1;
+	}
 	bool continuer = true;
 
 	//for (int i = nb_line *rank; i < nb_line *(rank+1); i++) {
