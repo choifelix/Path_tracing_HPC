@@ -575,7 +575,7 @@ void version2_dynamic(int argc, char **argv){
 	while(continuer){
 
 		MPI_Request req;
-		MPI_Irecv($shared_memory,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
+		MPI_Irecv(shared_memory,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
 
 		for(int l=size ; l<h ; l++ )
 			if(shared_memory[l] == 0){
