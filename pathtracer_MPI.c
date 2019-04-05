@@ -736,34 +736,6 @@ void version2_dynamic(int argc, char **argv){
 
 	
 
-	if (rank == 0){
-		
-			struct passwd *pass; 
-			char nom_sortie[100] = "";
-			char nom_rep[100] = "";
-
-			pass = getpwuid(getuid()); 
-			sprintf(nom_rep, "/nfs/home/sasl/eleves/main/3520621/Documents/HPC/Path_tracing_HPC/%s", pass->pw_name);
-			mkdir(nom_rep, S_IRWXU);
-			sprintf(nom_sortie, "%s/image.ppm", nom_rep);
-			
-			FILE *f = fopen(nom_sortie, "w");
-			fprintf(f, "P3\n%d %d\n%d\n", w, h, 255); 
-			for (int i = 0; i < w * h; i++) 
-		  		fprintf(f,"%d %d %d ", toInt(image[3 * i]), toInt(image[3 * i + 1]), toInt(image[3 * i + 2])); 
-			fclose(f); 
-	}
- 
-	
-	 
-
-	free(image);
-	free(tab);
-
-	MPI_Finalize();
-}
-
-
 
 
 
