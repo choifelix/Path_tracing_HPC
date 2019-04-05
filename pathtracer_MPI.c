@@ -812,6 +812,7 @@ void version2_beta_dynamic(int argc, char **argv){
 
 	//for (int i = nb_line *rank; i < nb_line *(rank+1); i++) {
 	while(continuer){
+		MPI_Irecv(&line,1,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
 
 		unsigned short PRNG_state[3] = {0, 0, i*i*i};
 		for (unsigned short j = 0; j < w; j++) {
