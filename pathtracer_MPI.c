@@ -510,6 +510,7 @@ void version2_dynamic(int argc, char **argv){
 	MPI_Comm_size(MPI_COMM_WORLD,&size);
 	MPI_Comm_rank(MPI_COMM_WORLD,&rank);
 	MPI_Request req;
+	MPI_Request req_tab;
 	printf("%d : MPI init DONE \n", rank);
 
 	/* Petit cas test (small, quick and dirty): */
@@ -589,17 +590,17 @@ void version2_dynamic(int argc, char **argv){
 	//for (int i = nb_line *rank; i < nb_line *(rank+1); i++) {
 	while(continuer){
 
-		MPI_Irecv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
+		// MPI_Irecv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
 
-		for(int k=0 ; k<h ; k++){
-			shared_memory[k] += shared_memory_tmp[k];
-		}
-		printf("proc %d recieve1  :", rank);
-			printf(" [ ");
-			for(int l=0 ; l<h ; l++ ){
-				printf("%d ",shared_memory[l] );
-			}
-			printf("] \n");
+		// for(int k=0 ; k<h ; k++){
+		// 	shared_memory[k] += shared_memory_tmp[k];
+		// }
+		// printf("proc %d recieve1  :", rank);
+		// 	printf(" [ ");
+		// 	for(int l=0 ; l<h ; l++ ){
+		// 		printf("%d ",shared_memory[l] );
+		// 	}
+		// 	printf("] \n");
 		
 
 		if(count_empty_place > 0 ){
@@ -660,7 +661,7 @@ void version2_dynamic(int argc, char **argv){
 
 			if (rank == 0){
 
-		       	MPI_Irecv(&tab,3*w+1,MPI_DOUBLE,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
+		       	MPI_Irecv(&tab,3*w+1,MPI_DOUBLE,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req_tab);
 		       	int line = tab[0];
 
 		       	for(int k=1; k< 3*w+1; k++){
@@ -674,6 +675,10 @@ void version2_dynamic(int argc, char **argv){
 				MPI_Send(tab,3*w+1,MPI_DOUBLE,0,0,MPI_COMM_WORLD);
 				
 			}
+
+			MPI_Cancel(req)
+			MPI_Irecv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
+			//MPI_Recv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
 
 			for(int l=0 ; l<h ; l++ ){
 				if(shared_memory[(l + rank*nb_line)%h] == 0){	
@@ -701,7 +706,7 @@ void version2_dynamic(int argc, char **argv){
 				if(k != rank)
 					MPI_Send(shared_memory,h,MPI_INT,k,0,MPI_COMM_WORLD);
 			}
-			MPI_Irecv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
+			//MPI_Irecv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
 
 
 
