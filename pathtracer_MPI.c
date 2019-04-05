@@ -812,14 +812,14 @@ void version2_beta_dynamic(int argc, char **argv){
 
 	//for (int i = nb_line *rank; i < nb_line *(rank+1); i++) {
 	while(continuer){
-		MPI_Irecv(&line,1,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
-		if(line> line_number){
-			line_number = line;
-		}
-		else if(line == line_number){
-			i = line_number;
-			line_number++;
-		}
+		// MPI_Irecv(&line,1,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
+		// if(line> line_number){
+		// 	line_number = line;
+		// }
+		// else if(line == line_number){
+		// 	i = line_number;
+		// 	line_number++;
+		// }
 
 		printf("proc %d afetr Irecv1 - i = %d line_number=%d\n",rank , i, line_number);
 
