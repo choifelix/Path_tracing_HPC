@@ -592,14 +592,7 @@ void version2_dynamic(int argc, char **argv){
 		printf("] \n ");
 
 
-		for(int l=0 ; l<h ; l++ ){
-			if(shared_memory[l] == 0){
-				i = l;
-				shared_memory[l] = 1;
-				break;
-			}
-		}
-			
+		
 			
 
 			
@@ -711,6 +704,15 @@ void version2_dynamic(int argc, char **argv){
 			printf("] \n ");
 
 			//MPI_Irecv(shared_memory,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
+
+			for(int l=0 ; l<h ; l++ ){
+				if(shared_memory[l] == 0){
+					i = l;
+					shared_memory[l] = 1;
+					break;
+				}
+			}
+			
 
 			
 			
