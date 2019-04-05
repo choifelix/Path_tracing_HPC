@@ -876,7 +876,7 @@ void version2_beta_dynamic(int argc, char **argv){
 		}
 		else{
 
-			MPI_Isend(tab,3*w+1,MPI_DOUBLE,0,0,MPI_COMM_WORLD,&req);
+			MPI_Send(tab,3*w+1,MPI_DOUBLE,0,0,MPI_COMM_WORLD);
 			
 		}
 
@@ -895,7 +895,9 @@ void version2_beta_dynamic(int argc, char **argv){
 		for(int k=0; k< size ; k++){
 			//MPI_Ibcast(line_number, 1, MPI_INT, k, MPI_COMM_WORLD,&req);
 			if(k !=rank){
-				MPI_Send(line_number,1,MPI_INT,k,0,MPI_COMM_WORLD);
+				int * tmp;
+				*tmp = line_number;
+				MPI_Send(tmp,1,MPI_INT,k,0,MPI_COMM_WORLD);
 				
 				//MPI_Bcast(line_number, 1, MPI_INT, k, MPI_COMM_WORLD);
 				//MPI_Ibcast(line_number, 1, MPI_INT, k, MPI_COMM_WORLD,&req);
