@@ -751,7 +751,7 @@ void version2_beta_dynamic(int argc, char **argv){
 	int h = 20;
 	int samples = 200;
 	int line_number = size;
-	int line;
+	int *line;
 
 
 
@@ -884,8 +884,8 @@ void version2_beta_dynamic(int argc, char **argv){
 
 
 		MPI_Irecv(line,1,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
-		if(line> line_number){
-			line_number = line;
+		if(*line> line_number){
+			line_number = *line;
 		}
 
 		//MPI_Bcast(line_number, 1, MPI_INT, rank, MPI_COMM_WORLD);
