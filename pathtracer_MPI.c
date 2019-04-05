@@ -603,174 +603,172 @@ void version2_dynamic(int argc, char **argv){
 		// 	}
 		// 	printf("] \n");
 		
+		continuer = verif(shared_memory, h);
 
-		if(count_empty_place > 0 ){
-			unsigned short PRNG_state[3] = {0, 0, i*i*i};
-			for (unsigned short j = 0; j < w; j++) {
-				printf(" precessus %d, pixel : %d - %d   -----  ",rank,i,j);
-				/* calcule la luminance d'un pixel, avec sur-échantillonnage 2x2 */
-				double pixel_radiance[3] = {0, 0, 0};
-				for (int sub_i = 0; sub_i < 2; sub_i++) {
-					for (int sub_j = 0; sub_j < 2; sub_j++) {
-						double subpixel_radiance[3] = {0, 0, 0};
-						/* simulation de monte-carlo : on effectue plein de lancers de rayons et on moyenne */
-						for (int s = 0; s < samples; s++) { 
-							/* tire un rayon aléatoire dans une zone de la caméra qui correspond à peu près au pixel à calculer */
-							double r1 = 2 * erand48(PRNG_state);
-							double dx = (r1 < 1) ? sqrt(r1) - 1 : 1 - sqrt(2 - r1); 
-							double r2 = 2 * erand48(PRNG_state);
-							double dy = (r2 < 1) ? sqrt(r2) - 1 : 1 - sqrt(2 - r2);
-							double ray_direction[3];
-							copy(camera_direction, ray_direction);
-							axpy(((sub_i + .5 + dy) / 2 + i) / h - .5, cy, ray_direction);
-							axpy(((sub_j + .5 + dx) / 2 + j) / w - .5, cx, ray_direction);
-							normalize(ray_direction);
+		unsigned short PRNG_state[3] = {0, 0, i*i*i};
+		for (unsigned short j = 0; j < w; j++) {
+			printf(" precessus %d, pixel : %d - %d   -----  ",rank,i,j);
+			/* calcule la luminance d'un pixel, avec sur-échantillonnage 2x2 */
+			double pixel_radiance[3] = {0, 0, 0};
+			for (int sub_i = 0; sub_i < 2; sub_i++) {
+				for (int sub_j = 0; sub_j < 2; sub_j++) {
+					double subpixel_radiance[3] = {0, 0, 0};
+					/* simulation de monte-carlo : on effectue plein de lancers de rayons et on moyenne */
+					for (int s = 0; s < samples; s++) { 
+						/* tire un rayon aléatoire dans une zone de la caméra qui correspond à peu près au pixel à calculer */
+						double r1 = 2 * erand48(PRNG_state);
+						double dx = (r1 < 1) ? sqrt(r1) - 1 : 1 - sqrt(2 - r1); 
+						double r2 = 2 * erand48(PRNG_state);
+						double dy = (r2 < 1) ? sqrt(r2) - 1 : 1 - sqrt(2 - r2);
+						double ray_direction[3];
+						copy(camera_direction, ray_direction);
+						axpy(((sub_i + .5 + dy) / 2 + i) / h - .5, cy, ray_direction);
+						axpy(((sub_j + .5 + dx) / 2 + j) / w - .5, cx, ray_direction);
+						normalize(ray_direction);
 
-							double ray_origin[3];
-							copy(camera_position, ray_origin);
-							axpy(140, ray_direction, ray_origin);
-							
-							/* estime la lumiance qui arrive sur la caméra par ce rayon */
-							double sample_radiance[3];
-							radiance(ray_origin, ray_direction, 0, PRNG_state, sample_radiance);
-							/* fait la moyenne sur tous les rayons */
-							axpy(1. / samples, sample_radiance, subpixel_radiance);
-						}
-						clamp(subpixel_radiance);
-						/* fait la moyenne sur les 4 sous-pixels */
-						axpy(0.25, subpixel_radiance, pixel_radiance);
+						double ray_origin[3];
+						copy(camera_position, ray_origin);
+						axpy(140, ray_direction, ray_origin);
 						
+						/* estime la lumiance qui arrive sur la caméra par ce rayon */
+						double sample_radiance[3];
+						radiance(ray_origin, ray_direction, 0, PRNG_state, sample_radiance);
+						/* fait la moyenne sur tous les rayons */
+						axpy(1. / samples, sample_radiance, subpixel_radiance);
 					}
-				}
-				printf("%f %f %f \n",pixel_radiance[0], pixel_radiance[1], pixel_radiance[2]);
-				if(rank!=0){
-					copy(pixel_radiance, image + 3 * j); // <-- retournement vertical
-				}
-				else{
-					copy(pixel_radiance, image + 3*w*i+ 3 * j); // <-- retournement vertical
+					clamp(subpixel_radiance);
+					/* fait la moyenne sur les 4 sous-pixels */
+					axpy(0.25, subpixel_radiance, pixel_radiance);
+					
 				}
 			}
+			printf("%f %f %f \n",pixel_radiance[0], pixel_radiance[1], pixel_radiance[2]);
+			if(rank!=0){
+				copy(pixel_radiance, image + 3 * j); // <-- retournement vertical
+			}
+			else{
+				copy(pixel_radiance, image + 3*w*i+ 3 * j); // <-- retournement vertical
+			}
+		}
 
 
+
+
+	
+		tab[0] = (double)i;
+
+		
+
+		if(line_number >= h){
+			line_number = -1;
+		}
+
+		if (rank == 0){
+
+			for(int k=1 ; k<3*w+1 ; k++){
+				tab[k] = image[i*3*w + k-1];
+			}
+
+	       	MPI_Irecv(tab,3*w+1,MPI_DOUBLE,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req_tab);
+		    int flag_tab;
+			MPI_Status status_tab;
+			MPI_Test(&req_tab,&flag_tab,&status_tab);
+			if(flag_tab){
+				printf("%d recieve tab from %d \n",rank,status_tab.MPI_SOURCE);
+			}
+	       	int line = tab[0];
+
+	       	for(int k=1; k< 3*w+1; k++){
+	       		image[h -(line*3*w + k -1)] = tab[k]; 
+	       	}
+
+	       	printf("proc %d tab  :", rank);
+			printf(" [ ");
+			for(int l=0 ; l<3*w ; l++ ){
+				printf("%f ",image[line*3*w + l ] );
+			}
+			printf("] \n");
+
+	       	printf("%d : recieving image line %d \n",rank,line);
+		}
+		else{
+			printf("proc %d image   :", rank);
+			printf(" [ ");
+			for(int l=0 ; l<3*w ; l++ ){
+				printf("%f ",image[l ] );
+			}
+			printf("] \n");
+
+
+			for(int k=1 ; k<3*w+1 ; k++){
+				tab[k] = image[k-1];
+			}
+
+			MPI_Send(tab,3*w+1,MPI_DOUBLE,0,0,MPI_COMM_WORLD);
+			
+		}
+
+		//MPI_Cancel(&req);
+		MPI_Irecv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
+		//MPI_Recv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
+
+		int flag;
+		MPI_Status status;
+		MPI_Test(&req,&flag,&status);
+		if(flag){
+			printf("%d recieve shared memory from %d \n",rank,status.MPI_SOURCE);
+		}
+		 for(int k=0 ; k<h ; k++){
+			shared_memory[k] += shared_memory_tmp[k];
+		}
+		printf("proc %d recieve1  :", rank);
+		printf(" [ ");
+		for(int l=0 ; l<h ; l++ ){
+			printf("%d ",shared_memory_tmp[l] );
+		}
+		printf("] \n");
+
+		for(int l=0 ; l<h ; l++ ){
+			if(shared_memory[(l + rank*nb_line)%h] == 0){	
+				i = (l + rank*nb_line)%h;
+				shared_memory[(l + rank*nb_line)%h] = 1;
+				break;
+			}
+			else if(l == h-1){
+				i = -1;
+			}
+		}
+
+
+
+
+		printf("proc %d recieve  :", rank);
+		printf(" [ ");
+		for(int l=0 ; l<h ; l++ ){
+			printf("%d ",shared_memory[l] );
+		}
+		printf("] \n");
+
+		
+		for(int k=0 ; k<size ; k++){
+			if(k != rank)
+				MPI_Send(shared_memory,h,MPI_INT,k,0,MPI_COMM_WORLD);
+		}
+		//MPI_Irecv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
+
+
+
+		printf("proc %d bcasting (send):", rank);
+		printf(" [ ");
+		for(int l=0 ; l<h ; l++ ){
+			printf("%d ",shared_memory[l] );
+		}
+		printf("] \n ");
+		
 
 
 		
-			tab[0] = (double)i;
-
-			
-
-			if(line_number >= h){
-				line_number = -1;
-			}
-
-			if (rank == 0){
-
-				for(int k=1 ; k<3*w+1 ; k++){
-					tab[k] = image[i*3*w + k-1];
-				}
-
-		       	MPI_Irecv(tab,3*w+1,MPI_DOUBLE,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req_tab);
-			    int flag_tab;
-				MPI_Status status_tab;
-				MPI_Test(&req_tab,&flag_tab,&status_tab);
-				if(flag_tab){
-					printf("%d recieve tab from %d \n",rank,status_tab.MPI_SOURCE);
-				}
-		       	int line = tab[0];
-
-		       	for(int k=1; k< 3*w+1; k++){
-		       		image[line*3*w + k -1] = tab[k]; 
-		       	}
-
-		       	printf("proc %d tab  :", rank);
-				printf(" [ ");
-				for(int l=0 ; l<3*w ; l++ ){
-					printf("%f ",image[line*3*w + l ] );
-				}
-				printf("] \n");
-
-		       	printf("%d : recieving image line %d \n",rank,line);
-			}
-			else{
-				printf("proc %d image   :", rank);
-				printf(" [ ");
-				for(int l=0 ; l<3*w ; l++ ){
-					printf("%f ",image[l ] );
-				}
-				printf("] \n");
-
-
-				for(int k=1 ; k<3*w+1 ; k++){
-					tab[k] = image[k-1];
-				}
-
-				MPI_Send(tab,3*w+1,MPI_DOUBLE,0,0,MPI_COMM_WORLD);
-				
-			}
-
-			//MPI_Cancel(&req);
-			MPI_Irecv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
-			//MPI_Recv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
-
-			int flag;
-			MPI_Status status;
-			MPI_Test(&req,&flag,&status);
-			if(flag){
-				printf("%d recieve shared memory from %d \n",rank,status.MPI_SOURCE);
-			}
-			 for(int k=0 ; k<h ; k++){
-				shared_memory[k] += shared_memory_tmp[k];
-			}
-			printf("proc %d recieve1  :", rank);
-			printf(" [ ");
-			for(int l=0 ; l<h ; l++ ){
-				printf("%d ",shared_memory_tmp[l] );
-			}
-			printf("] \n");
-
-			for(int l=0 ; l<h ; l++ ){
-				if(shared_memory[(l + rank*nb_line)%h] == 0){	
-					i = (l + rank*nb_line)%h;
-					shared_memory[(l + rank*nb_line)%h] = 1;
-					break;
-				}
-				else if(l == h-1){
-					i = -1;
-				}
-			}
-
-
-
-
-			printf("proc %d recieve  :", rank);
-			printf(" [ ");
-			for(int l=0 ; l<h ; l++ ){
-				printf("%d ",shared_memory[l] );
-			}
-			printf("] \n");
-
-			
-			for(int k=0 ; k<size ; k++){
-				if(k != rank)
-					MPI_Send(shared_memory,h,MPI_INT,k,0,MPI_COMM_WORLD);
-			}
-			//MPI_Irecv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
-
-
-
-			printf("proc %d bcasting (send):", rank);
-			printf(" [ ");
-			for(int l=0 ; l<h ; l++ ){
-				printf("%d ",shared_memory[l] );
-			}
-			printf("] \n ");
-			
-
-
-			continuer = verif(shared_memory, h);
-		}
-		else
-			continuer = false;
+	
 	}
 
 
