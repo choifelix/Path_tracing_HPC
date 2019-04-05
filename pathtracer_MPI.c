@@ -913,7 +913,7 @@ void version2_beta_dynamic(int argc, char **argv){
 
 		//MPI_Bcast(line_number, 1, MPI_INT, rank, MPI_COMM_WORLD);
 
-		//printf("proc %d : i = %d line_number=%d \n", rank,i,line_number);
+		printf("proc %d : i = %d line_number=%d \n", rank,i,line_number);
 		if(line_number == h)
 			continuer = false;
 	}
