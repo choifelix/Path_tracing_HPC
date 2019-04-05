@@ -572,6 +572,9 @@ void version2_dynamic(int argc, char **argv){
 	int * shared_memory;
 	shared_memory = (int*)calloc(h,sizeof(int));
 
+	int * shared_memory_tmp;
+	shared_memory_tmp = (int*)calloc(h,sizeof(int));
+
 	double * tab;
 	tab = (double*)malloc((3*w + 1)*sizeof(double));
 
@@ -586,7 +589,11 @@ void version2_dynamic(int argc, char **argv){
 	//for (int i = nb_line *rank; i < nb_line *(rank+1); i++) {
 	while(continuer){
 
-		MPI_Irecv(shared_memory,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
+		MPI_Irecv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
+
+		for(int k=0 ; k<h ; k++){
+			shared_memory[k] += shared_memory_tmp;
+		}
 		
 
 		if(count_empty_place > 0 ){
