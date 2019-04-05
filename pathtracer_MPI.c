@@ -587,7 +587,7 @@ void version2_dynamic(int argc, char **argv){
 			if(shared_memory[l] == 0)
 				count_empty_place++;
 
-		if(count_empty_place < h)
+		if(count_empty_place < h - size)
 			for(int l=0 ; l<h ; l++ )
 				if(shared_memory[l] == 0){	
 					i = l;
