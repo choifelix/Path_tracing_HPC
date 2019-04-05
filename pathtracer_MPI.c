@@ -577,14 +577,7 @@ void version2_dynamic(int argc, char **argv){
 
 	//for (int i = nb_line *rank; i < nb_line *(rank+1); i++) {
 	while(continuer){
-		//MPI_Irecv(shared_memory,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
-		MPI_Recv(shared_memory,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
-		printf("proc %d recieve :", rank);
-			printf(" [ ");
-			for(int l=0 ; l<h ; l++ ){
-				printf("%d ",shared_memory[l] );
-			}
-			printf("] \n ");
+
 
 			
 
@@ -696,6 +689,15 @@ void version2_dynamic(int argc, char **argv){
 			//MPI_Ibcast(shared_memory, h, MPI_INT, rank, MPI_COMM_WORLD,&req);
 			MPI_Bcast(shared_memory, h, MPI_INT, rank, MPI_COMM_WORLD);
 			printf("proc %d bcasting :", rank);
+			printf(" [ ");
+			for(int l=0 ; l<h ; l++ ){
+				printf("%d ",shared_memory[l] );
+			}
+			printf("] \n ");
+
+			//MPI_Irecv(shared_memory,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
+			MPI_Recv(shared_memory,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+			printf("proc %d recieve :", rank);
 			printf(" [ ");
 			for(int l=0 ; l<h ; l++ ){
 				printf("%d ",shared_memory[l] );
