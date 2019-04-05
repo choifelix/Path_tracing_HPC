@@ -890,7 +890,8 @@ void version2_beta_dynamic(int argc, char **argv){
 		for(int k=0; k< size ; k++){
 			if(k !=rank)
 				//MPI_Isend(line_number,1,MPI_INT,k,0,MPI_COMM_WORLD,&req);
-				MPI_Bcast(line_number, 1, MPI_INT, k, MPI_COMM_WORLD);
+				//MPI_Bcast(line_number, 1, MPI_INT, k, MPI_COMM_WORLD);
+				MPI_Ibcast(line_number, 1, MPI_INT, k, MPI_COMM_WORLD,&req);
 		}
 
 
