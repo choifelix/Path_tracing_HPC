@@ -583,7 +583,7 @@ void version2_dynamic(int argc, char **argv){
 
 		
 		int count_empty_place = 0;
-		printf("[ ");
+		printf("prco : %d  [ ", rank);
 		for(int l=0 ; l<h ; l++ ){
 			printf("%d ",shared_memory[l] );
 			if(shared_memory[l] == 0)
