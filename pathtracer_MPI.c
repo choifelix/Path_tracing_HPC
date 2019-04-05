@@ -751,7 +751,7 @@ void version2_beta_dynamic(int argc, char **argv){
 	int h = 20;
 	int samples = 200;
 	int line_number = size;
-	int *line;
+	int line;
 
 
 
@@ -866,7 +866,7 @@ void version2_beta_dynamic(int argc, char **argv){
 		}
 		if (rank == 0){
 
-	       	//MPI_Irecv(tab,3*w+1,MPI_DOUBLE,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
+	       	MPI_Irecv(tab,3*w+1,MPI_DOUBLE,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
 	       	int line_t = tab[0];
 
 	       	for(int k=1; k< 3*w+1; k++){
@@ -884,8 +884,8 @@ void version2_beta_dynamic(int argc, char **argv){
 		//MPI_Irecv(line_number,1,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
 
 
-		MPI_Irecv(line,1,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
-		if(*line> line_number){
+		MPI_Irecv(&line,1,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
+		if(line> line_number){
 			line_number = *line;
 		}
 		printf("proc %d afetr Irecv\n",rank );
