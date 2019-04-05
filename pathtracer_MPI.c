@@ -891,7 +891,7 @@ void version2_beta_dynamic(int argc, char **argv){
 
 		MPI_Irecv(line_number,1,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
 
-		if(nb_line == h)
+		if(line_number == h)
 			continuer = false;
 	}
 
