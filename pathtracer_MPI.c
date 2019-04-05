@@ -679,7 +679,7 @@ void version2_dynamic(int argc, char **argv){
 	       	int line = tab[0];
 
 	       	for(int k=1; k< 3*w+1; k++){
-	       		image[h*3*w - (line*3*w + k -1) ] = tab[k]; 
+	       		image[(line*3*w + k -1) ] = tab[k]; 
 	       	}
 
 	       	printf("proc %d tab  :", rank);
@@ -776,21 +776,30 @@ void version2_dynamic(int argc, char **argv){
 
 
 	if (rank == 0){
-		
-			struct passwd *pass; 
-			char nom_sortie[100] = "";
-			char nom_rep[100] = "";
+		double * reverse_image ;
+		reverse_image = malloc(3 * w * h * sizeof(double));
+		for (int k=h-1 ; k>=0 ; k--){
+			for (int l=0 ; l<w ; l++){
+				reverse_image[h-k+1 +l] = image[k + l];
+			}
+		}
 
-			pass = getpwuid(getuid()); 
-			sprintf(nom_rep, "/nfs/home/sasl/eleves/main/3520621/Documents/HPC/Path_tracing_HPC/%s", pass->pw_name);
-			mkdir(nom_rep, S_IRWXU);
-			sprintf(nom_sortie, "%s/image2.ppm", nom_rep);
-			
-			FILE *f = fopen(nom_sortie, "w");
-			fprintf(f, "P3\n%d %d\n%d\n", w, h, 255); 
-			for (int i = 0; i < w * h; i++) 
-		  		fprintf(f,"%d %d %d ", toInt(image[3 * i]), toInt(image[3 * i + 1]), toInt(image[3 * i + 2])); 
-			fclose(f); 
+		
+		struct passwd *pass; 
+		char nom_sortie[100] = "";
+		char nom_rep[100] = "";
+
+		pass = getpwuid(getuid()); 
+		sprintf(nom_rep, "/nfs/home/sasl/eleves/main/3520621/Documents/HPC/Path_tracing_HPC/%s", pass->pw_name);
+		mkdir(nom_rep, S_IRWXU);
+		sprintf(nom_sortie, "%s/image2.ppm", nom_rep);
+		
+		FILE *f = fopen(nom_sortie, "w");
+		fprintf(f, "P3\n%d %d\n%d\n", w, h, 255); 
+		for (int i = 0; i < w * h; i++) 
+	  		fprintf(f,"%d %d %d ", toInt(reverse_image[3 * i]), toInt(reverse_image[3 * i + 1]), toInt(reverse_image[3 * i + 2])); 
+		fclose(f);
+		free(reverse_image); 
 	}
 
 
