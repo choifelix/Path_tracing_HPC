@@ -884,7 +884,7 @@ void version2_beta_dynamic(int argc, char **argv){
 		//MPI_Irecv(line_number,1,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
 
 
-		MPI_Irecv(line,1,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
+		MPI_Irecv(&line,1,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
 		if(line> line_number){
 			line_number = line;
 		}
@@ -894,11 +894,12 @@ void version2_beta_dynamic(int argc, char **argv){
 		i = line_number;
 		line_number++;
 		
+		int * tmp;
+		*tmp = line_number;
 		for(int k=0; k< size ; k++){
 			//MPI_Ibcast(line_number, 1, MPI_INT, k, MPI_COMM_WORLD,&req);
 			if(k !=rank){
-				int * tmp;
-				*tmp = line_number;
+				
 				MPI_Send(tmp,1,MPI_INT,k,0,MPI_COMM_WORLD);
 				
 				//MPI_Bcast(line_number, 1, MPI_INT, k, MPI_COMM_WORLD);
@@ -912,7 +913,7 @@ void version2_beta_dynamic(int argc, char **argv){
 
 		//MPI_Bcast(line_number, 1, MPI_INT, rank, MPI_COMM_WORLD);
 
-		printf("proc %d : i = %d line_number=%d \n", rank,i,line_number);
+		//printf("proc %d : i = %d line_number=%d \n", rank,i,line_number);
 		if(line_number == h)
 			continuer = false;
 	}
