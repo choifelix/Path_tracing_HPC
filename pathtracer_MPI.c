@@ -511,6 +511,10 @@ void version2_dynamic(int argc, char **argv){
 	MPI_Comm_rank(MPI_COMM_WORLD,&rank);
 	MPI_Request req;
 	MPI_Request req_tab;
+	int flag_tab;
+	MPI_Status status_tab;
+	int flag;
+	MPI_Status status;
 	printf("%d : MPI init DONE \n", rank);
 
 	/* Petit cas test (small, quick and dirty): */
@@ -670,8 +674,7 @@ void version2_dynamic(int argc, char **argv){
 			}
 
 	       	MPI_Irecv(tab,3*w+1,MPI_DOUBLE,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req_tab);
-		    int flag_tab;
-			MPI_Status status_tab;
+		    
 			MPI_Test(&req_tab,&flag_tab,&status_tab);
 			if(flag_tab){
 				printf("%d recieve tab from %d \n",rank,status_tab.MPI_SOURCE);
@@ -712,8 +715,7 @@ void version2_dynamic(int argc, char **argv){
 		MPI_Irecv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
 		//MPI_Recv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
 
-		int flag;
-		MPI_Status status;
+		
 		MPI_Test(&req,&flag,&status);
 		if(flag){
 			printf("%d recieve shared memory from %d \n",rank,status.MPI_SOURCE);
