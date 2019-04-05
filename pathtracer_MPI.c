@@ -851,7 +851,7 @@ void version2_beta_dynamic(int argc, char **argv){
 				}
 			}
 			printf("%f %f %f \n",pixel_radiance[0], pixel_radiance[1], pixel_radiance[2]);
-			copy(pixel_radiance, image + 3 * j); // <-- retournement vertical
+			//copy(pixel_radiance, image + (3 * j)); // <-- retournement vertical
 		}
 
 		
