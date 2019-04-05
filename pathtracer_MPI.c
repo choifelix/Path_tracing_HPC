@@ -592,13 +592,26 @@ void version2_dynamic(int argc, char **argv){
 		printf("] \n ");
 
 
-
+		for(int l=0 ; l<h ; l++ ){
+			if(shared_memory[l] == 0){
+				i = l;
+				shared_memory[l] = 1;
+				break;
+			}
+		}
 			
 			
 
 			
 
-
+		//MPI_Ibcast(shared_memory, h, MPI_INT, rank, MPI_COMM_WORLD,&req);
+		MPI_Bcast(shared_memory, h, MPI_INT, rank, MPI_COMM_WORLD);
+		printf("proc %d bcasting :", rank);
+		printf(" [ ");
+		for(int l=0 ; l<h ; l++ ){
+			printf("%d ",shared_memory[l] );
+		}
+		printf("] \n ");
 
 		if(count_empty_place > 0 ){
 			unsigned short PRNG_state[3] = {0, 0, i*i*i};
@@ -686,17 +699,10 @@ void version2_dynamic(int argc, char **argv){
 
 
 
-			//MPI_Ibcast(shared_memory, h, MPI_INT, rank, MPI_COMM_WORLD,&req);
-			MPI_Bcast(shared_memory, h, MPI_INT, rank, MPI_COMM_WORLD);
-			printf("proc %d bcasting :", rank);
-			printf(" [ ");
-			for(int l=0 ; l<h ; l++ ){
-				printf("%d ",shared_memory[l] );
-			}
-			printf("] \n ");
+			
 
-			//MPI_Irecv(shared_memory,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
-			MPI_Recv(shared_memory,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+			MPI_Irecv(shared_memory,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
+			//MPI_Recv(shared_memory,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
 			printf("proc %d recieve :", rank);
 			printf(" [ ");
 			for(int l=0 ; l<h ; l++ ){
