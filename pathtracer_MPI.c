@@ -783,7 +783,7 @@ void version2_dynamic(int argc, char **argv){
 			pass = getpwuid(getuid()); 
 			sprintf(nom_rep, "/nfs/home/sasl/eleves/main/3520621/Documents/HPC/Path_tracing_HPC/%s", pass->pw_name);
 			mkdir(nom_rep, S_IRWXU);
-			sprintf(nom_sortie, "%s/image.ppm", nom_rep);
+			sprintf(nom_sortie, "%s/image2.ppm", nom_rep);
 			
 			FILE *f = fopen(nom_sortie, "w");
 			fprintf(f, "P3\n%d %d\n%d\n", w, h, 255); 
