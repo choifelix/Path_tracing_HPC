@@ -680,6 +680,16 @@ void version2_dynamic(int argc, char **argv){
 			MPI_Irecv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
 			//MPI_Recv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
 
+			 for(int k=0 ; k<h ; k++){
+				shared_memory[k] += shared_memory_tmp[k];
+			}
+			printf("proc %d recieve1  :", rank);
+			printf(" [ ");
+			for(int l=0 ; l<h ; l++ ){
+				printf("%d ",shared_memory[l] );
+			}
+			printf("] \n");
+
 			for(int l=0 ; l<h ; l++ ){
 				if(shared_memory[(l + rank*nb_line)%h] == 0){	
 					i = (l + rank*nb_line)%h;
