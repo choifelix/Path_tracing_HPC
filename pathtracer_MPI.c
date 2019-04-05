@@ -577,7 +577,8 @@ void version2_dynamic(int argc, char **argv){
 
 	//for (int i = nb_line *rank; i < nb_line *(rank+1); i++) {
 	while(continuer){
-		MPI_Irecv(shared_memory,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
+		//MPI_Irecv(shared_memory,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
+		MPI_Recv(shared_memory,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD);
 		printf("proc %d recieve :", rank);
 			printf(" [ ");
 			for(int l=0 ; l<h ; l++ ){
