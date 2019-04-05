@@ -649,10 +649,6 @@ void version2_dynamic(int argc, char **argv){
 		
 			tab[0] = (double)i;
 
-			for(int k=1 ; k<3*w+1 ; k++){
-				tab[k] = image[k-1];
-			}
-
 			
 
 			if(line_number >= h){
@@ -660,6 +656,10 @@ void version2_dynamic(int argc, char **argv){
 			}
 
 			if (rank == 0){
+
+				for(int k=1 ; k<3*w+1 ; k++){
+					tab[k] = image[i*3*w + k-1];
+				}
 
 		       	MPI_Irecv(tab,3*w+1,MPI_DOUBLE,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req_tab);
 			    int flag_tab;
@@ -684,6 +684,11 @@ void version2_dynamic(int argc, char **argv){
 		       	printf("%d : recieving image line %d \n",rank,line);
 			}
 			else{
+
+
+				for(int k=1 ; k<3*w+1 ; k++){
+					tab[k] = image[k-1];
+				}
 
 				MPI_Send(tab,3*w+1,MPI_DOUBLE,0,0,MPI_COMM_WORLD);
 				
@@ -739,7 +744,7 @@ void version2_dynamic(int argc, char **argv){
 
 
 
-			printf("proc %d bcasting :", rank);
+			printf("proc %d bcasting (send):", rank);
 			printf(" [ ");
 			for(int l=0 ; l<h ; l++ ){
 				printf("%d ",shared_memory[l] );
