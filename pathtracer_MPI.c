@@ -851,7 +851,7 @@ void version2_beta_dynamic(int argc, char **argv){
 				}
 			}
 			printf("%f %f %f \n",pixel_radiance[0], pixel_radiance[1], pixel_radiance[2]);
-			//copy(pixel_radiance, image + (3 * j)); // <-- retournement vertical
+			copy(pixel_radiance, image + (3 * j)); // <-- retournement vertical
 		}
 
 		
@@ -870,7 +870,7 @@ void version2_beta_dynamic(int argc, char **argv){
 	       	int line_t = tab[0];
 
 	       	for(int k=1; k< 3*w+1; k++){
-	       		image[line_t*3*w + k -1] = tab[k]; 
+	       		//image[line_t*3*w + k -1] = tab[k]; 
 	       	}
 
 	       	printf("%d : recieving image line %d \n",rank,line_t);
