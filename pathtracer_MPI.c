@@ -780,7 +780,7 @@ void version2_dynamic(int argc, char **argv){
 		reverse_image = malloc(3 * w * h * sizeof(double));
 		for (int k=h-1 ; k>=0 ; k--){
 			for (int l=0 ; l<w ; l++){
-				reverse_image[(h-k+1)*3*w +l] = image[k*3*w + l];
+				reverse_image[(h-(k+1))*3*w +l] = image[k*3*w + l];
 			}
 		}
 
