@@ -643,6 +643,7 @@ void version2_dynamic(int argc, char **argv){
 			if(line_number >= h){
 				line_number = -1;
 			}
+
 			if (rank == 0){
 
 		       	MPI_Irecv(&tab,3*w+1,MPI_DOUBLE,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
@@ -672,12 +673,6 @@ void version2_dynamic(int argc, char **argv){
 			}
 
 
-
-
-			
-
-			//MPI_Irecv(shared_memory,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
-			//MPI_Recv(shared_memory,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
 			printf("proc %d recieve  :", rank);
 			printf(" [ ");
 			for(int l=0 ; l<h ; l++ ){
@@ -686,7 +681,7 @@ void version2_dynamic(int argc, char **argv){
 			printf("] \n");
 
 			
-			for(intk= ; k<size ; k++){
+			for(int k=0 ; k<size ; k++){
 				if(k != rank)
 					MPI_UNSIGNED_CHAR(shared_memory,h,MPI_INT,k,0,MPI_COMM_WORLD);
 			}
@@ -727,12 +722,14 @@ void version2_dynamic(int argc, char **argv){
 			fclose(f); 
 	}
 
+
 	free(image);
 	free(tab);
 	free(shared_memory);
 
 	MPI_Finalize();
 }
+
 
 
 	
