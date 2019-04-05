@@ -686,7 +686,7 @@ void version2_dynamic(int argc, char **argv){
 			printf("proc %d recieve1  :", rank);
 			printf(" [ ");
 			for(int l=0 ; l<h ; l++ ){
-				printf("%d ",shared_memory[l] );
+				printf("%d ",shared_memory_tmp[l] );
 			}
 			printf("] \n");
 
