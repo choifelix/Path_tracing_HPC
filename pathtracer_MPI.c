@@ -645,12 +645,7 @@ void version2_dynamic(int argc, char **argv){
 				copy(pixel_radiance, image + w*3 + j); // <-- retournement vertical
 			}
 
-			printf("proc %d image   :", rank);
-			printf(" [ ");
-			for(int l=0 ; l<3*w ; l++ ){
-				printf("%f ",image[line*3*w + l ] );
-			}
-			printf("] \n");
+
 
 
 		
@@ -691,6 +686,12 @@ void version2_dynamic(int argc, char **argv){
 		       	printf("%d : recieving image line %d \n",rank,line);
 			}
 			else{
+				printf("proc %d image   :", rank);
+				printf(" [ ");
+				for(int l=0 ; l<3*w ; l++ ){
+					printf("%f ",image[l ] );
+				}
+				printf("] \n");
 
 
 				for(int k=1 ; k<3*w+1 ; k++){
