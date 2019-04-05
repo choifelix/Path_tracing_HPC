@@ -865,14 +865,14 @@ void version2_beta_dynamic(int argc, char **argv){
 		}
 		if (rank == 0){
 
-	       	MPI_Irecv(&tab,3*w+1,MPI_DOUBLE,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
-	       	int line = tab[0];
+	       	MPI_Irecv(tab,3*w+1,MPI_DOUBLE,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
+	       	int line_t = tab[0];
 
 	       	for(int k=1; k< 3*w+1; k++){
-	       		image[line*3*w + k -1] = tab[k]; 
+	       		image[line_t*3*w + k -1] = tab[k]; 
 	       	}
 
-	       	printf("%d : recieving image line %d \n",rank,line);
+	       	printf("%d : recieving image line %d \n",rank,line_t);
 		}
 		else{
 
