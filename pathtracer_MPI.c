@@ -504,6 +504,7 @@ void version2_dynamic(int argc, char **argv){
 	int rank,size;
 	MPI_Comm_size(MPI_COMM_WORLD,&size);
 	MPI_Comm_rank(MPI_COMM_WORLD,&rank);
+	MPI_Request req;
 	printf("%d : MPI init DONE \n", rank);
 
 	/* Petit cas test (small, quick and dirty): */
@@ -660,7 +661,7 @@ void version2_dynamic(int argc, char **argv){
 				
 			}
 
-			MPI_Request req;
+			
 			MPI_Irecv(shared_memory,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
 
 			
