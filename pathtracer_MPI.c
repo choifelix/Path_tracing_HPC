@@ -574,7 +574,7 @@ void version2_dynamic(int argc, char **argv){
 		shared_memory[k] = 1;
 	}
 	bool continuer = true;
-	int count_empty_place;
+	int count_empty_place = h-size;
 
 	//for (int i = nb_line *rank; i < nb_line *(rank+1); i++) {
 	while(continuer){
