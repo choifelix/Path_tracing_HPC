@@ -862,6 +862,7 @@ void version2_beta_dynamic(int argc, char **argv){
 		}
 		if(line_number >= h){
 			line_number = -1;
+			continuer = false;
 		}
 		if (rank == 0){
 
