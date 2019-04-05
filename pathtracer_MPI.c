@@ -894,10 +894,11 @@ void version2_beta_dynamic(int argc, char **argv){
 		//MPI_Bcast(line_number, 1, MPI_INT, rank, MPI_COMM_WORLD);
 		i = line_number;
 		line_number++;
-		printf("proc %d afetr after Irecv - i = %d line_number=%d\n",rank , i, line_number);
+		
 		
 		int * tmp;
 		*tmp = line_number;
+		printf("proc %d afetr after Irecv - i = %d line_number=%d\n",rank , i, line_number);
 		for(int k=0; k< size ; k++){
 			//MPI_Ibcast(line_number, 1, MPI_INT, k, MPI_COMM_WORLD,&req);
 			if(k !=rank){
