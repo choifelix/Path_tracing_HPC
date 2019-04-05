@@ -807,7 +807,7 @@ void version2_beta_dynamic(int argc, char **argv){
 	tab = (double*)malloc((3*w + 1)*sizeof(double));
 
 	int i = rank;
-
+	bool continuer = true;
 
 	//for (int i = nb_line *rank; i < nb_line *(rank+1); i++) {
 	while(continuer){
@@ -879,16 +879,6 @@ void version2_beta_dynamic(int argc, char **argv){
 			
 		}
 
-		for(int l=0 ; l<h ; l++ ){
-			if(shared_memory[l] == 0){	
-				i = l;
-				shared_memory[l] = 1;
-				break;
-			}
-			else if(l == h-1){
-				i = -1;
-			}
-		}
 
 		i = line_number;
 		line_number++;
