@@ -679,7 +679,7 @@ void version2_dynamic(int argc, char **argv){
 	       	int line = tab[0];
 
 	       	for(int k=1; k< 3*w+1; k++){
-	       		image[h -(line*3*w + k -1) + 1] = tab[k]; 
+	       		image[h -(line*3*w + k -1) - 1] = tab[k]; 
 	       	}
 
 	       	printf("proc %d tab  :", rank);
@@ -720,6 +720,9 @@ void version2_dynamic(int argc, char **argv){
 		}
 		 for(int k=0 ; k<h ; k++){
 			shared_memory[k] += shared_memory_tmp[k];
+			if(shared_memory[k] > 0){
+				shared_memory[k] = 1;
+			}
 		}
 		printf("proc %d recieve1  :", rank);
 		printf(" [ ");
