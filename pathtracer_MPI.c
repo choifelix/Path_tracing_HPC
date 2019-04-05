@@ -676,7 +676,7 @@ void version2_dynamic(int argc, char **argv){
 				
 			}
 
-			MPI_Cancel(req)
+			MPI_Cancel(req);
 			MPI_Irecv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
 			//MPI_Recv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
 
