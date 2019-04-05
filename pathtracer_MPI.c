@@ -810,16 +810,79 @@ void version2_beta_dynamic(int argc, char **argv){
 	int i = rank;
 	bool continuer = true;
 
-	//for (int i = nb_line *rank; i < nb_line *(rank+1); i++) {
+	
+		unsigned short PRNG_state[3] = {0, 0, i*i*i};
+		for (unsigned short j = 0; j < w; j++) {
+			printf(" precessus %d, pixel : %d - %d   -----  ",rank,i,j);
+			/* calcule la luminance d'un pixel, avec sur-échantillonnage 2x2 */
+			double pixel_radiance[3] = {0, 0, 0};
+			for (int sub_i = 0; sub_i < 2; sub_i++) {
+				for (int sub_j = 0; sub_j < 2; sub_j++) {
+					double subpixel_radiance[3] = {0, 0, 0};
+					/* simulation de monte-carlo : on effectue plein de lancers de rayons et on moyenne */
+					for (int s = 0; s < samples; s++) { 
+						/* tire un rayon aléatoire dans une zone de la caméra qui correspond à peu près au pixel à calculer */
+						double r1 = 2 * erand48(PRNG_state);
+						double dx = (r1 < 1) ? sqrt(r1) - 1 : 1 - sqrt(2 - r1); 
+						double r2 = 2 * erand48(PRNG_state);
+						double dy = (r2 < 1) ? sqrt(r2) - 1 : 1 - sqrt(2 - r2);
+						double ray_direction[3];
+						copy(camera_direction, ray_direction);
+						axpy(((sub_i + .5 + dy) / 2 + i) / h - .5, cy, ray_direction);
+						axpy(((sub_j + .5 + dx) / 2 + j) / w - .5, cx, ray_direction);
+						normalize(ray_direction);
+
+						double ray_origin[3];
+						copy(camera_position, ray_origin);
+						axpy(140, ray_direction, ray_origin);
+						
+						/* estime la lumiance qui arrive sur la caméra par ce rayon */
+						double sample_radiance[3];
+						radiance(ray_origin, ray_direction, 0, PRNG_state, sample_radiance);
+						/* fait la moyenne sur tous les rayons */
+						axpy(1. / samples, sample_radiance, subpixel_radiance);
+					}
+					clamp(subpixel_radiance);
+					/* fait la moyenne sur les 4 sous-pixels */
+					axpy(0.25, subpixel_radiance, pixel_radiance);
+					
+				}
+			}
+			printf("%f %f %f \n",pixel_radiance[0], pixel_radiance[1], pixel_radiance[2]);
+			copy(pixel_radiance, image + (3 * j)); // <-- retournement vertical
+		}
+
+		
+		tab[0] =(double)i;
+
+		for(int k=1 ; k<3*w+1 ; k++){
+			tab[k] = image[k-1];
+		}
+		if(line_number >= h){
+			line_number = -1;
+			continuer = false;
+		}
+		if (rank == 0){
+
+	       	MPI_Irecv(tab,3*w+1,MPI_DOUBLE,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
+	       	int line_t = tab[0];
+
+	       	for(int k=1; k< 3*w+1; k++){
+	       		image[line_t*3*w + k -1] = tab[k]; 
+	       	}
+
+	       	printf("%d : recieving image line %d \n",rank,line_t);
+		}
+		else{
+
+			MPI_Send(tab,3*w+1,MPI_DOUBLE,0,0,MPI_COMM_WORLD);
+			
+		}
 	while(continuer){
-		// MPI_Irecv(&line,1,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
-		// if(line> line_number){
-		// 	line_number = line;
-		// }
-		// else if(line == line_number){
-		// 	i = line_number;
-		// 	line_number++;
-		// }
+		
+		
+		if(line_number >= h)
+			continuer = false;
 
 		printf("proc %d afetr Irecv1 - i = %d line_number=%d\n",rank , i, line_number);
 
@@ -923,9 +986,8 @@ void version2_beta_dynamic(int argc, char **argv){
 		}
 		printf("proc %d afetr Send - i = %d line_number=%d\n",rank , i, line_number);
 
-		
-		if(line_number >= h)
-			continuer = false;
+
+
 	}
 
 	
