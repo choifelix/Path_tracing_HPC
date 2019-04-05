@@ -592,7 +592,7 @@ void version2_dynamic(int argc, char **argv){
 		MPI_Irecv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
 
 		for(int k=0 ; k<h ; k++){
-			shared_memory[k] += shared_memory_tmp;
+			shared_memory[k] += shared_memory_tmp[k];
 		}
 		
 
