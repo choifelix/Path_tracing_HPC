@@ -679,7 +679,7 @@ void version2_dynamic(int argc, char **argv){
 	       	int line = tab[0];
 
 	       	for(int k=1; k< 3*w+1; k++){
-	       		image[h -(line*3*w + k -1) - 1] = tab[k]; 
+	       		image[(line*3*w + k -1) ] = tab[k]; 
 	       	}
 
 	       	printf("proc %d tab  :", rank);
