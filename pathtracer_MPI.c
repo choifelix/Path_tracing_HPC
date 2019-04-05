@@ -816,6 +816,11 @@ void version2_beta_dynamic(int argc, char **argv){
 		if(line> line_number){
 			line_number = line;
 		}
+		else if(line == line_number){
+			i = line_number;
+			line_number++;
+		}
+
 		printf("proc %d afetr Irecv1 - i = %d line_number=%d\n",rank , i, line_number);
 
 		unsigned short PRNG_state[3] = {0, 0, i*i*i};
@@ -888,16 +893,18 @@ void version2_beta_dynamic(int argc, char **argv){
 
 		//MPI_Irecv(line_number,1,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
 
+		//while(1){
+			MPI_Irecv(&line,1,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
+			if(line> line_number){
+				line_number = line;
+			}
+			else if(line == line_number){
+				i = line_number;
+				line_number++;
+			}
+			printf("proc %d afetr Irecv2 - i = %d line_number=%d\n",rank , i, line_number);
 
-		MPI_Irecv(&line,1,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
-		if(line> line_number){
-			line_number = line;
-		}
-		printf("proc %d afetr Irecv2 - i = %d line_number=%d\n",rank , i, line_number);
-
-		//MPI_Bcast(line_number, 1, MPI_INT, rank, MPI_COMM_WORLD);
-		i = line_number;
-		line_number++;
+		//}		
 		
 		
 		int tmp[1];
