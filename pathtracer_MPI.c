@@ -866,7 +866,7 @@ void version2_beta_dynamic(int argc, char **argv){
 		}
 		if (rank == 0){
 
-	       	MPI_Irecv(tab,3*w+1,MPI_DOUBLE,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
+	       	//MPI_Irecv(tab,3*w+1,MPI_DOUBLE,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
 	       	int line_t = tab[0];
 
 	       	for(int k=1; k< 3*w+1; k++){
