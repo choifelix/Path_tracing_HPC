@@ -580,7 +580,7 @@ void version2_dynamic(int argc, char **argv){
 
 	int i = rank*nb_line;
 	for(int k =0 ; k<h ; k++){
-		if(k == rank*nb_line)
+		if(k%nb_line == 0)
 			shared_memory[k] = 1;
 	}
 	bool continuer = true;
