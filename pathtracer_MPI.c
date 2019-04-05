@@ -887,12 +887,18 @@ void version2_beta_dynamic(int argc, char **argv){
 
 		//MPI_Bcast(line_number, 1, MPI_INT, rank, MPI_COMM_WORLD);
 
+		int line;
 		for(int k=0; k< size ; k++){
-			MPI_Ibcast(line_number, 1, MPI_INT, k, MPI_COMM_WORLD,&req);
-			//if(k !=rank)
-				//MPI_Isend(line_number,1,MPI_INT,k,0,MPI_COMM_WORLD,&req);
+			//MPI_Ibcast(line_number, 1, MPI_INT, k, MPI_COMM_WORLD,&req);
+			if(k !=rank){
+				MPI_Isend(line_number,1,MPI_INT,k,0,MPI_COMM_WORLD,&req);
+				MPI_Irecv(line,1,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
+				if(line> line_number){
+					line_number = line;
+				}
 				//MPI_Bcast(line_number, 1, MPI_INT, k, MPI_COMM_WORLD);
 				//MPI_Ibcast(line_number, 1, MPI_INT, k, MPI_COMM_WORLD,&req);
+			}
 		}
 
 
