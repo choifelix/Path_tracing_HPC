@@ -668,6 +668,13 @@ void version2_dynamic(int argc, char **argv){
 		       		image[line*3*w + k -1] = tab[k]; 
 		       	}
 
+		       	printf("proc %d tab  :", rank);
+				printf(" [ ");
+				for(int l=0 ; l<3*w ; l++ ){
+					printf("%d ",image[line*3*w + l ] );
+				}
+				printf("] \n");
+
 		       	printf("%d : recieving image line %d \n",rank,line);
 			}
 			else{
