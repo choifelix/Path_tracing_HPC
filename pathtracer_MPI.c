@@ -577,6 +577,22 @@ void version2_dynamic(int argc, char **argv){
 
 	//for (int i = nb_line *rank; i < nb_line *(rank+1); i++) {
 	while(continuer){
+		MPI_Irecv(shared_memory,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
+
+			
+			for(int l=0 ; l<h ; l++ )
+				if(shared_memory[l] == 0){	
+					i = l;
+					shared_memory[l] = 1;
+					break;
+			}
+
+
+
+
+		//MPI_Ibcast(shared_memory, h, MPI_INT, rank, MPI_COMM_WORLD,&req);
+		MPI_Bcast(shared_memory, h, MPI_INT, rank, MPI_COMM_WORLD;
+		//MPI_Irecv(shared_memory,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
 
 		
 		int count_empty_place = 0;
@@ -662,21 +678,7 @@ void version2_dynamic(int argc, char **argv){
 			}
 
 			
-			MPI_Irecv(shared_memory,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
-
 			
-			for(int l=0 ; l<h ; l++ )
-				if(shared_memory[l] == 0){	
-					i = l;
-					shared_memory[l] = 1;
-					break;
-			}
-
-
-
-
-		MPI_Ibcast(shared_memory, h, MPI_INT, rank, MPI_COMM_WORLD,&req);
-		//MPI_Irecv(shared_memory,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
 
 			continuer = verif(shared_memory, h);
 		}
