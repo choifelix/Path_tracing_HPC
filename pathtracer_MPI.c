@@ -607,7 +607,7 @@ void version2_dynamic(int argc, char **argv){
 
 		unsigned short PRNG_state[3] = {0, 0, i*i*i};
 		for (unsigned short j = 0; j < w; j++) {
-			printf(" precessus %d, pixel : %d - %d   -----  ",rank,i,j);
+			//printf(" precessus %d, pixel : %d - %d   -----  ",rank,i,j);
 			/* calcule la luminance d'un pixel, avec sur-échantillonnage 2x2 */
 			double pixel_radiance[3] = {0, 0, 0};
 			for (int sub_i = 0; sub_i < 2; sub_i++) {
@@ -682,22 +682,22 @@ void version2_dynamic(int argc, char **argv){
 	       		image[(line*3*w + k -1) ] = tab[k]; 
 	       	}
 
-	       	printf("proc %d tab  :", rank);
-			printf(" [ ");
-			for(int l=0 ; l<3*w ; l++ ){
-				printf("%f ",image[line*3*w + l ] );
-			}
-			printf("] \n");
+	  //      	printf("proc %d tab  :", rank);
+			// printf(" [ ");
+			// for(int l=0 ; l<3*w ; l++ ){
+			// 	printf("%f ",image[line*3*w + l ] );
+			// }
+			// printf("] \n");
 
 	       	printf("%d : recieving image line %d \n",rank,line);
 		}
 		else{
-			printf("proc %d image   :", rank);
-			printf(" [ ");
-			for(int l=0 ; l<3*w ; l++ ){
-				printf("%f ",image[l ] );
-			}
-			printf("] \n");
+			// printf("proc %d image   :", rank);
+			// printf(" [ ");
+			// for(int l=0 ; l<3*w ; l++ ){
+			// 	printf("%f ",image[l ] );
+			// }
+			// printf("] \n");
 
 
 			for(int k=1 ; k<3*w+1 ; k++){
@@ -761,12 +761,12 @@ void version2_dynamic(int argc, char **argv){
 
 
 
-		printf("proc %d bcasting (send):", rank);
-		printf(" [ ");
-		for(int l=0 ; l<h ; l++ ){
-			printf("%d ",shared_memory[l] );
-		}
-		printf("] \n ");
+		// printf("proc %d bcasting (send):", rank);
+		// printf(" [ ");
+		// for(int l=0 ; l<h ; l++ ){
+		// 	printf("%d ",shared_memory[l] );
+		// }
+		// printf("] \n ");
 		
 
 
