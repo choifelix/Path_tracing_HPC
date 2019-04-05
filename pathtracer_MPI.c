@@ -888,7 +888,7 @@ void version2_beta_dynamic(int argc, char **argv){
 		if(line> line_number){
 			line_number = line;
 		}
-		printf("proc %d afetr Irecv\n",rank );
+		printf("proc %d afetr Irecv - i = %d line_number=%d\n",rank , i, line_number);
 
 		//MPI_Bcast(line_number, 1, MPI_INT, rank, MPI_COMM_WORLD);
 		i = line_number;
