@@ -576,8 +576,9 @@ void version2_dynamic(int argc, char **argv){
 	tab = (double*)malloc((3*w + 1)*sizeof(double));
 
 	int i = rank*nb_line;
-	for(int k =0 ; k<size ; k++){
-		shared_memory[k] = 1;
+	for(int k =0 ; k<h ; k++){
+		if(k == rank*nb_line)
+			shared_memory[k] = 1;
 	}
 	bool continuer = true;
 	int count_empty_place = h-size;
@@ -662,15 +663,17 @@ void version2_dynamic(int argc, char **argv){
 			}
 
 			for(int l=0 ; l<h ; l++ ){
-				if(shared_memory[l] == 0){	
-					i = l;
-					shared_memory[l] = 1;
+				if(shared_memory[(l + rank*nb_line)%h] == 0){	
+					i = (l + rank*nb_line)%h;
+					shared_memory[(l + rank*nb_line)%h] = 1;
 					break;
 				}
 				else if(l == h-1){
 					i = -1;
 				}
 			}
+
+
 
 
 			printf("proc %d recieve  :", rank);
