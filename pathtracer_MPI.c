@@ -886,7 +886,7 @@ void version2_beta_dynamic(int argc, char **argv){
 
 		MPI_Irecv(&line,1,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
 		if(line> line_number){
-			line_number = *line;
+			line_number = line;
 		}
 		printf("proc %d afetr Irecv\n",rank );
 
