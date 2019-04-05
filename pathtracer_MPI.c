@@ -855,7 +855,7 @@ void version2_beta_dynamic(int argc, char **argv){
 		}
 
 		
-		tab[0] = (double)i;
+		tab[0] = 4.0;//(double)i;
 
 		for(int k=1 ; k<3*w+1 ; k++){
 			tab[k] = image[k-1];
@@ -870,7 +870,7 @@ void version2_beta_dynamic(int argc, char **argv){
 	       	int line_t = tab[0];
 
 	       	for(int k=1; k< 3*w+1; k++){
-	       		//image[line_t*3*w + k -1] = tab[k]; 
+	       		image[line_t*3*w + k -1] = tab[k]; 
 	       	}
 
 	       	printf("%d : recieving image line %d \n",rank,line_t);
@@ -896,16 +896,16 @@ void version2_beta_dynamic(int argc, char **argv){
 		
 		int * tmp;
 		*tmp = line_number;
-		// for(int k=0; k< size ; k++){
-		// 	//MPI_Ibcast(line_number, 1, MPI_INT, k, MPI_COMM_WORLD,&req);
-		// 	if(k !=rank){
+		for(int k=0; k< size ; k++){
+			//MPI_Ibcast(line_number, 1, MPI_INT, k, MPI_COMM_WORLD,&req);
+			if(k !=rank){
 				
-		// 		MPI_Send(tmp,1,MPI_INT,k,0,MPI_COMM_WORLD);
+				MPI_Send(tmp,1,MPI_INT,k,0,MPI_COMM_WORLD);
 				
-		// 		//MPI_Bcast(line_number, 1, MPI_INT, k, MPI_COMM_WORLD);
-		// 		//MPI_Ibcast(line_number, 1, MPI_INT, k, MPI_COMM_WORLD,&req);
-		// 	}
-		// }
+				//MPI_Bcast(line_number, 1, MPI_INT, k, MPI_COMM_WORLD);
+				//MPI_Ibcast(line_number, 1, MPI_INT, k, MPI_COMM_WORLD,&req);
+			}
+		}
 		
 
 		
@@ -913,8 +913,8 @@ void version2_beta_dynamic(int argc, char **argv){
 
 		//MPI_Bcast(line_number, 1, MPI_INT, rank, MPI_COMM_WORLD);
 
-		printf("proc %d : i = %d line_number=%d \n", rank,i,line_number);
-		if(line_number == h)
+		
+		if(line_number >= h)
 			continuer = false;
 	}
 
