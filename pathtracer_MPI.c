@@ -583,9 +583,14 @@ void version2_dynamic(int argc, char **argv){
 
 		
 		int count_empty_place = 0;
-		for(int l=0 ; l<h ; l++ )
+		printf("[ ");
+		for(int l=0 ; l<h ; l++ ){
+			printf("%d ",shared_memory[l] );
 			if(shared_memory[l] == 0)
 				count_empty_place++;
+		}
+		printf("] \n ");
+
 
 
 			
