@@ -724,7 +724,7 @@ void version2_dynamic(int argc, char **argv){
 				if(flag[k]){
 					printf("%d recieve shared memory from %d \n",rank,status.MPI_SOURCE);
 				}
-			}while(flag[k])
+			}while(flag[k]);
 		}
 		 for(int k=0 ; k<h ; k++){
 			shared_memory[k] += shared_memory_tmp[k];
