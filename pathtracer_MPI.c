@@ -719,10 +719,12 @@ void version2_dynamic(int argc, char **argv){
 		}
 
 		for(int k=0 ; k < size-1 ; k++){
-			MPI_Test(&req[k],&flag[k],&status);
-			if(flag[k]){
-				printf("%d recieve shared memory from %d \n",rank,status.MPI_SOURCE);
-			}
+			do{
+				MPI_Test(&req[k],&flag[k],&status);
+				if(flag[k]){
+					printf("%d recieve shared memory from %d \n",rank,status.MPI_SOURCE);
+				}
+			}while(flag[k])
 		}
 		 for(int k=0 ; k<h ; k++){
 			shared_memory[k] += shared_memory_tmp[k];
