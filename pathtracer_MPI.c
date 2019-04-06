@@ -673,18 +673,24 @@ void version2_dynamic(int argc, char **argv){
 			for(int k=1 ; k<3*w+1 ; k++){
 				tab[k] = image[i*3*w + k-1];
 			}
+			int line = tab[0];
+
+	       	for(int k=1; k< 3*w+1; k++){
+	       		image[(line*3*w + k -1) ] = tab[k]; 
+	       	}
 
 	       	MPI_Irecv(tab,3*w+1,MPI_DOUBLE,MPI_ANY_SOURCE,1,MPI_COMM_WORLD,&req_tab);
 		    
 			MPI_Test(&req_tab,&flag_tab,&status_tab);
 			if(flag_tab){
 				printf("%d recieve tab from %d \n",rank,status_tab.MPI_SOURCE);
-			}
-	       	int line = tab[0];
+				line = tab[0];
 
-	       	for(int k=1; k< 3*w+1; k++){
-	       		image[(line*3*w + k -1) ] = tab[k]; 
-	       	}
+		       	for(int k=1; k< 3*w+1; k++){
+		       		image[(line*3*w + k -1) ] = tab[k]; 
+		       	}
+			}
+	       	
 
 	  //      	printf("proc %d tab  :", rank);
 			// printf(" [ ");
