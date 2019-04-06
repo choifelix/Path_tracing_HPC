@@ -758,10 +758,10 @@ void version2_dynamic(int argc, char **argv){
 		printf("] \n");
 
 		
-		for(int k=0 ; k<size ; k++){
-			if(k != rank)
-				//MPI_Send(shared_memory,h,MPI_INT,k,0,MPI_COMM_WORLD);
-		}
+		// for(int k=0 ; k<size ; k++){
+		// 	if(k != rank)
+		// 		MPI_Send(shared_memory,h,MPI_INT,k,0,MPI_COMM_WORLD);
+		// }
 		//MPI_Irecv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
 
 
