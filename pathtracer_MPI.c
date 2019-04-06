@@ -723,7 +723,7 @@ void version2_dynamic(int argc, char **argv){
 			// if(req[k] != MPI_REQUEST_NULL ){
 			// 	MPI_Request_free(&req[k]);
 			// }
-			MPI_Cancel(&req[k]);
+			//MPI_Cancel(&req[k]);
 			MPI_Irecv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req[k]);
 			//MPI_Recv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
 		}
@@ -796,6 +796,10 @@ void version2_dynamic(int argc, char **argv){
 
 
 	if (rank == 0){
+		for(int k=0 ; k<size ; k++){
+			if(k != rank)
+				MPI_Isend(shared_memory,h,MPI_INT,k,0,MPI_COMM_WORLD,&send_req[k]);
+		}
 		printf( "proc 0 saving image \n");
 		double * reverse_image ;
 		reverse_image = malloc(3 * w * h * sizeof(double));
