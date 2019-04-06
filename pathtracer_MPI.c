@@ -714,7 +714,9 @@ void version2_dynamic(int argc, char **argv){
 
 		//MPI_Cancel(&req);
 		for(int k=0 ; k < size-1 ; k++){
-			MPI_Request_free(&req[k]);
+			if(req[k] != MPI_REQUEST_NULL ){
+				MPI_Request_free(&req[k]);
+			}
 			MPI_Irecv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req[k]);
 			//MPI_Recv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
 		}
