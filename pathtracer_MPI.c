@@ -714,17 +714,17 @@ void version2_dynamic(int argc, char **argv){
 
 		//MPI_Cancel(&req);
 		for(int k=0 ; k < size-1 ; k++){
+			MPI_Cancel(&req[k])
 			MPI_Irecv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req[k]);
 			//MPI_Recv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
 		}
 
 		for(int k=0 ; k < size-1 ; k++){
-			do{
 				MPI_Test(&req[k],&flag[k],&status);
 				if(flag[k]){
 					printf("%d recieve shared memory from %d \n",rank,status.MPI_SOURCE);
 				}
-			}while(flag[k]);
+			
 		}
 		 for(int k=0 ; k<h ; k++){
 			shared_memory[k] += shared_memory_tmp[k];
