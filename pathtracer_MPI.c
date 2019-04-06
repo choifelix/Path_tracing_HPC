@@ -798,7 +798,7 @@ void version2_dynamic(int argc, char **argv){
 	if (rank == 0){
 		for(int k=0 ; k<size ; k++){
 			if(k != rank)
-				MPI_Isend(shared_memory,h,MPI_INT,k,0,MPI_COMM_WORLD,&send_req[k]);
+				MPI_Send(shared_memory,h,MPI_INT,k,0,MPI_COMM_WORLD);
 		}
 		printf( "proc 0 saving image \n");
 		double * reverse_image ;
