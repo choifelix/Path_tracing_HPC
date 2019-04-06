@@ -675,10 +675,10 @@ void version2_dynamic(int argc, char **argv){
 
 	       	MPI_Irecv(tab,3*w+1,MPI_DOUBLE,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req_tab);
 		    
-			// MPI_Test(&req_tab,&flag_tab,&status_tab);
-			// if(flag_tab){
-			// 	printf("%d recieve tab from %d \n",rank,status_tab.MPI_SOURCE);
-			// }
+			MPI_Test(&req_tab,&flag_tab,&status_tab);
+			if(flag_tab){
+				printf("%d recieve tab from %d \n",rank,status_tab.MPI_SOURCE);
+			}
 	       	int line = tab[0];
 
 	       	for(int k=1; k< 3*w+1; k++){
@@ -713,16 +713,16 @@ void version2_dynamic(int argc, char **argv){
 
 		//MPI_Cancel(&req);
 		for(int k=0 ; k < size-1 ; k++){
-			MPI_Irecv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req[k]);
+			//MPI_Irecv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req[k]);
 			//MPI_Recv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
 		}
 
-		for(int k=0 ; k < size-1 ; k++){
-			MPI_Test(&req[k],&flag[k],&status);
-			if(flag[k]){
-				printf("%d recieve shared memory from %d \n",rank,status.MPI_SOURCE);
-			}
-		}
+		// for(int k=0 ; k < size-1 ; k++){
+		// 	MPI_Test(&req[k],&flag[k],&status);
+		// 	if(flag[k]){
+		// 		printf("%d recieve shared memory from %d \n",rank,status.MPI_SOURCE);
+		// 	}
+		// }
 		 for(int k=0 ; k<h ; k++){
 			shared_memory[k] += shared_memory_tmp[k];
 			if(shared_memory[k] > 0){
