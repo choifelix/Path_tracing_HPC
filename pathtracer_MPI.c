@@ -757,6 +757,9 @@ void version2_dynamic(int argc, char **argv){
 			// else if(l == h-1){
 			// 	i = -1;
 			// }
+			if(l == h-1){
+				continuer = false;
+			}
 		}
 
 
@@ -787,7 +790,7 @@ void version2_dynamic(int argc, char **argv){
 
 		
 		if(line_number >= h){
-			
+			continuer = false;
 		}
 
 		
