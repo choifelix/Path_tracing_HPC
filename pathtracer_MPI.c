@@ -792,7 +792,7 @@ void version2_dynamic(int argc, char **argv){
 			// else if(l == h-1){
 			// 	i = -1;
 			// }
-			if(l == h-1){
+			if(l == h){
 				continuer = false;
 			}
 		}
