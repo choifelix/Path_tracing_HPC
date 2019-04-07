@@ -567,17 +567,17 @@ void version2_dynamic(int argc, char **argv){
 
 	/* boucle principale */
 	double * image ;
-	double * final_image ;
+	//double * final_image ;
 	//int * image_map;
 	if(rank == 0){
 		
-		final_image = malloc(3 * w * h * sizeof(double));
+		image = malloc(3 * w * h * sizeof(double));
 		
 		//image_map = (int*)calloc(h,sizeof(int));
 	}
-	// else
-	// 	image = malloc(3 * w * sizeof(double));
-	image = malloc(3 * w * sizeof(double));
+	else
+		image = malloc(3 * w * sizeof(double));
+	//image = malloc(3 * w * sizeof(double));
 		
 
 	if (image == NULL) {
@@ -656,12 +656,12 @@ void version2_dynamic(int argc, char **argv){
 				}
 			}
 			//printf("%f %f %f \n",pixel_radiance[0], pixel_radiance[1], pixel_radiance[2]);
-			//if(rank!=0){
+			if(rank!=0){
 				copy(pixel_radiance, image + 3 * j); // <-- retournement vertical
-			//}
-			//else{
-				//copy(pixel_radiance, image + 3*w*i+ 3 * j); // <-- retournement vertical
-			//}
+			}
+			else{
+				copy(pixel_radiance, image + 3*w*i+ 3 * j); // <-- retournement vertical
+			}
 		}
 
 
@@ -678,15 +678,15 @@ void version2_dynamic(int argc, char **argv){
 
 		if (rank == 0){
 
-			for(int k=1 ; k<3*w+1 ; k++){
-				tab[k] = image[i*3*w + k-1];
-			}
-			line = tab[0];
+			// for(int k=1 ; k<3*w+1 ; k++){
+			// 	tab[k] = image[i*3*w + k-1];
+			// }
+			// line = tab[0];
 
-	       	for(int k=1; k< 3*w+1; k++){
-	       		final_image[(line*3*w + k -1) ] = tab[k]; 
-	       	}
-	       	printf(" line done : %d \n",line);
+	  //      	for(int k=1; k< 3*w+1; k++){
+	  //      		image[(line*3*w + k -1) ] = tab[k]; 
+	  //      	}
+	       	// printf(" line done : %d \n",line);
 	       	count_line++;
 	       	printf("nb line done : %d \n",count_line);
 
@@ -705,7 +705,7 @@ void version2_dynamic(int argc, char **argv){
 					printf("%d recieve tab from %d with line %d \n",rank,status_tab.MPI_SOURCE, line);
 
 			       	for(int k=1; k< 3*w+1; k++){
-			       		final_image[(line*3*w + k -1) ] = tab[k]; 
+			       		image[(line*3*w + k -1) ] = tab[k]; 
 			       	}
 			       	count_line++;
 			       	printf("nb line done : %d \n",count_line);
@@ -826,6 +826,9 @@ void version2_dynamic(int argc, char **argv){
 		
 	
 	}
+	printf("--------------------------------------\n");
+	printf("     Processeur %d JOB FINISHED       \n",rank);
+	printf("--------------------------------------\n");
 
 
 
@@ -880,7 +883,7 @@ void version2_dynamic(int argc, char **argv){
 	  		fprintf(f,"%d %d %d ", toInt(reverse_image[3 * i]), toInt(reverse_image[3 * i + 1]), toInt(reverse_image[3 * i + 2])); 
 		fclose(f);
 		free(reverse_image); 
-		free(final_image);
+		//free(final_image);
 		//free(image_map);
 	}
 
