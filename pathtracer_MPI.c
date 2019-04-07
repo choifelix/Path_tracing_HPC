@@ -524,6 +524,7 @@ void version2_dynamic(int argc, char **argv){
 	int samples = 200;
 	int line_number = 0;
 	int nb_line = h/size;
+	int line;
 
 
 
@@ -676,7 +677,7 @@ void version2_dynamic(int argc, char **argv){
 			for(int k=1 ; k<3*w+1 ; k++){
 				tab[k] = image[i*3*w + k-1];
 			}
-			int line = tab[0];
+			line = tab[0];
 
 	       	for(int k=1; k< 3*w+1; k++){
 	       		image[(line*3*w + k -1) ] = tab[k]; 
