@@ -656,11 +656,11 @@ void version2_dynamic(int argc, char **argv){
 				}
 			}
 			//printf("%f %f %f \n",pixel_radiance[0], pixel_radiance[1], pixel_radiance[2]);
-			if(rank!=0){
+			//if(rank!=0){
 				copy(pixel_radiance, image + 3 * j); // <-- retournement vertical
-			}
-			else{
-				copy(pixel_radiance, image + 3*w*i+ 3 * j); // <-- retournement vertical
+			//}
+			//else{
+				//copy(pixel_radiance, image + 3*w*i+ 3 * j); // <-- retournement vertical
 			}
 		}
 
