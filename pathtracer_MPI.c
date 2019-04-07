@@ -688,7 +688,7 @@ void version2_dynamic(int argc, char **argv){
 	  //      	}
 	       	// printf(" line done : %d \n",line);
 	       	count_line++;
-	       	printf("nb line done : %d, line %d \n",count_line, line);
+	       	printf("done by %d nb line done : %d, line %d \n",rank,count_line, line);
 
 
 	       	for(int k=0 ; k<size-1 ; k++){
@@ -709,7 +709,7 @@ void version2_dynamic(int argc, char **argv){
 			       		image[(line*3*w + k -1) ] = tab[k]; 
 			       	}
 			       	count_line++;
-			       	printf("nb line done : %d, line %d \n",count_line, line);
+			       	printf(" done by %d nb line done : %d, line %d \n",status_tab.MPI_SOURCE,count_line, line);
 				}
 			}
 	       	
@@ -777,7 +777,7 @@ void version2_dynamic(int argc, char **argv){
 		for(int l=0 ; l<h ; l++ ){
 			if(shared_memory[(l + rank*nb_line)%h] == 0){	
 				i = (l + rank*nb_line)%h;
-				shared_memory[(l + rank*nb_line)%h] = 1;
+				shared_memory[i] = 1;
 				break;
 			}
 			// else if(l == h-1){
@@ -833,24 +833,24 @@ void version2_dynamic(int argc, char **argv){
 
 
 	if (rank == 0){
-		MPI_Request final_req;
-		int final_flag;
-		while(count_line <= h){
-			MPI_Irecv(tab,3*w+1,MPI_DOUBLE,MPI_ANY_SOURCE,1,MPI_COMM_WORLD,&final_req);
+		// MPI_Request final_req;
+		// int final_flag;
+		// while(count_line <= h){
+		// 	MPI_Irecv(tab,3*w+1,MPI_DOUBLE,MPI_ANY_SOURCE,1,MPI_COMM_WORLD,&final_req);
 		    
-			MPI_Test(&final_req,&final_flag,&status_tab);
-			if(final_flag){
-				//printf("%d recieve tab from %d \n",rank,status_tab.MPI_SOURCE);
-				line = tab[0];
+		// 	MPI_Test(&final_req,&final_flag,&status_tab);
+		// 	if(final_flag){
+		// 		//printf("%d recieve tab from %d \n",rank,status_tab.MPI_SOURCE);
+		// 		line = tab[0];
 
-		       	for(int k=1; k< 3*w+1; k++){
-		       		image[(line*3*w + k -1) ] = tab[k]; 
-		       	}
-		       	count_line++;
-		       	printf("nb line done : %d \n",count_line);
-		       	//image_map[line] = 1;
-			}
-		}
+		//        	for(int k=1; k< 3*w+1; k++){
+		//        		image[(line*3*w + k -1) ] = tab[k]; 
+		//        	}
+		//        	count_line++;
+		//        	printf("nb line done : %d \n",count_line);
+		//        	//image_map[line] = 1;
+		// 	}
+		// }
 
 
 		for(int k=0 ; k<size ; k++){
