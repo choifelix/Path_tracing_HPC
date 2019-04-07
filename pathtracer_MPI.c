@@ -661,7 +661,7 @@ void version2_dynamic(int argc, char **argv){
 			//}
 			//else{
 				//copy(pixel_radiance, image + 3*w*i+ 3 * j); // <-- retournement vertical
-			}
+			//}
 		}
 
 
