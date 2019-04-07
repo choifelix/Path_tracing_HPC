@@ -453,7 +453,7 @@ void version1_static(int argc, char **argv){
 				copy(pixel_radiance, image + 3 * ((nb_line - 1 - (i - rank*nb_line)) * w + j)); // <-- retournement vertical
 			}
 			else{
-				copy(pixel_radiance, image + 3 * ((h - 1 - i * w + j))); // <-- retournement vertical
+				copy(pixel_radiance, image + 3 * ((h - 1 - i) * w + j)); // <-- retournement vertical
 			}
 		}
 	}
