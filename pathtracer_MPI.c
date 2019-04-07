@@ -726,8 +726,8 @@ void version2_dynamic(int argc, char **argv){
 			for(int k=1 ; k<3*w+1 ; k++){
 				tab[k] = image[k-1];
 			}
-
-			MPI_Send(tab,3*w+1,MPI_DOUBLE,0,1,MPI_COMM_WORLD);
+			MPI_Request tmp_reg;
+			MPI_Isend(tab,3*w+1,MPI_DOUBLE,0,1,MPI_COMM_WORLD,&tmp_reg);
 			
 		}
 
@@ -737,7 +737,7 @@ void version2_dynamic(int argc, char **argv){
 			// 	MPI_Request_free(&req[k]);
 			// }
 			//MPI_Cancel(&req[k]);
-			if(iter > 0){
+			if(iter > 0 && flag[k] == 0){
 				//MPI_Cancel(&req[k]);
 				MPI_Request_free(&req[k]);
 			}
