@@ -694,7 +694,7 @@ void version2_dynamic(int argc, char **argv){
 	  //      	}
 	       	// printf(" line done : %d \n",line);
 	       	count_line++;
-	       	printf("done by %d nb line done : %d, line %d \n",rank,count_line, line);
+	       	printf("done by %d nb line done : %d, line %d \n",rank,count_line, i);
 
 
 	       	for(int k=0 ; k<size-1 ; k++){
