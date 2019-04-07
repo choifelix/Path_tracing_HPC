@@ -838,9 +838,10 @@ void version2_dynamic(int argc, char **argv){
 		
 	
 	}
+	double t1 = my_gettimeofday();
 	printf("--------------------------------------\n");
 	printf("     Processeur %d JOB FINISHED       \n",rank);
-	printf("                time : %f             \n",my_gettimeofday()-t0);
+	printf("                time : %f             \n",t1-t0);
 	printf("--------------------------------------\n");
 
 
@@ -897,6 +898,7 @@ void version2_dynamic(int argc, char **argv){
 	  		fprintf(f,"%d %d %d ", toInt(reverse_image[3 * i]), toInt(reverse_image[3 * i + 1]), toInt(reverse_image[3 * i + 2])); 
 		fclose(f);
 		free(reverse_image); 
+		//printf()
 		printf( "image saved as %s \n", nom_sortie);
 		//free(final_image);
 		//free(image_map);
