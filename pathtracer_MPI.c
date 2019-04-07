@@ -711,8 +711,8 @@ void version2_dynamic(int argc, char **argv){
 					line = tab[0];
 					//printf("%d recieve tab from %d with line %d \n",rank,status_tab.MPI_SOURCE, line);
 
-			       	for(int k=1; k< 3*w+1; k++){
-			       		image[(line*3*w + k -1) ] = tab[k]; 
+			       	for(int l=1; l< 3*w+1; l++){
+			       		image[(line*3*w + l -1) ] = tab[l]; 
 			       	}
 			       	count_line++;
 			       	printf("done by %d nb line done : %d, line %d \n",status_tab.MPI_SOURCE,count_line, line);
