@@ -692,8 +692,9 @@ void version2_dynamic(int argc, char **argv){
 		    
 				MPI_Test(&req_tab[k],&flag_tab[k],&status_tab);
 				if(flag_tab[k]){
-					printf("%d recieve tab from %d \n",rank,status_tab.MPI_SOURCE);
+					
 					line = tab[0];
+					printf("%d recieve tab from %d with line %d \n",rank,status_tab.MPI_SOURCE, line);
 
 			       	for(int k=1; k< 3*w+1; k++){
 			       		image[(line*3*w + k -1) ] = tab[k]; 
@@ -782,12 +783,12 @@ void version2_dynamic(int argc, char **argv){
 
 
 
-		printf("proc %d shared memory  :", rank);
-		printf(" [ ");
-		for(int l=0 ; l<h ; l++ ){
-			printf("%d ",shared_memory[l] );
-		}
-		printf("] \n");
+		// printf("proc %d shared memory  :", rank);
+		// printf(" [ ");
+		// for(int l=0 ; l<h ; l++ ){
+		// 	printf("%d ",shared_memory[l] );
+		// }
+		// printf("] \n");
 
 		
 		for(int k=0 ; k<size ; k++){
