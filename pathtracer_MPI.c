@@ -697,17 +697,17 @@ void version2_dynamic(int argc, char **argv){
 	       	printf("done by %d nb line done : %d, line %d \n",rank,count_line, i);
 
 
-	       	for(int k=0 ; k<size ; k++){
+	       	for(int k=1 ; k<size ; k++){
 
-	       		if(iter > 0 && flag_tab[k] == 0){
-					MPI_Request_free(&req_tab[k]);
+	       		if(iter > 0 && flag_tab[k-1] == 0){
+					MPI_Request_free(&req_tab[k-1]);
 				}
-				printf("try irecv form %d", k+1);
+				printf("try irecv form %d", k);
 
-	       		MPI_Irecv(tab,3*w+1,MPI_DOUBLE,k+1,1,MPI_COMM_WORLD,&req_tab[k]);
+	       		MPI_Irecv(tab,3*w+1,MPI_DOUBLE,k,1,MPI_COMM_WORLD,&req_tab[k]);
 		    
-				MPI_Test(&req_tab[k],&flag_tab[k],&status_tab);
-				if(flag_tab[k]){
+				MPI_Test(&req_tab[k-1],&flag_tab[k-1],&status_tab);
+				if(flag_tab[k-1]){
 					
 					line = tab[0];
 					//printf("%d recieve tab from %d with line %d \n",rank,status_tab.MPI_SOURCE, line);
