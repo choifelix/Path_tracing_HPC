@@ -610,6 +610,7 @@ void version2_dynamic(int argc, char **argv){
 
 	bool continuer = true;
 	int count_line = 0;
+	double t0 = gettimeofday();
 
 	//for (int i = nb_line *rank; i < nb_line *(rank+1); i++) {
 	while(continuer){
@@ -839,7 +840,9 @@ void version2_dynamic(int argc, char **argv){
 	}
 	printf("--------------------------------------\n");
 	printf("     Processeur %d JOB FINISHED       \n",rank);
+	printf("                time : %f             \n",gettimeofday()-t0);
 	printf("--------------------------------------\n");
+
 
 
 
