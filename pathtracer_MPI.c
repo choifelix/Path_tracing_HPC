@@ -450,7 +450,7 @@ void version1_static(int argc, char **argv){
 			printf("%f %f %f \n",pixel_radiance[0], pixel_radiance[1], pixel_radiance[2]);
 			//copy(pixel_radiance, image + 3 * ((h - 1 - (i - rank*nb_line) * w + j))); // <-- retournement vertical
 			if(rank != 0){
-				copy(pixel_radiance, image + 3 * ((nb_line - 1 - (i - rank*nb_line)) * w + j)); // <-- retournement vertical
+				//copy(pixel_radiance, image + 3 * ((nb_line - 1 - (i - rank*nb_line)) * w + j)); // <-- retournement vertical
 			}
 			else{
 				copy(pixel_radiance, image + 3 * ((h - 1 - (i - rank*nb_line) * w + j))); // <-- retournement vertical
