@@ -678,7 +678,7 @@ void version2_dynamic(int argc, char **argv){
 
 	
 		tab[0] = (double)i;
-		printf("proc %d just done line %f or %d\n",rank, tab[0],i);
+		//printf("proc %d just done line %f or %d\n",rank, tab[0],i);
 
 		
 
