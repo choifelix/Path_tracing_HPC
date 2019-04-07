@@ -688,28 +688,28 @@ void version2_dynamic(int argc, char **argv){
 	  //      	}
 	       	// printf(" line done : %d \n",line);
 	       	count_line++;
-	       	printf("nb line done : %d \n",count_line);
+	       	printf("nb line done : %d, line %d \n",count_line, line);
 
-	       	//image_map[line] = 1;
+
 	       	for(int k=0 ; k<size-1 ; k++){
+
 	       		if(iter > 0 && flag_tab[k] == 0){
-					//MPI_Cancel(&req[k]);
 					MPI_Request_free(&req_tab[k]);
 				}
+
 	       		MPI_Irecv(tab,3*w+1,MPI_DOUBLE,k+1,1,MPI_COMM_WORLD,&req_tab[k]);
 		    
 				MPI_Test(&req_tab[k],&flag_tab[k],&status_tab);
 				if(flag_tab[k]){
 					
 					line = tab[0];
-					printf("%d recieve tab from %d with line %d \n",rank,status_tab.MPI_SOURCE, line);
+					//printf("%d recieve tab from %d with line %d \n",rank,status_tab.MPI_SOURCE, line);
 
 			       	for(int k=1; k< 3*w+1; k++){
 			       		image[(line*3*w + k -1) ] = tab[k]; 
 			       	}
 			       	count_line++;
-			       	printf("nb line done : %d \n",count_line);
-			       	//image_map[line] = 1;
+			       	printf("nb line done : %d, line %d \n",count_line, line);
 				}
 			}
 	       	
@@ -721,7 +721,7 @@ void version2_dynamic(int argc, char **argv){
 			// }
 			// printf("] \n");
 
-	       	printf("%d : recieving image line %d \n",rank,line);
+	       	//printf("%d : recieving image line %d \n",rank,line);
 		}
 		else{
 			// printf("proc %d image   :", rank);
@@ -817,10 +817,9 @@ void version2_dynamic(int argc, char **argv){
 		// }
 		// printf("] \n ");
 
+
+		continuer = verif(shared_memory, h);
 		
-		if(line_number >= h){
-			continuer = false;
-		}
 		iter++;
 
 		
