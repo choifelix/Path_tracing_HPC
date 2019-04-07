@@ -602,9 +602,9 @@ void version2_dynamic(int argc, char **argv){
 	// 		shared_memory[k] = 1;
 	// }
 
-	for(int k=0 ; k<size ; k++){
-		shared_memory[k*nb_line] = 1;
-	}
+	// for(int k=0 ; k<size ; k++){
+	// 	shared_memory[k*nb_line] = 1;
+	// }
 
 
 	bool continuer = true;
@@ -883,7 +883,7 @@ void version2_dynamic(int argc, char **argv){
 		pass = getpwuid(getuid()); 
 		sprintf(nom_rep, "/nfs/home/sasl/eleves/main/3520621/Documents/HPC/Path_tracing_HPC/%s", pass->pw_name);
 		mkdir(nom_rep, S_IRWXU);
-		sprintf(nom_sortie, "%s/image3.ppm", nom_rep);
+		sprintf(nom_sortie, "%s/image%d.ppm", nom_rep,size);
 		
 		FILE *f = fopen(nom_sortie, "w");
 		fprintf(f, "P3\n%d %d\n%d\n", w, h, 255); 
@@ -891,6 +891,7 @@ void version2_dynamic(int argc, char **argv){
 	  		fprintf(f,"%d %d %d ", toInt(reverse_image[3 * i]), toInt(reverse_image[3 * i + 1]), toInt(reverse_image[3 * i + 2])); 
 		fclose(f);
 		free(reverse_image); 
+		printf( "image saved as %s \n", nom_sortie);
 		//free(final_image);
 		//free(image_map);
 	}
