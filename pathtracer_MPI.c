@@ -406,6 +406,7 @@ void version1_static(int argc, char **argv){
 		perror("Impossible d'allouer l'image");
 		exit(1);
 	}
+	double t0 = my_gettimeofday();
 
 	for (int i = nb_line *rank; i < nb_line *(rank+1); i++) {
  		unsigned short PRNG_state[3] = {0, 0, i*i*i};
@@ -450,6 +451,11 @@ void version1_static(int argc, char **argv){
 			copy(pixel_radiance, image + 3 * ((nb_line - 1 - (i - rank*nb_line)) * w + j)); // <-- retournement vertical
 		}
 	}
+
+	printf("--------------------------------------\n");
+	printf("     Processeur %d JOB FINISHED       \n",rank);
+	printf("                time : %f             \n",my_gettimeofday()-t0);
+	printf("--------------------------------------\n");
 
 
 	if (rank == 0){
@@ -924,7 +930,9 @@ int main(int argc, char **argv)
 {
 	printf("BEGIN\n");
 
-	version2_dynamic(argc, argv);
+	//version2_dynamic(argc, argv);
+	version1_static(argc, argv);
+
 	return 0;
 	/*MPI_Init(&argc,&argv);
 	int rank,size;
