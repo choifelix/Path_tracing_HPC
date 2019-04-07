@@ -678,6 +678,7 @@ void version2_dynamic(int argc, char **argv){
 
 	
 		tab[0] = (double)i;
+		printf("proc %d just done line %f or %d\n", tab[0],i);
 
 		
 
@@ -702,9 +703,9 @@ void version2_dynamic(int argc, char **argv){
 
 	       	for(int k=0 ; k<size-1 ; k++){
 
-	   //     		if(iter > 0 && flag_tab[k] == 0){
-				// 	MPI_Request_free(&req_tab[k]);
-				// }
+	       		if(iter > 0 && flag_tab[k] == 0){
+					MPI_Request_free(&req_tab[k]);
+				}
 
 	       		MPI_Irecv(tab,3*w+1,MPI_DOUBLE,k+1,1,MPI_COMM_WORLD,&req_tab[k]);
 		    
