@@ -565,11 +565,11 @@ void version2_dynamic(int argc, char **argv){
 
 	/* boucle principale */
 	double * image ;
-	int * image_map;
+	//int * image_map;
 	if(rank == 0){
 		image = malloc(3 * w * h * sizeof(double));
 		
-		image_map = (int*)calloc(h,sizeof(int));
+		//image_map = (int*)calloc(h,sizeof(int));
 	}
 	else
 		image = malloc(3 * w * sizeof(double));
@@ -683,7 +683,7 @@ void version2_dynamic(int argc, char **argv){
 	       	}
 
 	       	//image_map[line] = 1;
-	       	for(int k=0 ; k<size ; k++){
+	       	for(int k=0 ; k<size-1 ; k++){
 	       		MPI_Irecv(tab,3*w+1,MPI_DOUBLE,MPI_ANY_SOURCE,1,MPI_COMM_WORLD,&req_tab[k]);
 		    
 				MPI_Test(&req_tab[k],&flag_tab[k],&status_tab);
