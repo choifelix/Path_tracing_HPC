@@ -527,7 +527,7 @@ void version2_dynamic(int argc, char **argv){
 	int line;
 	int iter=0;
 	if(rank ==0){
-		printf("initial data : w = %d \nh = %d \nsamples = %d \nb_line = %d ",w,h,samples,nb_line);
+		printf("initial data : w = %d \nh = %d \nsamples = %d \nnb_line = %d ",w,h,samples,nb_line);
 	}
 
 
@@ -597,6 +597,7 @@ void version2_dynamic(int argc, char **argv){
 	tab = (double*)malloc((3*w + 1)*sizeof(double));
 
 	int i = rank*nb_line;
+	printf("proc %d initiate at line %d",rank,i);
 	// for(int k =0 ; k<h ; k++){
 	// 	if(k%nb_line == 0)
 	// 		shared_memory[k] = 1;
