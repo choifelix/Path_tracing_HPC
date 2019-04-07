@@ -597,7 +597,7 @@ void version2_dynamic(int argc, char **argv){
 	tab = (double*)malloc((3*w + 1)*sizeof(double));
 
 	int i = rank*nb_line;
-	printf("proc %d initiate at line %d",rank,i);
+	printf("proc %d initiate at line %d\n",rank,i);
 	// for(int k =0 ; k<h ; k++){
 	// 	if(k%nb_line == 0)
 	// 		shared_memory[k] = 1;
