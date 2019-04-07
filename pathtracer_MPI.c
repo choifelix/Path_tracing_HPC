@@ -722,6 +722,7 @@ void version2_dynamic(int argc, char **argv){
 			       	}
 			       	count_line++;
 			       	printf("done by %d nb line done : %d, line %d \n",status_tab.MPI_SOURCE,count_line, line);
+			       	shared_memory[line] = 1;
 				}
 			}
 	       	
@@ -869,10 +870,10 @@ void version2_dynamic(int argc, char **argv){
 		// }
 
 
-		for(int k=0 ; k<size ; k++){
-			if(k != rank)
-				MPI_Send(shared_memory,h,MPI_INT,k,0,MPI_COMM_WORLD);
-		}
+		// for(int k=0 ; k<size ; k++){
+		// 	if(k != rank)
+		// 		MPI_Send(shared_memory,h,MPI_INT,k,0,MPI_COMM_WORLD);
+		// }
 		printf( "proc 0 saving image \n");
 		double * reverse_image ;
 		reverse_image = malloc(3 * w * h * sizeof(double));
