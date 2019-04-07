@@ -567,9 +567,10 @@ void version2_dynamic(int argc, char **argv){
 
 	/* boucle principale */
 	double * image ;
+	double * final_image ;
 	//int * image_map;
 	if(rank == 0){
-		double * final_image ;
+		
 		final_image = malloc(3 * w * h * sizeof(double));
 		
 		//image_map = (int*)calloc(h,sizeof(int));
