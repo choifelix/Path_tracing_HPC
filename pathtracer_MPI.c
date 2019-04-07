@@ -510,9 +510,9 @@ void version2_dynamic(int argc, char **argv){
 	MPI_Comm_size(MPI_COMM_WORLD,&size);
 	MPI_Comm_rank(MPI_COMM_WORLD,&rank);
 	MPI_Request req[size];
-	MPI_Request req_tab;
+	MPI_Request req_tab[size-1];
 	MPI_Request send_req[size];
-	int flag_tab;
+	int flag_tab[size-1];
 	MPI_Status status_tab;
 	int flag[size];
 	MPI_Status status;
@@ -567,6 +567,8 @@ void version2_dynamic(int argc, char **argv){
 	double * image ;
 	if(rank == 0){
 		image = malloc(3 * w * h * sizeof(double));
+		int * image_map;
+		image_map = (int*)calloc(h,sizeof(int));
 	}
 	else
 		image = malloc(3 * w * sizeof(double));
@@ -679,16 +681,20 @@ void version2_dynamic(int argc, char **argv){
 	       		image[(line*3*w + k -1) ] = tab[k]; 
 	       	}
 
-	       	MPI_Irecv(tab,3*w+1,MPI_DOUBLE,MPI_ANY_SOURCE,1,MPI_COMM_WORLD,&req_tab);
+	       	//image_map[line] = 1;
+	       	for(int k=0 ; k<size ; k++){
+	       		MPI_Irecv(tab,3*w+1,MPI_DOUBLE,MPI_ANY_SOURCE,1,MPI_COMM_WORLD,&req_tab[k]);
 		    
-			MPI_Test(&req_tab,&flag_tab,&status_tab);
-			if(flag_tab){
-				printf("%d recieve tab from %d \n",rank,status_tab.MPI_SOURCE);
-				line = tab[0];
+				MPI_Test(&req_tab[k],&flag_tab[k],&status_tab);
+				if(flag_tab[k]){
+					printf("%d recieve tab from %d \n",rank,status_tab.MPI_SOURCE);
+					line = tab[0];
 
-		       	for(int k=1; k< 3*w+1; k++){
-		       		image[(line*3*w + k -1) ] = tab[k]; 
-		       	}
+			       	for(int k=1; k< 3*w+1; k++){
+			       		image[(line*3*w + k -1) ] = tab[k]; 
+			       	}
+			       	//image_map[line] = 1;
+				}
 			}
 	       	
 
@@ -798,7 +804,11 @@ void version2_dynamic(int argc, char **argv){
 	}
 
 
+
+
 	if (rank == 0){
+
+
 		for(int k=0 ; k<size ; k++){
 			if(k != rank)
 				MPI_Send(shared_memory,h,MPI_INT,k,0,MPI_COMM_WORLD);
@@ -828,6 +838,7 @@ void version2_dynamic(int argc, char **argv){
 	  		fprintf(f,"%d %d %d ", toInt(reverse_image[3 * i]), toInt(reverse_image[3 * i + 1]), toInt(reverse_image[3 * i + 2])); 
 		fclose(f);
 		free(reverse_image); 
+		free(image_map);
 	}
 
 
