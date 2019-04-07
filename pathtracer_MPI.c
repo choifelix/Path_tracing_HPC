@@ -331,7 +331,6 @@ double my_gettimeofday(){
 		axpy(((sub_i + .5 + dy) / 2 + i) / h - .5, cy, ray_direction);
 		axpy(((sub_j + .5 + dx) / 2 + j) / w - .5, cx, ray_direction);
 		normalize(ray_direction);
-
 		double ray_origin[3];
 		copy(camera_position, ray_origin);
 		axpy(140, ray_direction, ray_origin);
@@ -722,7 +721,6 @@ void version2_dynamic(int argc, char **argv){
 			       	}
 			       	count_line++;
 			       	printf("done by %d nb line done : %d, line %d \n",status_tab.MPI_SOURCE,count_line, line);
-			       	shared_memory[line] = 1;
 				}
 			}
 	       	
@@ -839,10 +837,9 @@ void version2_dynamic(int argc, char **argv){
 		
 	
 	}
-	double t1 = my_gettimeofday();
 	printf("--------------------------------------\n");
 	printf("     Processeur %d JOB FINISHED       \n",rank);
-	printf("                time : %f             \n",t1-t0);
+	printf("                time : %f             \n",my_gettimeofday()-t0);
 	printf("--------------------------------------\n");
 
 
@@ -870,10 +867,10 @@ void version2_dynamic(int argc, char **argv){
 		// }
 
 
-		// for(int k=0 ; k<size ; k++){
-		// 	if(k != rank)
-		// 		MPI_Send(shared_memory,h,MPI_INT,k,0,MPI_COMM_WORLD);
-		// }
+		for(int k=0 ; k<size ; k++){
+			if(k != rank)
+				MPI_Send(shared_memory,h,MPI_INT,k,0,MPI_COMM_WORLD);
+		}
 		printf( "proc 0 saving image \n");
 		double * reverse_image ;
 		reverse_image = malloc(3 * w * h * sizeof(double));
@@ -899,7 +896,6 @@ void version2_dynamic(int argc, char **argv){
 	  		fprintf(f,"%d %d %d ", toInt(reverse_image[3 * i]), toInt(reverse_image[3 * i + 1]), toInt(reverse_image[3 * i + 2])); 
 		fclose(f);
 		free(reverse_image); 
-		//printf()
 		printf( "image saved as %s \n", nom_sortie);
 		//free(final_image);
 		//free(image_map);
@@ -935,29 +931,21 @@ int main(int argc, char **argv)
 	MPI_Comm_size(MPI_COMM_WORLD,&size);
 	MPI_Comm_rank(MPI_COMM_WORLD,&rank);
 	//assert((h%size)==0);
-
 	MPI_Status status;
-
 	if (rank>0 && rank < size/4){
 	   	MPI_Send(ima,w*h/size,MPI_UNSIGNED_CHAR,0,0,MPI_COMM_WORLD);
-
 	}
-
 	else {
     	for(int k=1;k<size;k++){
-
    //    MPI_Recv(ima+((k*w*h)/size),w*h/size,MPI_UNSIGNED_CHAR,k,0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
-
 	    }
 	}
 	
 	/* debut du chronometrage 
   	debut = my_gettimeofday();
-
   	fin = my_gettimeofday();
  	fprintf( stderr, "Temps total de calcul : %g sec\n", fin - debut);
   	fprintf( stdout, "%g\n", fin - debut);
  
-
   	MPI_Finalize();*/
 }
