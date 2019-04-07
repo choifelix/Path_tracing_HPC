@@ -594,10 +594,16 @@ void version2_dynamic(int argc, char **argv){
 	tab = (double*)malloc((3*w + 1)*sizeof(double));
 
 	int i = rank*nb_line;
-	for(int k =0 ; k<h ; k++){
-		if(k%nb_line == 0)
-			shared_memory[k] = 1;
+	// for(int k =0 ; k<h ; k++){
+	// 	if(k%nb_line == 0)
+	// 		shared_memory[k] = 1;
+	// }
+
+	for(int k=0 ; k<size ; k++){
+		shared_memory[k*nb_line] = 1;
 	}
+
+
 	bool continuer = true;
 	int count_line = 0;
 
@@ -709,7 +715,7 @@ void version2_dynamic(int argc, char **argv){
 			       		image[(line*3*w + k -1) ] = tab[k]; 
 			       	}
 			       	count_line++;
-			       	printf(" done by %d nb line done : %d, line %d \n",status_tab.MPI_SOURCE,count_line, line);
+			       	printf("done by %d nb line done : %d, line %d \n",status_tab.MPI_SOURCE,count_line, line);
 				}
 			}
 	       	
