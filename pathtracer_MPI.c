@@ -752,9 +752,9 @@ void version2_dynamic(int argc, char **argv){
 
 		for(int k=0 ; k < size-1 ; k++){
 				MPI_Test(&req[k],&flag[k],&status);
-				if(flag[k]){
-					printf("%d recieve shared memory from %d \n",rank,status.MPI_SOURCE);
-				}
+				// if(flag[k]){
+				// 	printf("%d recieve shared memory from %d \n",rank,status.MPI_SOURCE);
+				// }
 			
 		}
 		 for(int k=0 ; k<h ; k++){
@@ -834,7 +834,7 @@ void version2_dynamic(int argc, char **argv){
 		    
 			MPI_Test(&final_req,&final_flag,&status_tab);
 			if(final_flag){
-				printf("%d recieve tab from %d \n",rank,status_tab.MPI_SOURCE);
+				//printf("%d recieve tab from %d \n",rank,status_tab.MPI_SOURCE);
 				line = tab[0];
 
 		       	for(int k=1; k< 3*w+1; k++){
