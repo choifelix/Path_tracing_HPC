@@ -745,8 +745,9 @@ void version2_dynamic(int argc, char **argv){
 			for(int k=1 ; k<3*w+1 ; k++){
 				tab[k] = image[k-1];
 			}
-			MPI_Request tmp_reg;
-			MPI_Isend(tab,3*w+1,MPI_DOUBLE,0,1,MPI_COMM_WORLD,&tmp_reg);
+			// MPI_Request tmp_reg;
+			// MPI_Isend(tab,3*w+1,MPI_DOUBLE,0,1,MPI_COMM_WORLD,&tmp_reg);
+			MPI_Send(tab,3*w+1,MPI_DOUBLE,0,1,MPI_COMM_WORLD);
 			
 		}
 
