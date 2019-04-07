@@ -526,6 +526,9 @@ void version2_dynamic(int argc, char **argv){
 	int nb_line = h/size;
 	int line;
 	int iter=0;
+	if(rank ==0){
+		printf("initial data : w = %d \nh = %d \nsamples = %d \nb_line = %d ",w,h,samples,nb_line);
+	}
 
 
 
