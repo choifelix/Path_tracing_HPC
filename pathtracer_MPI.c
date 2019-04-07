@@ -412,7 +412,7 @@ void version1_static(int argc, char **argv){
 	for (int i = nb_line *rank; i < nb_line *(rank+1); i++) {
  		unsigned short PRNG_state[3] = {0, 0, i*i*i};
 		for (unsigned short j = 0; j < w; j++) {
-			printf(" precessus %d, pixel : %d - %d   -----  ",rank,i,j);
+			//printf(" precessus %d, pixel : %d - %d   -----  ",rank,i,j);
 			/* calcule la luminance d'un pixel, avec sur-échantillonnage 2x2 */
 			double pixel_radiance[3] = {0, 0, 0};
 			for (int sub_i = 0; sub_i < 2; sub_i++) {
@@ -447,7 +447,7 @@ void version1_static(int argc, char **argv){
 					
 				}
 			}
-			printf("%f %f %f \n",pixel_radiance[0], pixel_radiance[1], pixel_radiance[2]);
+			//printf("%f %f %f \n",pixel_radiance[0], pixel_radiance[1], pixel_radiance[2]);
 			//copy(pixel_radiance, image + 3 * ((h - 1 - (i - rank*nb_line) * w + j))); // <-- retournement vertical
 			if(rank != 0){
 				copy(pixel_radiance, image + 3 * ((nb_line - 1 - (i - rank*nb_line)) * w + j)); // <-- retournement vertical
