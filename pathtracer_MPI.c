@@ -797,9 +797,9 @@ void version2_dynamic(int argc, char **argv){
 			// else if(l == h-1){
 			// 	i = -1;
 			// }
-			// if(l == h){
-			// 	continuer = false;
-			// }
+			if(l == h){
+				continuer = false;
+			}
 		}
 
 
@@ -850,30 +850,30 @@ void version2_dynamic(int argc, char **argv){
 
 
 	if (rank == 0){
-		// MPI_Request final_req;
-		// int final_flag;
-		// while(count_line <= h){
-		// 	MPI_Irecv(tab,3*w+1,MPI_DOUBLE,MPI_ANY_SOURCE,1,MPI_COMM_WORLD,&final_req);
+		MPI_Request final_req;
+		int final_flag;
+		while(count_line <= h){
+			MPI_Irecv(tab,3*w+1,MPI_DOUBLE,MPI_ANY_SOURCE,1,MPI_COMM_WORLD,&final_req);
 		    
-		// 	MPI_Test(&final_req,&final_flag,&status_tab);
-		// 	if(final_flag){
-		// 		//printf("%d recieve tab from %d \n",rank,status_tab.MPI_SOURCE);
-		// 		line = tab[0];
+			MPI_Test(&final_req,&final_flag,&status_tab);
+			if(final_flag){
+				//printf("%d recieve tab from %d \n",rank,status_tab.MPI_SOURCE);
+				line = tab[0];
 
-		//        	for(int k=1; k< 3*w+1; k++){
-		//        		image[(line*3*w + k -1) ] = tab[k]; 
-		//        	}
-		//        	count_line++;
-		//        	printf("nb line done : %d \n",count_line);
-		//        	//image_map[line] = 1;
-		// 	}
-		// }
-
-
-		for(int k=0 ; k<size ; k++){
-			if(k != rank)
-				MPI_Send(shared_memory,h,MPI_INT,k,0,MPI_COMM_WORLD);
+		       	for(int k=1; k< 3*w+1; k++){
+		       		image[(line*3*w + k -1) ] = tab[k]; 
+		       	}
+		       	count_line++;
+		       	printf("nb line done : %d \n",count_line);
+		       	//image_map[line] = 1;
+			}
 		}
+
+
+		// for(int k=0 ; k<size ; k++){
+		// 	if(k != rank)
+		// 		MPI_Send(shared_memory,h,MPI_INT,k,0,MPI_COMM_WORLD);
+		// }
 		printf( "proc 0 saving image \n");
 		double * reverse_image ;
 		reverse_image = malloc(3 * w * h * sizeof(double));
