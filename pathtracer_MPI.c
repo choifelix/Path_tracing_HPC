@@ -523,9 +523,9 @@ void version2_dynamic(int argc, char **argv){
 	MPI_Comm_size(MPI_COMM_WORLD,&size);
 	MPI_Comm_rank(MPI_COMM_WORLD,&rank);
 	MPI_Request req[size];
-	MPI_Request req_tab[size-1];
+	MPI_Request req_tab[size];
 	MPI_Request send_req[size];
-	int flag_tab[size-1];
+	int flag_tab[size];
 	MPI_Status status_tab;
 	int flag[size];
 	MPI_Status status;
@@ -770,21 +770,23 @@ void version2_dynamic(int argc, char **argv){
 		}
 
 		//MPI_Cancel(&req);
-		for(int k=0 ; k < size-1 ; k++){
-			// if(req[k] != MPI_REQUEST_NULL ){
-			// 	MPI_Request_free(&req[k]);
-			// }
-			//MPI_Cancel(&req[k]);
-			if(iter > 0 && flag[k] == 0){
+		for(int k=0 ; k < size ; k++){
+			if(k != rank){
+				// if(req[k] != MPI_REQUEST_NULL ){
+				// 	MPI_Request_free(&req[k]);
+				// }
 				//MPI_Cancel(&req[k]);
-				MPI_Request_free(&req[k]);
+				if(iter > 0 && flag[k] == 0){
+					//MPI_Cancel(&req[k]);
+					MPI_Request_free(&req[k]);
+				}
+				MPI_Irecv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req[k]);
+				//MPI_Recv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
 			}
-			MPI_Irecv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req[k]);
-			//MPI_Recv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
 		}
 
 		for(int k=0 ; k < size ; k++){
-			if(k!= rank){
+			if(k != rank){
 				MPI_Test(&req[k],&flag[k],&status);
 				if(flag[k]){
 					printf("%d recieve shared memory from %d \n",rank,status.MPI_SOURCE);
