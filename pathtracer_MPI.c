@@ -923,7 +923,7 @@ void version2_dynamic(int argc, char **argv){
 	free(shared_memory);
 
 	MPI_Finalize();
-}s
+}
 
 
 
