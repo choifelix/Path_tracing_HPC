@@ -695,9 +695,14 @@ void version2_dynamic(int argc, char **argv){
 			       	for(int l=1; l< 3*w+1; l++){
 			       		image[(line*3*w + l -1) ] = tab[l]; 
 			       	}
-			       	count_line++;
+			       	if(shared_memory[line] != 1){
+			       		count_line++;
+			       	}
 			       	printf("done by %d nb line done : %d, line %d \n",status_tab.MPI_SOURCE,count_line, line);
 			       	shared_memory[line] = 1;
+			       	if(count_line > h){
+			       		continuer = false;
+			       	}
 				}
 			}
 		}
@@ -782,6 +787,9 @@ void version2_dynamic(int argc, char **argv){
 		//        	printf("nb line done : %d \n",count_line);
 		// 	}
 		// }
+		for (k=1 ; k<size ; k++){
+			MPI_Send(shared_memory,h,MPI_INT,k,0,MPI_COMM_WORLD);
+		}
 
 		printf( "proc 0 saving image \n");
 		double * reverse_image ;
