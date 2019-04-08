@@ -720,16 +720,20 @@ void version2_dynamic(int argc, char **argv){
 			if(iter > 0 && flag[k] == 0){
 				MPI_Request_free(&req[k]);
 			}
-			MPI_Irecv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req[k]);
+			if(continuer){
+				MPI_Irecv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req[k]);
+			}
 		}
 
-		for(int k=0 ; k < size-1 ; k++){
-				MPI_Test(&req[k],&flag[k],&status);
-				// if(flag[k]){
-				// 	printf("%d recieve shared memory from %d \n",rank,status.MPI_SOURCE);
-				// }
-			
-		}
+		if(continuer)
+			for(int k=0 ; k < size-1 ; k++){
+					MPI_Test(&req[k],&flag[k],&status);
+					// if(flag[k]){
+					// 	printf("%d recieve shared memory from %d \n",rank,status.MPI_SOURCE);
+					// }
+				
+			}
+
 		 for(int k=0 ; k<h ; k++){
 			shared_memory[k] += shared_memory_tmp[k];
 			if(shared_memory[k] > 0){
@@ -753,7 +757,9 @@ void version2_dynamic(int argc, char **argv){
 				if(iter>0){
 					MPI_Cancel(&send_req[k]);
 				}
-				MPI_Isend(shared_memory,h,MPI_INT,k,0,MPI_COMM_WORLD,&send_req[k]);
+				if(continuer){
+					MPI_Isend(shared_memory,h,MPI_INT,k,0,MPI_COMM_WORLD,&send_req[k]);
+				}
 		}
 
 		continuer = verif(shared_memory, h);
@@ -781,23 +787,23 @@ void version2_dynamic(int argc, char **argv){
 
 
 	if (rank == 0){
-		// MPI_Request final_req;
-		// int final_flag;
-		// while(count_line <= h){
-		// 	MPI_Irecv(tab,3*w+1,MPI_DOUBLE,MPI_ANY_SOURCE,1,MPI_COMM_WORLD,&final_req);
+		MPI_Request final_req;
+		int final_flag;
+		while(count_line <= h){
+			MPI_Irecv(tab,3*w+1,MPI_DOUBLE,MPI_ANY_SOURCE,1,MPI_COMM_WORLD,&final_req);
 		    
-		// 	MPI_Test(&final_req,&final_flag,&status_tab);
-		// 	if(final_flag){
-		// 		//printf("%d recieve tab from %d \n",rank,status_tab.MPI_SOURCE);
-		// 		line = tab[0];
+			MPI_Test(&final_req,&final_flag,&status_tab);
+			if(final_flag){
+				//printf("%d recieve tab from %d \n",rank,status_tab.MPI_SOURCE);
+				line = tab[0];
 
-		//        	for(int k=1; k< 3*w+1; k++){
-		//        		image[(line*3*w + k -1) ] = tab[k]; 
-		//        	}
-		//        	count_line++;
-		//        	printf("nb line done : %d \n",count_line);
-		// 	}
-		// }
+		       	for(int k=1; k< 3*w+1; k++){
+		       		image[(line*3*w + k -1) ] = tab[k]; 
+		       	}
+		       	count_line++;
+		       	printf("nb line done : %d \n",count_line);
+			}
+		}
 		for (int k=1 ; k<size ; k++){
 			MPI_Send(shared_memory,h,MPI_INT,k,0,MPI_COMM_WORLD);
 		}
