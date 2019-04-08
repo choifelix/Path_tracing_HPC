@@ -775,7 +775,7 @@ void version2_dynamic(int argc, char **argv){
 			// 	MPI_Request_free(&req[k]);
 			// }
 			//MPI_Cancel(&req[k]);
-			if(iter > 0 && flag[k] != 0){
+			if(iter > 0 && flag[k] == 0){
 				//MPI_Cancel(&req[k]);
 				MPI_Request_free(&req[k]);
 			}
@@ -785,17 +785,19 @@ void version2_dynamic(int argc, char **argv){
 
 		for(int k=0 ; k < size-1 ; k++){
 				MPI_Test(&req[k],&flag[k],&status);
-				// if(flag[k]){
-				// 	printf("%d recieve shared memory from %d \n",rank,status.MPI_SOURCE);
-				// }
+				if(flag[k]){
+					printf("%d recieve shared memory from %d \n",rank,status.MPI_SOURCE);
+					for(int k=0 ; k<h ; k++){
+					shared_memory[k] += shared_memory_tmp[k];
+					if(shared_memory[k] > 0){
+						shared_memory[k] = 1;
+						}
+					}
+				}
+
 			
 		}
-		 for(int k=0 ; k<h ; k++){
-			shared_memory[k] += shared_memory_tmp[k];
-			if(shared_memory[k] > 0){
-				shared_memory[k] = 1;
-			}
-		}
+		 
 		// printf("proc %d recieve1  :", rank);
 		// printf(" [ ");
 		// for(int l=0 ; l<h ; l++ ){
