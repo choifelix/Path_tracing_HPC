@@ -523,9 +523,9 @@ void version2_dynamic(int argc, char **argv){
 	MPI_Comm_size(MPI_COMM_WORLD,&size);
 	MPI_Comm_rank(MPI_COMM_WORLD,&rank);
 	MPI_Request req[size];
-	MPI_Request req_tab[size];
+	MPI_Request req_tab[size-1];
 	MPI_Request send_req[size];
-	int flag_tab[size];
+	int flag_tab[size-1];
 	MPI_Status status_tab;
 	int flag[size];
 	MPI_Status status;
@@ -623,7 +623,7 @@ void version2_dynamic(int argc, char **argv){
 
 	bool continuer = true;
 	int count_line = 0;
-	double t0 = my_gettimeofday();
+	double t0 = gettimeofday();
 
 	//for (int i = nb_line *rank; i < nb_line *(rank+1); i++) {
 	while(continuer){
@@ -641,8 +641,6 @@ void version2_dynamic(int argc, char **argv){
 		// 	printf("] \n");
 		
 		continuer = verif(shared_memory, h);
-
-		printf("i am %d and my job is line %d\n", rank, i);
 
 		unsigned short PRNG_state[3] = {0, 0, i*i*i};
 		for (unsigned short j = 0; j < w; j++) {
@@ -737,7 +735,6 @@ void version2_dynamic(int argc, char **argv){
 			       	}
 			       	count_line++;
 			       	printf("done by %d nb line done : %d, line %d \n",status_tab.MPI_SOURCE,count_line, line);
-			       	shared_memory[line] = 1;
 				}
 			}
 	       	
@@ -770,38 +767,32 @@ void version2_dynamic(int argc, char **argv){
 		}
 
 		//MPI_Cancel(&req);
-		for(int k=0 ; k < size ; k++){
-			if(k != rank){
-				// if(req[k] != MPI_REQUEST_NULL ){
-				// 	MPI_Request_free(&req[k]);
-				// }
+		for(int k=0 ; k < size-1 ; k++){
+			// if(req[k] != MPI_REQUEST_NULL ){
+			// 	MPI_Request_free(&req[k]);
+			// }
+			//MPI_Cancel(&req[k]);
+			if(iter > 0 && flag[k] == 0){
 				//MPI_Cancel(&req[k]);
-				if(iter > 0 && flag[k] == 0){
-					//MPI_Cancel(&req[k]);
-					MPI_Request_free(&req[k]);
-				}
-				MPI_Irecv(shared_memory_tmp,h,MPI_INT,k,k,MPI_COMM_WORLD,&req[k]);
-				//MPI_Recv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
+				MPI_Request_free(&req[k]);
 			}
+			MPI_Irecv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req[k]);
+			//MPI_Recv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
 		}
 
-		for(int k=0 ; k < size ; k++){
-			if(k != rank){
+		for(int k=0 ; k < size-1 ; k++){
 				MPI_Test(&req[k],&flag[k],&status);
-				if(flag[k]){
-					printf("%d recieve shared memory from %d \n",rank,status.MPI_SOURCE);
-					for(int k=0 ; k<h ; k++){
-					shared_memory[k] += shared_memory_tmp[k];
-					if(shared_memory[k] > 0){
-						shared_memory[k] = 1;
-						}
-					}
-				}
-			}
-
+				// if(flag[k]){
+				// 	printf("%d recieve shared memory from %d \n",rank,status.MPI_SOURCE);
+				// }
 			
 		}
-		 
+		 for(int k=0 ; k<h ; k++){
+			shared_memory[k] += shared_memory_tmp[k];
+			if(shared_memory[k] > 0){
+				shared_memory[k] = 1;
+			}
+		}
 		// printf("proc %d recieve1  :", rank);
 		// printf(" [ ");
 		// for(int l=0 ; l<h ; l++ ){
@@ -826,12 +817,12 @@ void version2_dynamic(int argc, char **argv){
 
 
 
-		printf("proc %d shared memory  :", rank);
-		printf(" [ ");
-		for(int l=0 ; l<h ; l++ ){
-			printf("%d ",shared_memory[l] );
-		}
-		printf("] \n");
+		// printf("proc %d shared memory  :", rank);
+		// printf(" [ ");
+		// for(int l=0 ; l<h ; l++ ){
+		// 	printf("%d ",shared_memory[l] );
+		// }
+		// printf("] \n");
 
 		
 		for(int k=0 ; k<size ; k++){
@@ -839,7 +830,7 @@ void version2_dynamic(int argc, char **argv){
 				if(iter>0){
 					MPI_Cancel(&send_req[k]);
 				}
-				MPI_Isend(shared_memory,h,MPI_INT,k,k,MPI_COMM_WORLD,&send_req[k]);
+				MPI_Isend(shared_memory,h,MPI_INT,k,0,MPI_COMM_WORLD,&send_req[k]);
 		}
 		//MPI_Irecv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
 
@@ -860,10 +851,9 @@ void version2_dynamic(int argc, char **argv){
 		
 	
 	}
-	double t1 = my_gettimeofday();
 	printf("--------------------------------------\n");
 	printf("     Processeur %d JOB FINISHED       \n",rank);
-	printf("                time : %f             \n",t1-t0);
+	printf("                time : %f             \n",gettimeofday()-t0);
 	printf("--------------------------------------\n");
 
 
@@ -871,24 +861,24 @@ void version2_dynamic(int argc, char **argv){
 
 
 	if (rank == 0){
-		MPI_Request final_req;
-		int final_flag;
-		while(count_line < h){
-			MPI_Irecv(tab,3*w+1,MPI_DOUBLE,MPI_ANY_SOURCE,1,MPI_COMM_WORLD,&final_req);
+		// MPI_Request final_req;
+		// int final_flag;
+		// while(count_line <= h){
+		// 	MPI_Irecv(tab,3*w+1,MPI_DOUBLE,MPI_ANY_SOURCE,1,MPI_COMM_WORLD,&final_req);
 		    
-			MPI_Test(&final_req,&final_flag,&status_tab);
-			if(final_flag){
-				//printf("%d recieve tab from %d \n",rank,status_tab.MPI_SOURCE);
-				line = tab[0];
+		// 	MPI_Test(&final_req,&final_flag,&status_tab);
+		// 	if(final_flag){
+		// 		//printf("%d recieve tab from %d \n",rank,status_tab.MPI_SOURCE);
+		// 		line = tab[0];
 
-		       	for(int k=1; k< 3*w+1; k++){
-		       		image[(line*3*w + k -1) ] = tab[k]; 
-		       	}
-		       	count_line++;
-		       	printf("nb line done : %d \n",count_line);
-		       	//image_map[line] = 1;
-			}
-		}
+		//        	for(int k=1; k< 3*w+1; k++){
+		//        		image[(line*3*w + k -1) ] = tab[k]; 
+		//        	}
+		//        	count_line++;
+		//        	printf("nb line done : %d \n",count_line);
+		//        	//image_map[line] = 1;
+		// 	}
+		// }
 
 
 		for(int k=0 ; k<size ; k++){
@@ -920,7 +910,6 @@ void version2_dynamic(int argc, char **argv){
 	  		fprintf(f,"%d %d %d ", toInt(reverse_image[3 * i]), toInt(reverse_image[3 * i + 1]), toInt(reverse_image[3 * i + 2])); 
 		fclose(f);
 		free(reverse_image); 
-		//printf()
 		printf( "image saved as %s \n", nom_sortie);
 		//free(final_image);
 		//free(image_map);
