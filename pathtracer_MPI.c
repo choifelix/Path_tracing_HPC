@@ -623,7 +623,7 @@ void version2_dynamic(int argc, char **argv){
 
 	bool continuer = true;
 	int count_line = 0;
-	double t0 = gettimeofday();
+	double t0 = my_gettimeofday();
 
 	//for (int i = nb_line *rank; i < nb_line *(rank+1); i++) {
 	while(continuer){
@@ -793,12 +793,12 @@ void version2_dynamic(int argc, char **argv){
 				shared_memory[k] = 1;
 			}
 		}
-		// printf("proc %d recieve1  :", rank);
-		// printf(" [ ");
-		// for(int l=0 ; l<h ; l++ ){
-		// 	printf("%d ",shared_memory_tmp[l] );
-		// }
-		// printf("] \n");
+		printf("proc %d recieve1  :", rank);
+		printf(" [ ");
+		for(int l=0 ; l<h ; l++ ){
+			printf("%d ",shared_memory_tmp[l] );
+		}
+		printf("] \n");
 
 		for(int l=0 ; l<h ; l++ ){
 			if(shared_memory[(l + rank*nb_line)%h] == 0){	
@@ -817,12 +817,12 @@ void version2_dynamic(int argc, char **argv){
 
 
 
-		// printf("proc %d shared memory  :", rank);
-		// printf(" [ ");
-		// for(int l=0 ; l<h ; l++ ){
-		// 	printf("%d ",shared_memory[l] );
-		// }
-		// printf("] \n");
+		printf("proc %d shared memory  :", rank);
+		printf(" [ ");
+		for(int l=0 ; l<h ; l++ ){
+			printf("%d ",shared_memory[l] );
+		}
+		printf("] \n");
 
 		
 		for(int k=0 ; k<size ; k++){
@@ -851,9 +851,11 @@ void version2_dynamic(int argc, char **argv){
 		
 	
 	}
+
+	double t1 =my_gettimeofday();
 	printf("--------------------------------------\n");
 	printf("     Processeur %d JOB FINISHED       \n",rank);
-	printf("                time : %f             \n",gettimeofday()-t0);
+	printf("                time : %f             \n",t1-t0);
 	printf("--------------------------------------\n");
 
 
@@ -921,7 +923,7 @@ void version2_dynamic(int argc, char **argv){
 	free(shared_memory);
 
 	MPI_Finalize();
-}
+}s
 
 
 
