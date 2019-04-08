@@ -865,7 +865,7 @@ void version2_dynamic(int argc, char **argv){
 	if (rank == 0){
 		MPI_Request final_req;
 		int final_flag;
-		while(count_line <= h){
+		while(count_line < h){
 			MPI_Irecv(tab,3*w+1,MPI_DOUBLE,MPI_ANY_SOURCE,1,MPI_COMM_WORLD,&final_req);
 		    
 			MPI_Test(&final_req,&final_flag,&status_tab);
