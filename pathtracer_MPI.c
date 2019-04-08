@@ -780,7 +780,7 @@ void version2_dynamic(int argc, char **argv){
 					//MPI_Cancel(&req[k]);
 					MPI_Request_free(&req[k]);
 				}
-				MPI_Irecv(shared_memory_tmp,h,MPI_INT,k,0,MPI_COMM_WORLD,&req[k]);
+				MPI_Irecv(shared_memory_tmp,h,MPI_INT,k,k,MPI_COMM_WORLD,&req[k]);
 				//MPI_Recv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
 			}
 		}
@@ -839,7 +839,7 @@ void version2_dynamic(int argc, char **argv){
 				if(iter>0){
 					MPI_Cancel(&send_req[k]);
 				}
-				MPI_Isend(shared_memory,h,MPI_INT,k,0,MPI_COMM_WORLD,&send_req[k]);
+				MPI_Isend(shared_memory,h,MPI_INT,k,k,MPI_COMM_WORLD,&send_req[k]);
 		}
 		//MPI_Irecv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
 
