@@ -642,6 +642,8 @@ void version2_dynamic(int argc, char **argv){
 		
 		continuer = verif(shared_memory, h);
 
+		printf("i am %d and my job is line %d\n", rank, i);
+
 		unsigned short PRNG_state[3] = {0, 0, i*i*i};
 		for (unsigned short j = 0; j < w; j++) {
 			//printf(" precessus %d, pixel : %d - %d   -----  ",rank,i,j);
@@ -761,9 +763,9 @@ void version2_dynamic(int argc, char **argv){
 			for(int k=1 ; k<3*w+1 ; k++){
 				tab[k] = image[k-1];
 			}
-			MPI_Request tmp_reg;
-			MPI_Isend(tab,3*w+1,MPI_DOUBLE,0,1,MPI_COMM_WORLD,&tmp_reg);
-			//MPI_Send(tab,3*w+1,MPI_DOUBLE,0,1,MPI_COMM_WORLD);
+			// MPI_Request tmp_reg;
+			// MPI_Isend(tab,3*w+1,MPI_DOUBLE,0,1,MPI_COMM_WORLD,&tmp_reg);
+			MPI_Send(tab,3*w+1,MPI_DOUBLE,0,1,MPI_COMM_WORLD);
 			
 		}
 
