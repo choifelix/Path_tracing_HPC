@@ -525,6 +525,7 @@ void version2_dynamic(int argc, char **argv){
 	MPI_Request req[size];
 	MPI_Request req_tab[size-1];
 	MPI_Request send_req[size];
+	int send_flag[size];	
 	int flag_tab[size-1];
 	MPI_Status status_tab;
 	int flag[size];
@@ -828,11 +829,14 @@ void version2_dynamic(int argc, char **argv){
 		
 		for(int k=0 ; k<size ; k++){
 			if(k != rank)
-				// if(iter>0){
-				// 	MPI_Cancel(&send_req[k]);
-				// }
-				//MPI_Isend(shared_memory,h,MPI_INT,k,0,MPI_COMM_WORLD,&send_req[k]);
-				MPI_Send(shared_memory,h,MPI_INT,k,0,MPI_COMM_WORLD);
+				if(iter>0){
+					MPI_Status send_status;
+					MPI_Test(&send_req[k],&send_flag[k],&send_status);
+					if(!send_flag[k])
+					MPI_Cancel(&send_req[k]);
+				}
+				MPI_Isend(shared_memory,h,MPI_INT,k,0,MPI_COMM_WORLD,&send_req[k]);
+				//MPI_Send(shared_memory,h,MPI_INT,k,0,MPI_COMM_WORLD);
 		}
 		//MPI_Irecv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
 
