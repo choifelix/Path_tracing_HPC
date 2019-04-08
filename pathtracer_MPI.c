@@ -787,7 +787,7 @@ void version2_dynamic(int argc, char **argv){
 		//        	printf("nb line done : %d \n",count_line);
 		// 	}
 		// }
-		for (k=1 ; k<size ; k++){
+		for (int k=1 ; k<size ; k++){
 			MPI_Send(shared_memory,h,MPI_INT,k,0,MPI_COMM_WORLD);
 		}
 
