@@ -758,16 +758,16 @@ void version2_dynamic(int argc, char **argv){
 
 		continuer = verif(shared_memory, h);
 		iter++;
-		if(continuer == false){
-			for(int k=0 ; k<size ; k++){
-				if(k!= rank){
-					MPI_Cancel(&send_req[k]);
-					if(flag[k] == 0){
-						MPI_Request_free(&req[k]);
-					}
-				}
-			}
-		}
+		// if(continuer == false){
+		// 	for(int k=0 ; k<size ; k++){
+		// 		if(k!= rank){
+		// 			MPI_Cancel(&send_req[k]);
+		// 			if(flag[k] == 0){
+		// 				MPI_Request_free(&req[k]);
+		// 			}
+		// 		}
+		// 	}
+		// }
 	}
 
 	double t1 = my_gettimeofday();
