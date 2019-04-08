@@ -581,15 +581,19 @@ void version2_dynamic(int argc, char **argv){
 		}
 	}
 
-	
+	/* boucle principale */
 	double * image ;
-
+	//double * final_image ;
+	//int * image_map;
 	if(rank == 0){
+		
 		image = malloc(3 * w * h * sizeof(double));
+		
+		//image_map = (int*)calloc(h,sizeof(int));
 	}
 	else
 		image = malloc(3 * w * sizeof(double));
-
+	//image = malloc(3 * w * sizeof(double));
 		
 
 	if (image == NULL) {
@@ -607,15 +611,35 @@ void version2_dynamic(int argc, char **argv){
 
 	int i = rank*nb_line;
 	printf("proc %d initiate at line %d\n",rank,i);
+	// for(int k =0 ; k<h ; k++){
+	// 	if(k%nb_line == 0)
+	// 		shared_memory[k] = 1;
+	// }
+
+	// for(int k=0 ; k<size ; k++){
+	// 	shared_memory[k*nb_line] = 1;
+	// }
+
 
 	bool continuer = true;
 	int count_line = 0;
 	double t0 = my_gettimeofday();
 
-/* boucle principale */
-
+	//for (int i = nb_line *rank; i < nb_line *(rank+1); i++) {
 	while(continuer){
 
+		// MPI_Irecv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
+
+		// for(int k=0 ; k<h ; k++){
+		// 	shared_memory[k] += shared_memory_tmp[k];
+		// }
+		// printf("proc %d recieve1  :", rank);
+		// 	printf(" [ ");
+		// 	for(int l=0 ; l<h ; l++ ){
+		// 		printf("%d ",shared_memory[l] );
+		// 	}
+		// 	printf("] \n");
+		
 		continuer = verif(shared_memory, h);
 
 		unsigned short PRNG_state[3] = {0, 0, i*i*i};
@@ -665,15 +689,29 @@ void version2_dynamic(int argc, char **argv){
 		}
 
 
+
+
+	
 		tab[0] = (double)i;
 		//printf("proc %d just done line %f or %d\n",rank, tab[0],i);
 
+		
 
 		if(line_number >= h){
 			line_number = -1;
 		}
 
 		if (rank == 0){
+
+			// for(int k=1 ; k<3*w+1 ; k++){
+			// 	tab[k] = image[i*3*w + k-1];
+			// }
+			// line = tab[0];
+
+	  //      	for(int k=1; k< 3*w+1; k++){
+	  //      		image[(line*3*w + k -1) ] = tab[k]; 
+	  //      	}
+	       	// printf(" line done : %d \n",line);
 	       	count_line++;
 	       	printf("done by %d nb line done : %d, line %d \n",rank,count_line, i);
 
@@ -700,21 +738,47 @@ void version2_dynamic(int argc, char **argv){
 			       	shared_memory[line] = 1;
 				}
 			}
+	       	
+
+	  //      	printf("proc %d tab  :", rank);
+			// printf(" [ ");
+			// for(int l=0 ; l<3*w ; l++ ){
+			// 	printf("%f ",image[line*3*w + l ] );
+			// }
+			// printf("] \n");
+
+	       	//printf("%d : recieving image line %d \n",rank,line);
 		}
 		else{
+			// printf("proc %d image   :", rank);
+			// printf(" [ ");
+			// for(int l=0 ; l<3*w ; l++ ){
+			// 	printf("%f ",image[l ] );
+			// }
+			// printf("] \n");
+
+
 			for(int k=1 ; k<3*w+1 ; k++){
 				tab[k] = image[k-1];
 			}
+			// MPI_Request tmp_reg;
+			// MPI_Isend(tab,3*w+1,MPI_DOUBLE,0,1,MPI_COMM_WORLD,&tmp_reg);
 			MPI_Send(tab,3*w+1,MPI_DOUBLE,0,1,MPI_COMM_WORLD);
 			
 		}
 
-
+		//MPI_Cancel(&req);
 		for(int k=0 ; k < size-1 ; k++){
+			// if(req[k] != MPI_REQUEST_NULL ){
+			// 	MPI_Request_free(&req[k]);
+			// }
+			//MPI_Cancel(&req[k]);
 			if(iter > 0 && flag[k] == 0){
+				//MPI_Cancel(&req[k]);
 				MPI_Request_free(&req[k]);
 			}
 			MPI_Irecv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req[k]);
+			//MPI_Recv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
 		}
 
 		for(int k=0 ; k < size-1 ; k++){
@@ -730,6 +794,12 @@ void version2_dynamic(int argc, char **argv){
 				shared_memory[k] = 1;
 			}
 		}
+		// printf("proc %d recieve1  :", rank);
+		// printf(" [ ");
+		// for(int l=0 ; l<h ; l++ ){
+		// 	printf("%d ",shared_memory_tmp[l] );
+		// }
+		// printf("] \n");
 
 		for(int l=0 ; l<h ; l++ ){
 			if(shared_memory[(l + rank*nb_line)%h] == 0){	
@@ -737,11 +807,25 @@ void version2_dynamic(int argc, char **argv){
 				shared_memory[i] = 1;
 				break;
 			}
+			// else if(l == h-1){
+			// 	i = -1;
+			// }
 			if(l == h){
 				continuer = false;
 			}
 		}
 
+
+
+
+		// printf("proc %d shared memory  :", rank);
+		// printf(" [ ");
+		// for(int l=0 ; l<h ; l++ ){
+		// 	printf("%d ",shared_memory[l] );
+		// }
+		// printf("] \n");
+
+		
 		for(int k=0 ; k<size ; k++){
 			if(k != rank)
 				if(iter>0){
@@ -749,11 +833,25 @@ void version2_dynamic(int argc, char **argv){
 				}
 				MPI_Isend(shared_memory,h,MPI_INT,k,0,MPI_COMM_WORLD,&send_req[k]);
 		}
+		//MPI_Irecv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
+
+
+
+		// printf("proc %d bcasting (send):", rank);
+		// printf(" [ ");
+		// for(int l=0 ; l<h ; l++ ){
+		// 	printf("%d ",shared_memory[l] );
+		// }
+		// printf("] \n ");
+
 
 		continuer = verif(shared_memory, h);
+		
 		iter++;
-	}
 
+		
+	
+	}
 	double t1 = my_gettimeofday();
 	printf("--------------------------------------\n");
 	printf("     Processeur %d JOB FINISHED       \n",rank);
@@ -780,9 +878,15 @@ void version2_dynamic(int argc, char **argv){
 		       	}
 		       	count_line++;
 		       	printf("nb line done : %d \n",count_line);
+		       	//image_map[line] = 1;
 			}
 		}
 
+
+		// for(int k=0 ; k<size ; k++){
+		// 	if(k != rank)
+		// 		MPI_Send(shared_memory,h,MPI_INT,k,0,MPI_COMM_WORLD);
+		// }
 		printf( "proc 0 saving image \n");
 		double * reverse_image ;
 		reverse_image = malloc(3 * w * h * sizeof(double));
@@ -808,7 +912,10 @@ void version2_dynamic(int argc, char **argv){
 	  		fprintf(f,"%d %d %d ", toInt(reverse_image[3 * i]), toInt(reverse_image[3 * i + 1]), toInt(reverse_image[3 * i + 2])); 
 		fclose(f);
 		free(reverse_image); 
+		//printf()
 		printf( "image saved as %s \n", nom_sortie);
+		//free(final_image);
+		//free(image_map);
 	}
 
 
@@ -818,6 +925,7 @@ void version2_dynamic(int argc, char **argv){
 
 	MPI_Finalize();
 }
+
 
 
 
