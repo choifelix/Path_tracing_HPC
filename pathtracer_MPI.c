@@ -775,7 +775,7 @@ void version2_dynamic(int argc, char **argv){
 			// 	MPI_Request_free(&req[k]);
 			// }
 			//MPI_Cancel(&req[k]);
-			if(iter > 0 && flag[k] == 0){
+			if(iter > 0 && flag[k] != 0){
 				//MPI_Cancel(&req[k]);
 				MPI_Request_free(&req[k]);
 			}
