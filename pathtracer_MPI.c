@@ -710,7 +710,8 @@ void version2_dynamic(int argc, char **argv){
 			for(int k=1 ; k<3*w+1 ; k++){
 				tab[k] = image[k-1];
 			}
-			MPI_Send(tab,3*w+1,MPI_DOUBLE,0,1,MPI_COMM_WORLD);
+			if(continuer)
+				MPI_Send(tab,3*w+1,MPI_DOUBLE,0,1,MPI_COMM_WORLD);
 			
 		}
 
@@ -757,6 +758,16 @@ void version2_dynamic(int argc, char **argv){
 
 		continuer = verif(shared_memory, h);
 		iter++;
+		if(continuer == false){
+			for(int k=0 ; k<size ; k++){
+				if(k!= rank){
+					MPI_Cancel(&send_req[k]);
+					if(flag[k] == 0){
+						MPI_Request_free(&req[k]);
+					}
+				}
+			}
+		}
 	}
 
 	double t1 = my_gettimeofday();
