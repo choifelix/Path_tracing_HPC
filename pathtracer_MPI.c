@@ -783,7 +783,8 @@ void version2_dynamic(int argc, char **argv){
 			//MPI_Recv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
 		}
 
-		for(int k=0 ; k < size-1 ; k++){
+		for(int k=0 ; k < size ; k++){
+			if(k!= rank){
 				MPI_Test(&req[k],&flag[k],&status);
 				if(flag[k]){
 					printf("%d recieve shared memory from %d \n",rank,status.MPI_SOURCE);
@@ -794,6 +795,7 @@ void version2_dynamic(int argc, char **argv){
 						}
 					}
 				}
+			}
 
 			
 		}
