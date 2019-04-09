@@ -1228,6 +1228,7 @@ void version2_beta_dynamic(int argc, char **argv){
 				// MPI_Request tmp_reg;
 				// MPI_Isend(tab,3*w+1,MPI_DOUBLE,0,1,MPI_COMM_WORLD,&tmp_reg);
 				MPI_Send(tab,3*w+1,MPI_DOUBLE,0,1,MPI_COMM_WORLD);
+				printf("proc %d just did line %d \n", rank,i);
 				
 			}
 		}
