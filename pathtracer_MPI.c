@@ -958,7 +958,7 @@ void version2_beta_dynamic(int argc, char **argv){
 	int nb_line = h/size;
 	int line;
 	int iter=0;
-	int state;
+	int state = inactif;
 	if(rank ==0){
 		printf("initial data : w = %d \nh = %d \nsamples = %d \nnb_line = %d ",w,h,samples,nb_line);
 	}
@@ -1080,63 +1080,18 @@ void version2_beta_dynamic(int argc, char **argv){
 			}
 			else{
 				MPI_Request_free(&req);
-				if(rank > 0){
-					MPI_Irecv(shared_memory_tmp,h,MPI_INT,rank-1,0,MPI_COMM_WORLD,&req);
-				}
-				else{
-					MPI_Irecv(shared_memory_tmp,h,MPI_INT,size-1,0,MPI_COMM_WORLD,&req);
-				}
-
-
-				MPI_Test(&req,&flag,&status);
-
-				if(flag){
-					printf("%d recieve shared memory from %d \n",rank,status.MPI_SOURCE);
-					for(int l=0 ; l<h ; l++){
-						shared_memory[l] += shared_memory_tmp[l];
-						// if(shared_memory[l] > 0){
-						// 	shared_memory[l] = 1;
-						// }
-					}
-					for(int k=0 ; k<h ; k++ ){
-						if(shared_memory[k] == 0){
-							i = k;
-							shared_memory[i] = 1;
-							state = actif;
-							break;
-						}
-						else if(k == h - 1){
-							continuer = false;
-							state = inactif;
-						}
-					}
-				}
-				else{
-					if(i + size < h){
-						i += size;
-						shared_memory[i] = 1;
-						state = actif;
-					}
-					else{
-						if(state = actif)
-							state = inactif;
-						//MPI_wait(&req, &status);
-
-					}
-				}
 			}
 		}
-		// if(iter > 0 && flag == 0){
-		// 	MPI_Request_free(&req);
-
-		// }
+		if(iter > 0 && flag == 0){
+			MPI_Request_free(&req);
+		}
 		
-		// if(rank > 0){
-		// 	MPI_Irecv(shared_memory_tmp,h,MPI_INT,rank-1,0,MPI_COMM_WORLD,&req);
-		// }
-		// else{
-		// 	MPI_Irecv(shared_memory_tmp,h,MPI_INT,size-1,0,MPI_COMM_WORLD,&req);
-		// }
+		if(rank > 0){
+			MPI_Irecv(shared_memory_tmp,h,MPI_INT,rank-1,0,MPI_COMM_WORLD,&req);
+		}
+		else{
+			MPI_Irecv(shared_memory_tmp,h,MPI_INT,size-1,0,MPI_COMM_WORLD,&req);
+		}
 
 
 		// MPI_Test(&req,&flag,&status);
