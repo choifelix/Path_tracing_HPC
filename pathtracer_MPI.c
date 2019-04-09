@@ -958,7 +958,7 @@ void version2_beta_dynamic(int argc, char **argv){
 	int nb_line = h/size;
 	int line;
 	int iter=0;
-	State state;
+	enum State state;
 	if(rank ==0){
 		printf("initial data : w = %d \nh = %d \nsamples = %d \nnb_line = %d ",w,h,samples,nb_line);
 	}
