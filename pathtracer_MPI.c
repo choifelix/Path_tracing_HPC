@@ -1074,8 +1074,9 @@ void version2_beta_dynamic(int argc, char **argv){
 				state = actif;
 			}
 			else{
-				continuer = false;
-				state = inactif;
+				if(state = actif)
+					state = inactif;
+
 			}
 		}
 
