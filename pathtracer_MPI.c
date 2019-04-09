@@ -1050,6 +1050,31 @@ void version2_beta_dynamic(int argc, char **argv){
 			state = actif;
 
 		}
+		if(iter > 0){
+			MPI_Test(&req,&flag,&status);
+
+			if(flag){
+				printf("%d recieve shared memory from %d \n",rank,status.MPI_SOURCE);
+				for(int l=0 ; l<h ; l++){
+					shared_memory[l] += shared_memory_tmp[l];
+					if(shared_memory[l] > 0){
+						shared_memory[l] = 1;
+					}
+				}
+				for(int k=0 ; k<h ; k++ ){
+					if(shared_memory[k] == 0){
+						i = k;
+						shared_memory[i] = 1;
+						state = actif;
+						break;
+					}
+					if(k == h){
+						continuer = false;
+						state = inactif;
+					}
+				}
+			}
+		}
 		if(iter > 0 && flag == 0){
 			MPI_Request_free(&req);
 		}
