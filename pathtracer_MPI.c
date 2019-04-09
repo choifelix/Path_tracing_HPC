@@ -1087,9 +1087,10 @@ void version2_beta_dynamic(int argc, char **argv){
 		}
 
 		
-
-		MPI_Bsend(shared_memory,h,MPI_INT,rank+1%size,0,MPI_COMM_WORLD);
-
+		if(rank < size -1)
+			MPI_Bsend(shared_memory,h,MPI_INT,rank+1,0,MPI_COMM_WORLD);
+		else
+			MPI_Bsend(shared_memory,h,MPI_INT,0,0,MPI_COMM_WORLD);
 
 
 
