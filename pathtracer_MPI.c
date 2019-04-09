@@ -1091,7 +1091,7 @@ void version2_beta_dynamic(int argc, char **argv){
 			else{
 				if(state = actif)
 					state = inactif;
-				MPI_wait(&req, &status);
+				//MPI_wait(&req, &status);
 
 			}
 		}
