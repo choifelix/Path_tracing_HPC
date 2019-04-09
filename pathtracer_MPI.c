@@ -958,7 +958,7 @@ void version2_beta_dynamic(int argc, char **argv){
 	int nb_line = h/size;
 	int line;
 	int iter=0;
-	enum State state;
+	int state;
 	if(rank ==0){
 		printf("initial data : w = %d \nh = %d \nsamples = %d \nnb_line = %d ",w,h,samples,nb_line);
 	}
@@ -1044,7 +1044,7 @@ void version2_beta_dynamic(int argc, char **argv){
 
 	while(continuer){
 		if(iter == 0 && rank != 0){
-			MPI_Recv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD);
+			MPI_Recv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
 
 		}
 		
