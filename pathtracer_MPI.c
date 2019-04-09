@@ -1056,7 +1056,7 @@ void version2_beta_dynamic(int argc, char **argv){
 		MPI_Test(&req,&flag,&status);
 
 		if(flag){
-			printf("%d recieve shared memory from %d \n",rank,status.MPI_SOURCE);
+			//printf("%d recieve shared memory from %d \n",rank,status.MPI_SOURCE);
 			for(int l=0 ; l<h ; l++){
 				shared_memory[l] += shared_memory_tmp[l];
 				if(shared_memory[l] > 0){
@@ -1092,12 +1092,18 @@ void version2_beta_dynamic(int argc, char **argv){
 		
 		if(rank < size -1){
 			MPI_Bsend(shared_memory,h,MPI_INT,rank+1,0,MPI_COMM_WORLD);
-			printf("proc %d : shared memory send to %d\n", rank, rank +1);
+			//printf("proc %d : shared memory send to %d\n", rank, rank +1);
 		}
 		else{
 			MPI_Bsend(shared_memory,h,MPI_INT,0,0,MPI_COMM_WORLD);
-			printf("proc %d : shared memory send to %d\n", rank, 0);
+			//printf("proc %d : shared memory send to %d\n", rank, 0);
 		}
+		printf("proc %d shared memory  :", rank);
+		printf(" [ ");
+		for(int l=0 ; l<h ; l++ ){
+			printf("%d ",shared_memory_tmp[l] );
+		}
+		printf("] \n");
 
 
 
