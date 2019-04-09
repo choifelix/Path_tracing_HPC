@@ -1163,9 +1163,12 @@ void version2_beta_dynamic(int argc, char **argv){
 				}
 				else{
 					copy(pixel_radiance, image + 3*w*i+ 3 * j); // <-- retournement vertical
-					count_line++;
-					printf("done by %d nb line done : %d, line %d \n",rank,count_line, i);
+					
 				}
+			}
+			if(rank==0){
+				count_line++;
+				printf("done by %d nb line done : %d, line %d \n",rank,count_line, i);
 			}
 		
 
