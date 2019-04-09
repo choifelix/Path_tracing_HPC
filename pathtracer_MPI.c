@@ -1093,9 +1093,9 @@ void version2_beta_dynamic(int argc, char **argv){
 			printf("%d recieve shared memory from %d \n",rank,status.MPI_SOURCE);
 			for(int l=0 ; l<h ; l++){
 				shared_memory[l] += shared_memory_tmp[l];
-				if(shared_memory[l] > 0){
-					shared_memory[l] = 1;
-				}
+				// if(shared_memory[l] > 0){
+				// 	shared_memory[l] = 1;
+				// }
 			}
 			for(int k=0 ; k<h ; k++ ){
 				if(shared_memory[k] == 0){
@@ -1214,11 +1214,6 @@ void version2_beta_dynamic(int argc, char **argv){
 			}
 		}
 		if (rank == 0){
-
-	       	// printf(" line done : %d \n",line);
-	       	
-	       	
-
 
 	       	for(int k=0 ; k<size-1 ; k++){
 
