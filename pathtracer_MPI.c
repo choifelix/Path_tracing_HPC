@@ -958,7 +958,7 @@ void version2_beta_dynamic(int argc, char **argv){
 	int nb_line = h/size;
 	int line;
 	int iter=0;
-	int state = inactif;
+	int state;
 	if(rank ==0){
 		printf("initial data : w = %d \nh = %d \nsamples = %d \nnb_line = %d ",w,h,samples,nb_line);
 	}
@@ -1080,6 +1080,17 @@ void version2_beta_dynamic(int argc, char **argv){
 			}
 			else{
 				MPI_Request_free(&req);
+				if(i + size < h){
+					i += size;
+					shared_memory[i] = 1;
+					state = actif;
+				}
+				else{
+					if(state = actif)
+						state = inactif;
+					//MPI_wait(&req, &status);
+
+				}
 			}
 		}
 		if(iter > 0 && flag == 0){
