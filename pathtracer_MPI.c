@@ -1232,8 +1232,9 @@ int main(int argc, char **argv)
 {
 	printf("BEGIN\n");
 
-	version2_dynamic(argc, argv);
+	//version2_dynamic(argc, argv);
 	//version1_static(argc, argv);
+	version2_beta_dynamic(argc, argv);
 
 	return 0;
 	/*MPI_Init(&argc,&argv);
