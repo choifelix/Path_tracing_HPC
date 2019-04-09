@@ -1051,10 +1051,12 @@ void version2_beta_dynamic(int argc, char **argv){
 
 		}
 		
-		if(rank > 0)
+		if(rank > 0){
 			MPI_Irecv(shared_memory_tmp,h,MPI_INT,rank-1,0,MPI_COMM_WORLD,&req);
-		else
+		}
+		else{
 			MPI_Irecv(shared_memory_tmp,h,MPI_INT,size-1,0,MPI_COMM_WORLD,&req);
+		}
 
 
 		MPI_Test(&req,&flag,&status);
@@ -1094,7 +1096,7 @@ void version2_beta_dynamic(int argc, char **argv){
 		}
 
 		
-		if(rank < size -1){
+		if(rank != size -1){
 			//MPI_Bsend(shared_memory,h,MPI_INT,rank+1,0,MPI_COMM_WORLD);
 			MPI_Send(shared_memory,h,MPI_INT,rank+1,0,MPI_COMM_WORLD);
 			//printf("proc %d : shared memory send to %d\n", rank, rank +1);
