@@ -1068,7 +1068,7 @@ void version2_beta_dynamic(int argc, char **argv){
 						state = actif;
 						break;
 					}
-					if(k == h){
+					if(k == h - 1){
 						continuer = false;
 						state = inactif;
 					}
