@@ -1093,9 +1093,9 @@ void version2_beta_dynamic(int argc, char **argv){
 				}
 			}
 		}
-		if(iter > 0 && flag == 0){
-			MPI_Request_free(&req);
-		}
+		// if(iter > 0 && flag == 0){
+		// 	MPI_Request_free(&req);
+		// }
 		
 		if(rank > 0){
 			MPI_Irecv(shared_memory_tmp,h,MPI_INT,rank-1,0,MPI_COMM_WORLD,&req);
