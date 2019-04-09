@@ -1050,6 +1050,9 @@ void version2_beta_dynamic(int argc, char **argv){
 			state = actif;
 
 		}
+		if(iter > 0 && flag == 0){
+			MPI_Request_free(&req);
+		}
 		
 		if(rank > 0){
 			MPI_Irecv(shared_memory_tmp,h,MPI_INT,rank-1,0,MPI_COMM_WORLD,&req);
@@ -1062,7 +1065,7 @@ void version2_beta_dynamic(int argc, char **argv){
 		MPI_Test(&req,&flag,&status);
 
 		if(flag){
-			//printf("%d recieve shared memory from %d \n",rank,status.MPI_SOURCE);
+			printf("%d recieve shared memory from %d \n",rank,status.MPI_SOURCE);
 			for(int l=0 ; l<h ; l++){
 				shared_memory[l] += shared_memory_tmp[l];
 				if(shared_memory[l] > 0){
@@ -1160,6 +1163,8 @@ void version2_beta_dynamic(int argc, char **argv){
 				}
 				else{
 					copy(pixel_radiance, image + 3*w*i+ 3 * j); // <-- retournement vertical
+					count_line++;
+					printf("done by %d nb line done : %d, line %d \n",rank,count_line, i);
 				}
 			}
 		
@@ -1183,8 +1188,8 @@ void version2_beta_dynamic(int argc, char **argv){
 		if (rank == 0){
 
 	       	// printf(" line done : %d \n",line);
-	       	count_line++;
-	       	printf("done by %d nb line done : %d, line %d \n",rank,count_line, i);
+	       	
+	       	
 
 
 	       	for(int k=0 ; k<size-1 ; k++){
