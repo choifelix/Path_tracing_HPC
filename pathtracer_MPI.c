@@ -1035,6 +1035,12 @@ void version2_beta_dynamic(int argc, char **argv){
 	bool continuer = true;
 	int count_line = 0;
 	double t0 = my_gettimeofday();
+	int i;
+
+	if (rank == 0){
+		i = 0;
+		shared_memory[i] = 1;
+	}
 
 	while(continuer){
 		if(iter == 0 && rank != 0){
@@ -1061,7 +1067,7 @@ void version2_beta_dynamic(int argc, char **argv){
 					state = actif;
 					break;
 				}
-				if(l == h){
+				if(k == h){
 					continuer = false;
 					state = inactif;
 				}
