@@ -1044,14 +1044,18 @@ void version2_beta_dynamic(int argc, char **argv){
 	}
 
 	while(continuer){
-		if(iter == 0 && rank != 0){
-			MPI_Recv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+		if(iter == 0 && rank > 0){
+			MPI_Recv(shared_memory_tmp,h,MPI_INT,rank-1,0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
 			printf("proc %d : first recieve\n",rank );
 			state = actif;
 
 		}
 		
-		MPI_Irecv(shared_memory_tmp,h,MPI_INT,MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&req);
+		if(rank > 0)
+			MPI_Irecv(shared_memory_tmp,h,MPI_INT,rank-1,0,MPI_COMM_WORLD,&req);
+		else
+			MPI_Irecv(shared_memory_tmp,h,MPI_INT,size-1,0,MPI_COMM_WORLD,&req);
+
 
 		MPI_Test(&req,&flag,&status);
 
@@ -1091,11 +1095,13 @@ void version2_beta_dynamic(int argc, char **argv){
 
 		
 		if(rank < size -1){
-			MPI_Bsend(shared_memory,h,MPI_INT,rank+1,0,MPI_COMM_WORLD);
+			//MPI_Bsend(shared_memory,h,MPI_INT,rank+1,0,MPI_COMM_WORLD);
+			MPI_Send(shared_memory,h,MPI_INT,rank+1,0,MPI_COMM_WORLD);
 			//printf("proc %d : shared memory send to %d\n", rank, rank +1);
 		}
 		else{
-			MPI_Bsend(shared_memory,h,MPI_INT,0,0,MPI_COMM_WORLD);
+			//MPI_Bsend(shared_memory,h,MPI_INT,0,0,MPI_COMM_WORLD);
+			MPI_Send(shared_memory,h,MPI_INT,0,0,MPI_COMM_WORLD);
 			//printf("proc %d : shared memory send to %d\n", rank, 0);
 		}
 		printf("proc %d shared memory  :", rank);
@@ -1153,52 +1159,53 @@ void version2_beta_dynamic(int argc, char **argv){
 					copy(pixel_radiance, image + 3*w*i+ 3 * j); // <-- retournement vertical
 				}
 			}
-		}
+		
 
-		tab[0] = (double)i;
-
-
-		if (rank == 0){
-
-	       	// printf(" line done : %d \n",line);
-	       	count_line++;
-	       	printf("done by %d nb line done : %d, line %d \n",rank,count_line, i);
+			tab[0] = (double)i;
 
 
-	       	for(int k=0 ; k<size-1 ; k++){
+			if (rank == 0){
 
-	       		if(iter > 0 && flag_tab[k] == 0){
-					MPI_Request_free(&req_tab[k]);
+		       	// printf(" line done : %d \n",line);
+		       	count_line++;
+		       	printf("done by %d nb line done : %d, line %d \n",rank,count_line, i);
+
+
+		       	for(int k=0 ; k<size-1 ; k++){
+
+		       		if(iter > 0 && flag_tab[k] == 0){
+						MPI_Request_free(&req_tab[k]);
+					}
+
+		       		MPI_Irecv(tab,3*w+1,MPI_DOUBLE,k+1,1,MPI_COMM_WORLD,&req_tab[k]);
+			    
+					MPI_Test(&req_tab[k],&flag_tab[k],&status_tab);
+					if(flag_tab[k]){
+						
+						line = tab[0];
+						//printf("%d recieve tab from %d with line %d \n",rank,status_tab.MPI_SOURCE, line);
+
+				       	for(int l=1; l< 3*w+1; l++){
+				       		image[(line*3*w + l -1) ] = tab[l]; 
+				       	}
+				       	count_line++;
+				       	printf("done by %d nb line done : %d, line %d \n",status_tab.MPI_SOURCE,count_line, line);
+					}
 				}
 
-	       		MPI_Irecv(tab,3*w+1,MPI_DOUBLE,k+1,1,MPI_COMM_WORLD,&req_tab[k]);
-		    
-				MPI_Test(&req_tab[k],&flag_tab[k],&status_tab);
-				if(flag_tab[k]){
-					
-					line = tab[0];
-					//printf("%d recieve tab from %d with line %d \n",rank,status_tab.MPI_SOURCE, line);
+			}
+			else{
 
-			       	for(int l=1; l< 3*w+1; l++){
-			       		image[(line*3*w + l -1) ] = tab[l]; 
-			       	}
-			       	count_line++;
-			       	printf("done by %d nb line done : %d, line %d \n",status_tab.MPI_SOURCE,count_line, line);
+
+
+				for(int k=1 ; k<3*w+1 ; k++){
+					tab[k] = image[k-1];
 				}
+				// MPI_Request tmp_reg;
+				// MPI_Isend(tab,3*w+1,MPI_DOUBLE,0,1,MPI_COMM_WORLD,&tmp_reg);
+				MPI_Send(tab,3*w+1,MPI_DOUBLE,0,1,MPI_COMM_WORLD);
+				
 			}
-
-		}
-		else{
-
-
-
-			for(int k=1 ; k<3*w+1 ; k++){
-				tab[k] = image[k-1];
-			}
-			// MPI_Request tmp_reg;
-			// MPI_Isend(tab,3*w+1,MPI_DOUBLE,0,1,MPI_COMM_WORLD,&tmp_reg);
-			MPI_Send(tab,3*w+1,MPI_DOUBLE,0,1,MPI_COMM_WORLD);
-			
 		}
 		iter++;
 	}
