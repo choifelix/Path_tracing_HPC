@@ -1135,6 +1135,17 @@ void version2_beta_dynamic(int argc, char **argv){
 					// if(state = actif)
 					// 	state = inactif;
 					//MPI_wait(&req, &status);
+					if(rank != size -1){
+						//MPI_Bsend(shared_memory,h,MPI_INT,rank+1,0,MPI_COMM_WORLD);
+						MPI_Send(shared_memory,h,MPI_INT,rank+1,0,MPI_COMM_WORLD);
+						printf("proc %d :  last send to %d\n", rank, rank +1);
+					}
+					else{
+						//MPI_Bsend(shared_memory,h,MPI_INT,0,0,MPI_COMM_WORLD);
+						MPI_Send(shared_memory,h,MPI_INT,0,0,MPI_COMM_WORLD);
+						printf("proc %d : last send to %d\n", rank, 0);
+					}
+
 					MPI_Recv(shared_memory_tmp,h,MPI_INT,rank-1,0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
 					printf("%d Recieve shared memory from %d \n",rank,status.MPI_SOURCE);
 					for(int l=0 ; l<h ; l++){
@@ -1155,16 +1166,18 @@ void version2_beta_dynamic(int argc, char **argv){
 							state = inactif;
 						}
 					}
+					if(state == actif){
 
-					if(rank != size -1){
-						//MPI_Bsend(shared_memory,h,MPI_INT,rank+1,0,MPI_COMM_WORLD);
-						MPI_Send(shared_memory,h,MPI_INT,rank+1,0,MPI_COMM_WORLD);
-						printf("proc %d : shared memory send to %d\n", rank, rank +1);
-					}
-					else{
-						//MPI_Bsend(shared_memory,h,MPI_INT,0,0,MPI_COMM_WORLD);
-						MPI_Send(shared_memory,h,MPI_INT,0,0,MPI_COMM_WORLD);
-						printf("proc %d : shared memory send to %d\n", rank, 0);
+						if(rank != size -1){
+							//MPI_Bsend(shared_memory,h,MPI_INT,rank+1,0,MPI_COMM_WORLD);
+							MPI_Send(shared_memory,h,MPI_INT,rank+1,0,MPI_COMM_WORLD);
+							printf("proc %d : shared memory send to %d\n", rank, rank +1);
+						}
+						else{
+							//MPI_Bsend(shared_memory,h,MPI_INT,0,0,MPI_COMM_WORLD);
+							MPI_Send(shared_memory,h,MPI_INT,0,0,MPI_COMM_WORLD);
+							printf("proc %d : shared memory send to %d\n", rank, 0);
+						}
 					}
 
 				}
