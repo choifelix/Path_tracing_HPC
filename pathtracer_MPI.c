@@ -1439,7 +1439,7 @@ void version2_beta_dynamic_simple(int argc, char **argv){
 	MPI_Request send_req[size];
 	int send_flag[size];	
 	int flag_tab[size-1];
-	MPI_Status status_tab;
+	MPI_Status status_tab[k];
 	int flag;
 	MPI_Status status;
 	printf("%d : MPI init DONE \n", rank);
@@ -1601,12 +1601,20 @@ void version2_beta_dynamic_simple(int argc, char **argv){
 					//continuer = false;
 					end_count++;
 					state = inactif;
-					if(end_count >= 2){
-						continuer = false;
+					continuer = false;
+					if(rank != size -1){
+						//MPI_Bsend(shared_memory,h,MPI_INT,rank+1,0,MPI_COMM_WORLD);
+						MPI_Bsend(shared_memory,h,MPI_INT,rank+1,0,MPI_COMM_WORLD);
+						//printf("proc %d : shared memory send to %d\n", rank, rank +1);
+					}
+					else{
+						//MPI_Bsend(shared_memory,h,MPI_INT,0,0,MPI_COMM_WORLD);
+						MPI_Bsend(shared_memory,h,MPI_INT,0,0,MPI_COMM_WORLD);
+						//printf("proc %d : shared memory send to %d\n", rank, 0);
 					}
 				}
 			}
-			if(end_count <2){
+			if(end_count == 0){
 				if(rank != size -1){
 					//MPI_Bsend(shared_memory,h,MPI_INT,rank+1,0,MPI_COMM_WORLD);
 					MPI_Send(shared_memory,h,MPI_INT,rank+1,0,MPI_COMM_WORLD);
@@ -1712,7 +1720,7 @@ void version2_beta_dynamic_simple(int argc, char **argv){
 	       		
 
 	       		if(iter > 0){
-	       			MPI_Test(&req_tab[k],&flag_tab[k],&status_tab);
+	       			MPI_Test(&req_tab[k],&flag_tab[k],&status_tab[k]);
 	       			if(flag_tab[k]){
 						line = tab[0];
 						//printf("%d recieve tab from %d with line %d \n",rank,status_tab.MPI_SOURCE, line);
@@ -1721,7 +1729,7 @@ void version2_beta_dynamic_simple(int argc, char **argv){
 				       		image[(line*3*w + l -1) ] = tab[l]; 
 				       	}
 				       	count_line++;
-				       	printf("done by %d nb line done : %d, line %d \n",status_tab.MPI_SOURCE,count_line, line);
+				       	printf("done by %d nb line done : %d, line %d \n",status_tab[k].MPI_SOURCE,count_line, line);
 					}
 				
 					else{
@@ -1754,24 +1762,7 @@ void version2_beta_dynamic_simple(int argc, char **argv){
 
 
 	if (rank == 0){
-		// MPI_Request final_req;
-		// int final_flag;
-		// while(count_line <= h){
-		// 	MPI_Irecv(tab,3*w+1,MPI_DOUBLE,MPI_ANY_SOURCE,1,MPI_COMM_WORLD,&final_req);
-		    
-		// 	MPI_Test(&final_req,&final_flag,&status_tab);
-		// 	if(final_flag){
-		// 		//printf("%d recieve tab from %d \n",rank,status_tab.MPI_SOURCE);
-		// 		line = tab[0];
-
-		//        	for(int k=1; k< 3*w+1; k++){
-		//        		image[(line*3*w + k -1) ] = tab[k]; 
-		//        	}
-		//        	count_line++;
-		//        	printf("nb line done : %d \n",count_line);
-		//        	//image_map[line] = 1;
-		// 	}
-		// }
+	
 
 
 		for(int k=0 ; k<size ; k++){
