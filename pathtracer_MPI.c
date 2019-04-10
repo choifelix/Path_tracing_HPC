@@ -1051,6 +1051,34 @@ void version2_beta_dynamic(int argc, char **argv){
 		if(iter == 0){
 			if(rank > 0){
 				MPI_Recv(shared_memory_tmp,h,MPI_INT,rank-1,0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+				for(int l=0 ; l<h ; l++){
+					shared_memory[l] += shared_memory_tmp[l];
+					if(shared_memory[l] > 0){
+						shared_memory[l] = 1;
+					}
+				}
+				for(int k=0 ; k<h ; k++ ){
+					if(shared_memory[k] == 0){
+						i = k;
+						shared_memory[i] = 1;
+						state = actif;
+						break;
+					}
+					else if(k == h - 1){
+						continuer = false;
+						state = inactif;
+					}
+				}
+				if(rank != size -1){
+					//MPI_Bsend(shared_memory,h,MPI_INT,rank+1,0,MPI_COMM_WORLD);
+					MPI_Send(shared_memory,h,MPI_INT,rank+1,0,MPI_COMM_WORLD);
+					//printf("proc %d : shared memory send to %d\n", rank, rank +1);
+				}
+				else{
+					//MPI_Bsend(shared_memory,h,MPI_INT,0,0,MPI_COMM_WORLD);
+					MPI_Send(shared_memory,h,MPI_INT,0,0,MPI_COMM_WORLD);
+					//printf("proc %d : shared memory send to %d\n", rank, 0);
+				}
 				printf("proc %d : first recieve\n",rank );
 				state = actif;
 			}
