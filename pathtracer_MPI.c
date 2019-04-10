@@ -1439,7 +1439,7 @@ void version2_beta_dynamic_simple(int argc, char **argv){
 	MPI_Request send_req[size];
 	int send_flag[size];	
 	int flag_tab[size-1];
-	MPI_Status status_tab[k];
+	MPI_Status status_tab[size];
 	int flag;
 	MPI_Status status;
 	printf("%d : MPI init DONE \n", rank);
