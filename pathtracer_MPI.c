@@ -1087,6 +1087,8 @@ void version2_beta_dynamic(int argc, char **argv){
 			}
 
 		}
+
+
 		if(iter > 0){
 			MPI_Test(&req,&flag,&status);
 
@@ -1113,13 +1115,14 @@ void version2_beta_dynamic(int argc, char **argv){
 				if(rank != size -1){
 					//MPI_Bsend(shared_memory,h,MPI_INT,rank+1,0,MPI_COMM_WORLD);
 					MPI_Send(shared_memory,h,MPI_INT,rank+1,0,MPI_COMM_WORLD);
-					//printf("proc %d : shared memory send to %d\n", rank, rank +1);
+					printf("proc %d : shared memory send to %d\n", rank, rank +1);
 				}
 				else{
 					//MPI_Bsend(shared_memory,h,MPI_INT,0,0,MPI_COMM_WORLD);
 					MPI_Send(shared_memory,h,MPI_INT,0,0,MPI_COMM_WORLD);
-					//printf("proc %d : shared memory send to %d\n", rank, 0);
+					printf("proc %d : shared memory send to %d\n", rank, 0);
 				}
+
 			}
 			else{
 				MPI_Request_free(&req);
@@ -1156,12 +1159,12 @@ void version2_beta_dynamic(int argc, char **argv){
 					if(rank != size -1){
 						//MPI_Bsend(shared_memory,h,MPI_INT,rank+1,0,MPI_COMM_WORLD);
 						MPI_Send(shared_memory,h,MPI_INT,rank+1,0,MPI_COMM_WORLD);
-						//printf("proc %d : shared memory send to %d\n", rank, rank +1);
+						printf("proc %d : shared memory send to %d\n", rank, rank +1);
 					}
 					else{
 						//MPI_Bsend(shared_memory,h,MPI_INT,0,0,MPI_COMM_WORLD);
 						MPI_Send(shared_memory,h,MPI_INT,0,0,MPI_COMM_WORLD);
-						//printf("proc %d : shared memory send to %d\n", rank, 0);
+						printf("proc %d : shared memory send to %d\n", rank, 0);
 					}
 
 				}
