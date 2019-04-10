@@ -1145,7 +1145,7 @@ void version2_beta_dynamic(int argc, char **argv){
 						MPI_Send(shared_memory,h,MPI_INT,0,0,MPI_COMM_WORLD);
 						printf("proc %d : last send to %d\n", rank, 0);
 					}
-					if(verif(shared_memory) ){
+					if(verif(shared_memory,h) ){
 						MPI_Recv(shared_memory_tmp,h,MPI_INT,rank-1,0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
 						printf("%d Recieve shared memory from %d \n",rank,status.MPI_SOURCE);
 						for(int l=0 ; l<h ; l++){
@@ -1169,7 +1169,7 @@ void version2_beta_dynamic(int argc, char **argv){
 					}
 					else{
 						continuer = false;
-						sate =inactif;
+						state =inactif;
 					}
 					if(state == actif){
 
