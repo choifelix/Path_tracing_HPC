@@ -1048,10 +1048,15 @@ void version2_beta_dynamic(int argc, char **argv){
 
 
 	while(continuer){
-		if(iter == 0 && rank > 0){
-			MPI_Recv(shared_memory_tmp,h,MPI_INT,rank-1,0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
-			printf("proc %d : first recieve\n",rank );
-			state = actif;
+		if(iter == 0){
+			if(rank > 0){
+				MPI_Recv(shared_memory_tmp,h,MPI_INT,rank-1,0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+				printf("proc %d : first recieve\n",rank );
+				state = actif;
+			}
+			else{
+				MPI_Send(shared_memory,h,MPI_INT,rank+1,0,MPI_COMM_WORLD);
+			}
 
 		}
 		if(iter > 0){
@@ -1118,6 +1123,17 @@ void version2_beta_dynamic(int argc, char **argv){
 							continuer = false;
 							state = inactif;
 						}
+					}
+
+					if(rank != size -1){
+						//MPI_Bsend(shared_memory,h,MPI_INT,rank+1,0,MPI_COMM_WORLD);
+						MPI_Send(shared_memory,h,MPI_INT,rank+1,0,MPI_COMM_WORLD);
+						//printf("proc %d : shared memory send to %d\n", rank, rank +1);
+					}
+					else{
+						//MPI_Bsend(shared_memory,h,MPI_INT,0,0,MPI_COMM_WORLD);
+						MPI_Send(shared_memory,h,MPI_INT,0,0,MPI_COMM_WORLD);
+						//printf("proc %d : shared memory send to %d\n", rank, 0);
 					}
 
 				}
@@ -1278,6 +1294,7 @@ void version2_beta_dynamic(int argc, char **argv){
 			}
 		}
 		iter++;
+		state = inactif;
 	}
 
 	double t1 =my_gettimeofday();
