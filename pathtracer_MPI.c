@@ -1807,6 +1807,11 @@ void version2_beta_dynamic_simple(int argc, char **argv){
 		//free(final_image);
 		//free(image_map);
 	}
+		free(image);
+	free(tab);
+	free(shared_memory);
+
+	MPI_Finalize();
 }
 
 
