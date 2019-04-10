@@ -1321,16 +1321,12 @@ void version2_beta_dynamic(int argc, char **argv){
 		if (rank == 0){
 
 	       	for(int k=0 ; k<size-1 ; k++){
+	       		MPI_Test(&req_tab[k],&flag_tab[k],&status_tab);
 
 	       		if(iter > 0 && flag_tab[k] == 0){
 					MPI_Request_free(&req_tab[k]);
 				}
-
-	       		MPI_Irecv(tab,3*w+1,MPI_DOUBLE,k+1,1,MPI_COMM_WORLD,&req_tab[k]);
-		    
-				MPI_Test(&req_tab[k],&flag_tab[k],&status_tab);
-				if(flag_tab[k]){
-					
+				else{
 					line = tab[0];
 					//printf("%d recieve tab from %d with line %d \n",rank,status_tab.MPI_SOURCE, line);
 
@@ -1340,6 +1336,14 @@ void version2_beta_dynamic(int argc, char **argv){
 			       	count_line++;
 			       	printf("done by %d nb line done : %d, line %d \n",status_tab.MPI_SOURCE,count_line, line);
 				}
+
+	       		MPI_Irecv(tab,3*w+1,MPI_DOUBLE,k+1,1,MPI_COMM_WORLD,&req_tab[k]);
+		    
+				
+				// if(flag_tab[k]){
+					
+					
+				// }
 			}
 		}
 		iter++;
