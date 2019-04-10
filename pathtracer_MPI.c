@@ -1321,9 +1321,10 @@ void version2_beta_dynamic(int argc, char **argv){
 		if (rank == 0){
 
 	       	for(int k=0 ; k<size-1 ; k++){
-	       		MPI_Test(&req_tab[k],&flag_tab[k],&status_tab);
+	       		
 
 	       		if(iter > 0){
+	       			MPI_Test(&req_tab[k],&flag_tab[k],&status_tab);
 	       			if(flag_tab[k]){
 						line = tab[0];
 						//printf("%d recieve tab from %d with line %d \n",rank,status_tab.MPI_SOURCE, line);
