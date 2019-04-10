@@ -1807,6 +1807,7 @@ void version2_beta_dynamic_simple(int argc, char **argv){
 		//free(final_image);
 		//free(image_map);
 	}
+}
 
 
 
