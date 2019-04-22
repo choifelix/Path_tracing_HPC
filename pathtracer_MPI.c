@@ -1781,7 +1781,7 @@ void version3_dynamic_ring_token(int argc, char **argv){
 
 	/* Petit cas test (small, quick and dirty): */
 	int w = 320;
-	int h = 200;
+	int h = 20;
 	int samples = 200;
 	bool work =true;
 	bool continuer = true;
@@ -1881,13 +1881,13 @@ void version3_dynamic_ring_token(int argc, char **argv){
 			printf("proc %d entering no work zone. \n",rank);
 			if(token == -10){
 				printf("proc %d no token, waiting for it\n",rank);
-				int token_tmp;
+				int * token_tmp;
 				if(rank > 0)
 					MPI_Recv(token_tmp,1,MPI_INT,rank-1,2,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
 				else
 					MPI_Recv(token_tmp,1,MPI_INT,size-1,2,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
 
-				token = token_tmp;
+				token = *token_tmp;
 			}
 			printf("proc %d : token is here\n",rank);
 
