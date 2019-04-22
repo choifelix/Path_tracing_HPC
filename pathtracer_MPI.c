@@ -1756,7 +1756,7 @@ void traitement_token(int rank, int size,int token, bool work, int *state, bool 
 		}
 	}
 	else if(token == -1){
-		*token_send = tok\;
+		*token_send = token;
 		if(rank < size -1)
 			MPI_Send(token_send,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
 		else
