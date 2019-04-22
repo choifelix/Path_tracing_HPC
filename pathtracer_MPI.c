@@ -1734,16 +1734,16 @@ void traitement_token(int rank, int size,int token, bool work, int *state, bool 
 		printf("proc %d  case : >=0\n",rank);
 		if(work){
 			int line_left = work_limit - *i;
-			//*i++;
-			//*token_send = *i;
-			//MPI_Send(token_send,1,MPI_INT,token,0,MPI_COMM_WORLD);
-			//*i++;
+			*i++;
+			*token_send = *i;
+			MPI_Send(token_send,1,MPI_INT,token,0,MPI_COMM_WORLD);
+			*i++;
 		}
 		else{
 			if(token == rank){
 				// recieving his own message -> exit : token = -1
 				*token_send = -1;
-				if(rank < size -1)
+				if(rank < size-1)
 					MPI_Send(token_send,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
 				else
 					MPI_Send(token_send,1,MPI_INT,0,2,MPI_COMM_WORLD);
@@ -1751,12 +1751,13 @@ void traitement_token(int rank, int size,int token, bool work, int *state, bool 
 			else{
 				// no work to give -> pass the token
 				*token_send = token;
-				if(rank < size -1)
+				if(rank < size-1)
 					MPI_Send(token_send,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
 				else
 					MPI_Send(token_send,1,MPI_INT,0,2,MPI_COMM_WORLD);
 			}
 		}
+		printf("proc %d  case : >=0 done\n",rank);
 	}
 	else if(token == -1){
 		printf("proc %d  case : -1\n",rank);
