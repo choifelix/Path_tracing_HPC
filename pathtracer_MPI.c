@@ -1797,7 +1797,7 @@ void version3_dynamic_ring_token(int argc, char **argv){
 	int token = -10; //-10 means no token
 	int work_limit = (rank +1)*nb_line ;
 	if(rank ==0){
-		printf("initial data : w = %d \nh = %d \nsamples = %d \nnb_line = %d ",w,h,samples,nb_line);
+		printf("initial data : w = %d \nh = %d \nsamples = %d \nnb_line = %d \n",w,h,samples,nb_line);
 	}
 
 
@@ -1953,6 +1953,7 @@ void version3_dynamic_ring_token(int argc, char **argv){
 				copy(pixel_radiance, image + 3*w*i+ 3 * j); // <-- retournement vertical
 			}
 		}
+		printf( "proc %d did line %d ",rank,i);
 		i++;
 		if(i >= work_limit){
 			work = false;
