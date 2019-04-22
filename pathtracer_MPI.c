@@ -1858,6 +1858,7 @@ void version3_dynamic_ring_token(int argc, char **argv){
 	int *token_send;
 
 
+	double t0 = my_gettimeofday();
 
 
 
