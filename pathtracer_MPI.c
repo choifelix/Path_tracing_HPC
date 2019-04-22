@@ -1875,6 +1875,13 @@ void version3_dynamic_ring_token(int argc, char **argv){
 
 
 		if(!work){
+			if(token == -10){
+				if(rank > 0)
+					MPI_Recv(&token,1,MPI_INT,rank-1,2,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+				else
+					MPI_Recv(&token,1,MPI_INT,size-1,2,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+			}
+
 			if(token = -2){
 				token = rank;
 				*token_send = token;
@@ -1889,14 +1896,6 @@ void version3_dynamic_ring_token(int argc, char **argv){
 				traitement_token(rank, size, token, work, &state, &continuer, &i, work_limit);
 				token = -10;
 			}
-
-			
-			if(rank > 0)
-				MPI_Recv(&token,1,MPI_INT,rank-1,2,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
-			else
-				MPI_Recv(&token,1,MPI_INT,size-1,2,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
-
-			
 		}
 
 
