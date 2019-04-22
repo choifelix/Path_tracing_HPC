@@ -1720,40 +1720,47 @@ void version2_beta_dynamic_simple(int argc, char **argv){
 
 
 void traitement_token(int rank, int size,int token, bool work, int *state, bool *continuer, int *i, int work_limit){
+	int *token_send;
 	if(token  == -2){
+		*token_send = token;
 		if(rank < size -1)
-			MPI_Send(token,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
+			MPI_Send(token_send,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
 		else
-			MPI_Send(token,1,MPI_INT,0,2,MPI_COMM_WORLD);
+			MPI_Send(token_send,1,MPI_INT,0,2,MPI_COMM_WORLD);
 	}
 	else if(token >= 0){
 		if(work){
 			int line_left = work_limit - i;
-			MPI_Send(i++,1,MPI_INT,token,0,MPI_COMM_WORLD);
+			i++;
+			*token_send = i;
+			MPI_Send(token_send,1,MPI_INT,token,0,MPI_COMM_WORLD);
 			i++;
 		}
 		else{
 			if(token == rank){
 				// recieving his own message -> exit : token = -1
+				*token_send = -1;
 				if(rank < size -1)
-					MPI_Send(-1,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
+					MPI_Send(token_send,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
 				else
-					MPI_Send(-1,1,MPI_INT,0,2,MPI_COMM_WORLD);
+					MPI_Send(token_send,1,MPI_INT,0,2,MPI_COMM_WORLD);
 			}
 			else{
 				// no work to give -> pass the token
+				*token_send = token;
 				if(rank < size -1)
-					MPI_Send(token,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
+					MPI_Send(token_send,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
 				else
-					MPI_Send(token,1,MPI_INT,0,2,MPI_COMM_WORLD);
+					MPI_Send(token_send,1,MPI_INT,0,2,MPI_COMM_WORLD);
 			}
 		}
 	}
 	else if(token == -1){
+		*token_send = tok\;
 		if(rank < size -1)
-			MPI_Send(token,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
+			MPI_Send(token_send,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
 		else
-			MPI_Send(token,1,MPI_INT,0,2,MPI_COMM_WORLD);
+			MPI_Send(token_send,1,MPI_INT,0,2,MPI_COMM_WORLD);
 		state = inactif;
 		continuer = false;
 	}
@@ -1848,6 +1855,7 @@ void version3_dynamic_ring_token(int argc, char **argv){
 	
 
 	int i = rank * nb_line;
+	int *token_send;
 
 
 
@@ -1872,10 +1880,11 @@ void version3_dynamic_ring_token(int argc, char **argv){
 
 			if(token = -2){
 				token = rank;
+				*token_send = token
 				if(rank < size -1)
-					MPI_Send(token,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
+					MPI_Send(token_send,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
 				else
-					MPI_Send(token,1,MPI_INT,0,2,MPI_COMM_WORLD);
+					MPI_Send(token_send,1,MPI_INT,0,2,MPI_COMM_WORLD);
 
 				token = -10;
 			}
