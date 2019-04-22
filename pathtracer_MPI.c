@@ -1880,7 +1880,7 @@ void version3_dynamic_ring_token(int argc, char **argv){
 				token = -10;
 			}
 			else{
-				traitement_token(rank, size, token, work, &state, &continuer);
+				traitement_token(rank, size, token, work, &state, &continuer, &i, work_limit);
 				token = -10;
 			}
 		}
@@ -1895,7 +1895,7 @@ void version3_dynamic_ring_token(int argc, char **argv){
 
 		if(flag){
 			MPI_Recv(token,1,MPI_INT,status.MPI_SOURCE,2,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
-			traitement_token(rank, size, token, work, &state, &continuer);
+			traitement_token(rank, size, token, work, &state, &continuer, &i, work_limit);
 		}
 
 
@@ -2020,7 +2020,8 @@ int main(int argc, char **argv)
 	//version2_dynamic(argc, argv);
 	//version1_static(argc, argv);
 	//version2_beta_dynamic(argc, argv);
-	version2_beta_dynamic_simple(argc, argv);
+	//version2_beta_dynamic_simple(argc, argv);
+	version3_dynamic_ring_token(argc, argv);
 
 	return 0;
 
