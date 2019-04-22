@@ -1961,7 +1961,7 @@ void version3_dynamic_ring_token(int argc, char **argv){
 		}
 
 		iter++;
-		state = inactif;
+		//state = inactif;
 	}
 
 	double t1 =my_gettimeofday();
