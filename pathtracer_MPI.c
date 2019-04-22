@@ -1720,8 +1720,10 @@ void version2_beta_dynamic_simple(int argc, char **argv){
 
 
 void traitement_token(int rank, int size,int token, bool work, int *state, bool *continuer, int *i, int work_limit){
+	printf("proc %d entering token managment \n",rank);
 	int *token_send;
 	if(token  == -2){
+		printf("proc %d  case : -2\n",rank);
 		*token_send = token;
 		if(rank < size -1)
 			MPI_Send(token_send,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
@@ -1729,6 +1731,7 @@ void traitement_token(int rank, int size,int token, bool work, int *state, bool 
 			MPI_Send(token_send,1,MPI_INT,0,2,MPI_COMM_WORLD);
 	}
 	else if(token >= 0){
+		printf("proc %d  case : >=0\n",rank);
 		if(work){
 			int line_left = work_limit - *i;
 			*i++;
@@ -1756,6 +1759,7 @@ void traitement_token(int rank, int size,int token, bool work, int *state, bool 
 		}
 	}
 	else if(token == -1){
+		printf("proc %d  case : -1\n",rank);
 		*token_send = token;
 		if(rank < size -1)
 			MPI_Send(token_send,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
