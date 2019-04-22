@@ -1843,6 +1843,7 @@ void version3_dynamic_ring_token(int argc, char **argv){
 	double * image_tmp;
 	if(rank == 0){
 		image_tmp = (double*)calloc(3*w*h,sizeof(double));
+		token = -2;
 	}
 		
 	image = (double*)calloc(3*w*h,sizeof(double));
