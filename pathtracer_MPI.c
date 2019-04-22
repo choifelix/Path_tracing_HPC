@@ -1734,10 +1734,10 @@ void traitement_token(int rank, int size,int token, bool work, int *state, bool 
 		printf("proc %d  case : >=0\n",rank);
 		if(work){
 			int line_left = work_limit - *i;
-			*i++;
-			*token_send = *i;
-			MPI_Send(token_send,1,MPI_INT,token,0,MPI_COMM_WORLD);
-			*i++;
+			//*i++;
+			//*token_send = *i;
+			//MPI_Send(token_send,1,MPI_INT,token,0,MPI_COMM_WORLD);
+			//*i++;
 		}
 		else{
 			if(token == rank){
