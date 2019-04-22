@@ -1890,7 +1890,7 @@ void version3_dynamic_ring_token(int argc, char **argv){
 			if(token == -2){
 				printf("proc %d  token -2 , sending",rank);
 				token = rank;
-				*token_send = token;
+				token_send = &token;
 				if(rank < size -1)
 					MPI_Send(token_send,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
 				else
