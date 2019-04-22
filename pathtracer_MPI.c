@@ -1952,8 +1952,9 @@ void version3_dynamic_ring_token(int argc, char **argv){
 				}
 				copy(pixel_radiance, image + 3*w*i+ 3 * j); // <-- retournement vertical
 			}
+			printf( "proc %d did line %d \n",rank,i);
 		}
-		printf( "proc %d did line %d \n",rank,i);
+
 		i++;
 		if(i >= work_limit){
 			work = false;
