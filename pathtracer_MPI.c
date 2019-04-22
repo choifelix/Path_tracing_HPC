@@ -1730,11 +1730,11 @@ void traitement_token(int rank, int size,int token, bool work, int *state, bool 
 	}
 	else if(token >= 0){
 		if(work){
-			int line_left = work_limit - i;
-			i++;
-			*token_send = i;
+			int line_left = work_limit - *i;
+			*i++;
+			*token_send = *i;
 			MPI_Send(token_send,1,MPI_INT,token,0,MPI_COMM_WORLD);
-			i++;
+			*i++;
 		}
 		else{
 			if(token == rank){
@@ -1867,16 +1867,16 @@ void version3_dynamic_ring_token(int argc, char **argv){
 		MPI_Iprobe(MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&flag,&status);
 
 		if(flag && !work){
-			MPI_Recv(i,1,MPI_INT,status.MPI_SOURCE,0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+			MPI_Recv(&i,1,MPI_INT,status.MPI_SOURCE,0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
 			work == true;
 		}
 
 
 		if(!work){
 			if(rank > 0)
-				MPI_Recv(token,1,MPI_INT,rank-1,2,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+				MPI_Recv(&token,1,MPI_INT,rank-1,2,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
 			else
-				MPI_Recv(token,1,MPI_INT,size-1,2,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+				MPI_Recv(&token,1,MPI_INT,size-1,2,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
 
 			if(token = -2){
 				token = rank;
@@ -1903,7 +1903,7 @@ void version3_dynamic_ring_token(int argc, char **argv){
 			MPI_Iprobe(size -1,2,MPI_COMM_WORLD,&flag,&status);
 
 		if(flag){
-			MPI_Recv(token,1,MPI_INT,status.MPI_SOURCE,2,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+			MPI_Recv(&token,1,MPI_INT,status.MPI_SOURCE,2,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
 			traitement_token(rank, size, token, work, &state, &continuer, &i, work_limit);
 		}
 
