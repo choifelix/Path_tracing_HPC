@@ -1735,10 +1735,10 @@ void traitement_token(int rank, int size,int token, bool work, int *state, bool 
 		if(work){
 			int line_left = work_limit - *i;
 			*i++;
-			int token_t = *i;
-			int *token_tmp;
-			token_tmp = &token_t;
-			MPI_Send(token_tmp,1,MPI_INT,token,0,MPI_COMM_WORLD);
+			// int token_t = *i;
+			// int *token_tmp;
+			// token_tmp = &token_t;
+			// MPI_Send(token_tmp,1,MPI_INT,token,0,MPI_COMM_WORLD);
 			*i++;
 		}
 		else{
