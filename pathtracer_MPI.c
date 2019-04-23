@@ -1751,7 +1751,7 @@ void traitement_token(int rank, int size,int token, bool work, int *state, bool 
 			else{
 				printf("proc %d  f hell\n",rank);
 				// no work to give -> pass the token
-				// int *token_tmp;
+				int *token_tmp;
 				// *token_tmp = token;
 				printf("proc %d token_send value shit\n",rank);
 				if(rank < size-1){
