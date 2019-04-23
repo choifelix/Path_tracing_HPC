@@ -1742,7 +1742,9 @@ void traitement_token(int rank, int size,int token, bool work, int *state, bool 
 		else{
 			if(token == rank){
 				// recieving his own message -> exit : token = -1
-				*token_send = -1;
+				int token_t = -1;
+				int *token_tmp;
+				token_tmp = &token_t;
 				if(rank < size-1)
 					MPI_Send(token_send,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
 				else
