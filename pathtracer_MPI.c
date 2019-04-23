@@ -1751,11 +1751,11 @@ void traitement_token(int rank, int size,int token, bool work, int *state, bool 
 			else{
 				printf("proc %d  f hell\n",rank);
 				// no work to give -> pass the token
-				token_send = &token;
-				if(rank < size-1)
-					MPI_Send(token_send,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
-				else
-					MPI_Send(token_send,1,MPI_INT,0,2,MPI_COMM_WORLD);
+				*token_send = token;
+				// if(rank < size-1)
+				// 	MPI_Send(token_send,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
+				// else
+				// 	MPI_Send(token_send,1,MPI_INT,0,2,MPI_COMM_WORLD);
 			}
 		}
 		printf("proc %d  case : >=0 done\n",rank);
