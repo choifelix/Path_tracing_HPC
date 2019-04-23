@@ -1803,7 +1803,7 @@ void version3_dynamic_ring_token(int argc, char **argv){
 
 	/* Petit cas test (small, quick and dirty): */
 	int w = 320;
-	int h = 200;
+	int h = 20;
 	int samples = 200;
 	bool work =true;
 	bool continuer = true;
@@ -1916,11 +1916,13 @@ void version3_dynamic_ring_token(int argc, char **argv){
 			if(token == -2){
 				printf("proc %d  token -2 , sending\n",rank);
 				token = rank;
-				token_send = &token;
+				int token_t = token;
+				int *token_tmp;
+				token_tmp = &token_t;
 				if(rank < size -1)
-					MPI_Send(token_send,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
+					MPI_Send(token_tmp,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
 				else
-					MPI_Send(token_send,1,MPI_INT,0,2,MPI_COMM_WORLD);
+					MPI_Send(token_tmp,1,MPI_INT,0,2,MPI_COMM_WORLD);
 
 				token = -10;
 			}
