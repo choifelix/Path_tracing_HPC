@@ -1735,7 +1735,10 @@ void traitement_token(int rank, int size,int token, bool work, int *state, bool 
 	else if(token >= 0){
 		printf("proc %d  case : >=0\n",rank);
 		if(work){
+
+			// il y a du travail de dispo
 			if(work_limit - *i > 1){
+				//si on est a la limite du travail dispo on donne pas
 				int line_left = work_limit - *i;
 				*i++;
 				int i_t = *i;
@@ -1744,6 +1747,7 @@ void traitement_token(int rank, int size,int token, bool work, int *state, bool 
 				MPI_Send(i_tmp,1,MPI_INT,token,0,MPI_COMM_WORLD);
 				*i++;
 			}
+			//envoyer un token vide, le token de demande est consommé
 			
 			int token_t = -2;
 			int *token_tmp;
