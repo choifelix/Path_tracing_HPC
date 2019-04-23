@@ -1719,7 +1719,7 @@ void version2_beta_dynamic_simple(int argc, char **argv){
 }
 
 
-void traitement_token(int rank, int size,int token, bool work, int *state, bool *continuer, int i, int work_limit){
+void traitement_token(int rank, int size,int token, bool work, int *state, bool *continuer, int &i, int work_limit){
 	printf("proc %d entering token managment \n",rank);
 	int *token_send;
 	if(token  == -2){
