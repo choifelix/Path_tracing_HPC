@@ -1799,7 +1799,7 @@ void version3_dynamic_ring_token(int argc, char **argv){
 
 	/* Petit cas test (small, quick and dirty): */
 	int w = 320;
-	int h = 20;
+	int h = 200;
 	int samples = 200;
 	bool work =true;
 	bool continuer = true;
