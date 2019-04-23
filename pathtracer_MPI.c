@@ -1735,7 +1735,7 @@ void traitement_token(int rank, int size,int token, bool work, int *state, bool 
 	else if(token >= 0){
 		printf("proc %d  case : >=0\n",rank);
 		if(work){
-			if(work_limit - i > 1){
+			if(work_limit - *i > 1){
 				int line_left = work_limit - *i;
 				*i++;
 				int token_t = *i;
