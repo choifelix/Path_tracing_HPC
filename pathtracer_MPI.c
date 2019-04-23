@@ -1741,6 +1741,7 @@ void traitement_token(int rank, int size,int token, bool work, int *state, bool 
 		}
 		else{
 			if(token == rank){
+				printf("proc %d  token = rank\n",rank);
 				// recieving his own message -> exit : token = -1
 				int token_t = -1;
 				int *token_tmp;
