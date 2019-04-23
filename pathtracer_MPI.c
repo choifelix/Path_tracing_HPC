@@ -1772,8 +1772,8 @@ void traitement_token(int rank, int size,int token, bool work, int *state, bool 
 			MPI_Send(token_send,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
 		else
 			MPI_Send(token_send,1,MPI_INT,0,2,MPI_COMM_WORLD);
-		state = inactif;
-		continuer = false;
+		*state = inactif;
+		*continuer = false;
 	}
 	
 }
