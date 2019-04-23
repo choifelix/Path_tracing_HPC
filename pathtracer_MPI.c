@@ -1735,13 +1735,25 @@ void traitement_token(int rank, int size,int token, bool work, int *state, bool 
 	else if(token >= 0){
 		printf("proc %d  case : >=0\n",rank);
 		if(work){
-			int line_left = work_limit - *i;
-			*i++;
-			int token_t = *i;
-			int *token_tmp;
-			token_tmp = &token_t;
-			MPI_Send(token_tmp,1,MPI_INT,token,0,MPI_COMM_WORLD);
-			*i++;
+			if(work_limit - i > 1){
+				int line_left = work_limit - *i;
+				*i++;
+				int token_t = *i;
+				int *token_tmp;
+				token_tmp = &token_t;
+				MPI_Send(token_tmp,1,MPI_INT,token,0,MPI_COMM_WORLD);
+				*i++;
+			}
+			else{
+				int token_t = -2;
+				int *token_tmp;
+				token_tmp = &token_t;
+				if(rank < size -1)
+					MPI_Send(token_tmp,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
+				else
+					MPI_Send(token_tmp,1,MPI_INT,0,2,MPI_COMM_WORLD);
+			}
+
 		}
 		else{
 			if(token == rank){
