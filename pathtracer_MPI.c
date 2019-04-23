@@ -1724,11 +1724,13 @@ void traitement_token(int rank, int size,int token, bool work, int *state, bool 
 	int *token_send;
 	if(token  == -2){
 		printf("proc %d  case : -2\n",rank);
-		*token_send = token;
+		int token_t = token;
+		int *token_tmp;
+		token_tmp = &token_t;
 		if(rank < size -1)
-			MPI_Send(token_send,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
+			MPI_Send(token_tmp,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
 		else
-			MPI_Send(token_send,1,MPI_INT,0,2,MPI_COMM_WORLD);
+			MPI_Send(token_tmp,1,MPI_INT,0,2,MPI_COMM_WORLD);
 	}
 	else if(token >= 0){
 		printf("proc %d  case : >=0\n",rank);
