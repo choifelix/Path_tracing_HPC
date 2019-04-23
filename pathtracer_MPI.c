@@ -1753,7 +1753,7 @@ void traitement_token(int rank, int size,int token, bool work, int *state, bool 
 				// no work to give -> pass the token
 				// int *token_tmp;
 				// *token_tmp = token;
-				printf("proc %d token_send value %d\n",rank,*token_tmp);
+				printf("proc %d token_send value shit\n",rank);
 				if(rank < size-1){
 					printf("proc %d  sending to %d token %d\n",rank,rank+1,token);
 					//MPI_Send(token_tmp,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
