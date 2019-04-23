@@ -1719,7 +1719,7 @@ void version2_beta_dynamic_simple(int argc, char **argv){
 }
 
 
-void traitement_token(int rank, int size,int token, bool work, int *state, bool *continuer, int &i, int work_limit){
+void traitement_token(int rank, int size,int token, bool work, int *state, bool *continuer, int *i, int work_limit){
 	printf("proc %d entering token managment \n",rank);
 	int *token_send;
 	if(token  == -2){
@@ -1733,13 +1733,13 @@ void traitement_token(int rank, int size,int token, bool work, int *state, bool 
 	else if(token >= 0){
 		printf("proc %d  case : >=0\n",rank);
 		if(work){
-			int line_left = work_limit - i;
-			i++;
+			int line_left = work_limit - *i;
+			*i++;
 			// int token_t = *i;
 			// int *token_tmp;
 			// token_tmp = &token_t;
 			// MPI_Send(token_tmp,1,MPI_INT,token,0,MPI_COMM_WORLD);
-			i++;
+			*i++;
 		}
 		else{
 			if(token == rank){
