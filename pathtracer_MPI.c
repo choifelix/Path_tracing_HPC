@@ -1928,16 +1928,20 @@ void version3_dynamic_ring_token(int argc, char **argv){
 		}
 
 
-
-
-		if(rank > 0)
-			MPI_Iprobe(rank -1,2,MPI_COMM_WORLD,&flag,&status);
-		else
-			MPI_Iprobe(size -1,2,MPI_COMM_WORLD,&flag,&status);
-
-		if(flag){
-			MPI_Recv(&token,1,MPI_INT,status.MPI_SOURCE,2,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+		if(token != -10){
 			traitement_token(rank, size, token, work, &state, &continuer, &i, work_limit);
+		}
+		else{
+
+			if(rank > 0)
+				MPI_Iprobe(rank -1,2,MPI_COMM_WORLD,&flag,&status);
+			else
+				MPI_Iprobe(size -1,2,MPI_COMM_WORLD,&flag,&status);
+
+			if(flag){
+				MPI_Recv(&token,1,MPI_INT,status.MPI_SOURCE,2,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+				traitement_token(rank, size, token, work, &state, &continuer, &i, work_limit);
+			}
 		}
 
 
