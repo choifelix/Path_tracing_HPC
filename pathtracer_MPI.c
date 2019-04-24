@@ -1772,12 +1772,12 @@ void traitement_token(int rank, int size,int token, bool work, int *state, bool 
 					MPI_Send(token_tmp,1,MPI_INT,0,2,MPI_COMM_WORLD);
 			}
 			else{
-				printf("proc %d  f hell\n",rank);
+				printf("proc %d  token != rank\n",rank);
 				// no work to give -> pass the token
 				int token_t = token;
 				int *token_tmp;
 				token_tmp = &token_t;
-				printf("proc %d token_send value shit\n",rank);
+				printf("proc %d token_send value %d\n",rank,token_t);
 				if(rank < size-1){
 					printf("proc %d  sending to %d token %d\n",rank,rank+1,token);
 					MPI_Send(token_tmp,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
