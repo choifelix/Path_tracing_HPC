@@ -1737,6 +1737,7 @@ void traitement_token(int rank, int size,int token, bool work, int *state, bool 
 		if(work){
 
 			// il y a du travail de dispo
+			printf("proc %d there is work still %d line to do \n ",rank,work_limit - *i );
 			if(work_limit - *i > 1){
 				//si on est a la limite du travail dispo on donne pas
 				int line_left = work_limit - *i;
