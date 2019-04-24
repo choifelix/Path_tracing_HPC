@@ -1746,7 +1746,7 @@ void traitement_token(int rank, int size,int token, bool work, int *state, bool 
 				i_tmp = &i_t;
 				MPI_Send(i_tmp,1,MPI_INT,token,0,MPI_COMM_WORLD);
 				printf("...................................\n");
-				pritnf("proc %d SEND %d to proc %d for work\n",rank,*i_tmp,token);
+				printf("proc %d SEND %d to proc %d for work\n",rank,*i_tmp,token);
 				printf("...................................\n");
 				*i++;
 			}
