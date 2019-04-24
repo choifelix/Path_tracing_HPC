@@ -1947,6 +1947,8 @@ void version3_dynamic_ring_token(int argc, char **argv){
 				else
 					MPI_Send(token_tmp,1,MPI_INT,0,2,MPI_COMM_WORLD);
 
+				printf("proc %d  case -2 , send %d\n",rank, *token_tmp);
+
 				token = -10;
 			}
 			else{
