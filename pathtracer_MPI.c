@@ -1741,7 +1741,7 @@ void traitement_token(int rank, int size,int token, bool work, int *state, bool 
 			if(work_limit - *i > 1){
 				//si on est a la limite du travail dispo on donne pas
 				int line_left = work_limit - *i;
-				*i = *i + 1;
+				//*i = *i + 1;
 				// int i_t = *i;
 				// int *i_tmp;
 				// i_tmp = &i_t;
