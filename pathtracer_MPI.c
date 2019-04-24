@@ -1961,6 +1961,7 @@ void version3_dynamic_ring_token(int argc, char **argv){
 
 		if(token != -10){
 			traitement_token(rank, size, token, work, &state, &continuer, &i, work_limit);
+			token = -10;
 		}
 		else{
 
@@ -1972,6 +1973,7 @@ void version3_dynamic_ring_token(int argc, char **argv){
 			if(flag){
 				MPI_Recv(&token,1,MPI_INT,status.MPI_SOURCE,2,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
 				traitement_token(rank, size, token, work, &state, &continuer, &i, work_limit);
+				token = -10;
 			}
 		}
 
