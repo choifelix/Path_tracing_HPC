@@ -2038,6 +2038,7 @@ void version3_dynamic_ring_token(int argc, char **argv){
 
 
 	if (rank == 0){
+		printf("proc 0 recieving process\n");
 		for(int k=1 ; k<size ; k++){
 			MPI_Recv(image_tmp,3*w*h,MPI_DOUBLE,k,1,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
 			for(int i=0 ; i<3*w*h ; i++){
@@ -2076,9 +2077,11 @@ void version3_dynamic_ring_token(int argc, char **argv){
 		free(image_tmp);
 	}
 	else{
+		printf("proc %d sending process \n",rank);
 		MPI_Send(image,3*w*h,MPI_DOUBLE,0,1,MPI_COMM_WORLD);
 		
 	}
+	printf("proc %d freeing process\n",rank);
 	free(image);
 	//free(tab);
 	//free(shared_memory);
