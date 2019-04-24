@@ -2027,7 +2027,7 @@ void version3_dynamic_ring_token(int argc, char **argv){
 
 
 
-		if(i + 1 >= work_limit){
+		if(i + 1 >= work_limit || i < work_limit - nb_line){
 			work = false;
 			state = inactif; 
 		}
