@@ -1914,11 +1914,11 @@ void version3_dynamic_ring_token(int argc, char **argv){
 		MPI_Iprobe(MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&flag,&status);
 
 		if(flag && !work){
-			printf("proc %d recieving msg",rank);
+			printf("proc %d recieving msg\n",rank);
 			//int * i_tmp;
 			MPI_Recv(&i,1,MPI_INT,status.MPI_SOURCE,0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
 			//i = *i_tmp;
-			work == true;
+			work = true;
 			state = actif;
 		}
 
