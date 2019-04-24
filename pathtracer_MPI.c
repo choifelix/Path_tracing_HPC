@@ -1915,9 +1915,9 @@ void version3_dynamic_ring_token(int argc, char **argv){
 
 		if(flag && !work){
 			printf("proc %d recieving msg",rank);
-			int * i_tmp;
-			MPI_Recv(i_tmp,1,MPI_INT,status.MPI_SOURCE,0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
-			i = *i_tmp;
+			//int * i_tmp;
+			MPI_Recv(&i,1,MPI_INT,status.MPI_SOURCE,0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+			//i = *i_tmp;
 			work == true;
 		}
 
