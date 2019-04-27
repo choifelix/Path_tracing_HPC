@@ -2264,6 +2264,7 @@ void version4_openMP(int argc, char **argv){
 		if(state == actif){
 			unsigned short PRNG_state[3] = {0, 0, i*i*i};
 			#pragma omp parallel num_threads(4) 
+			{
 			for (unsigned short j = 0; j < w; j++) {
 				//printf(" precessus %d, pixel : %d - %d   -----  ",rank,i,j);
 				/* calcule la luminance d'un pixel, avec sur-échantillonnage 2x2 */
@@ -2303,6 +2304,7 @@ void version4_openMP(int argc, char **argv){
 				copy(pixel_radiance, image + 3*w*i+ 3 * j); // <-- retournement vertical
 			}
 			printf( "proc %d did line %d \n",rank,i);
+		}
 		}
 
 
@@ -2390,7 +2392,7 @@ int main(int argc, char **argv)
 	//version2_beta_dynamic(argc, argv);         // not working
 	//version2_beta_dynamic_simple(argc, argv);  // working fine
 	version3_dynamic_ring_token(argc, argv);   // working fine 
-	//version4_openMP(argc, argv);
+	//uiversion4_openMP(argc, argv);
 
 	return 0;
 
