@@ -2265,47 +2265,49 @@ void version4_openMP(int argc, char **argv){
 			unsigned short PRNG_state[3] = {0, 0, i*i*i};
 			#pragma omp parallel num_threads(4) 
 			{
-			for (unsigned short j = 0; j < w; j++) {
-				//printf(" precessus %d, pixel : %d - %d   -----  ",rank,i,j);
-				printf("processus %d thread %d doing pixe %d of line %d \n", rank,omp_get_thread_num(),j,i);
-				/* calcule la luminance d'un pixel, avec sur-échantillonnage 2x2 */
-				double pixel_radiance[3] = {0, 0, 0};
-				for (int sub_i = 0; sub_i < 2; sub_i++) {
-					for (int sub_j = 0; sub_j < 2; sub_j++) {
-						double subpixel_radiance[3] = {0, 0, 0};
-						/* simulation de monte-carlo : on effectue plein de lancers de rayons et on moyenne */
-						for (int s = 0; s < samples; s++) { 
-							/* tire un rayon aléatoire dans une zone de la caméra qui correspond à peu près au pixel à calculer */
-							double r1 = 2 * erand48(PRNG_state);
-							double dx = (r1 < 1) ? sqrt(r1) - 1 : 1 - sqrt(2 - r1); 
-							double r2 = 2 * erand48(PRNG_state);
-							double dy = (r2 < 1) ? sqrt(r2) - 1 : 1 - sqrt(2 - r2);
-							double ray_direction[3];
-							copy(camera_direction, ray_direction);
-							axpy(((sub_i + .5 + dy) / 2 + i) / h - .5, cy, ray_direction);
-							axpy(((sub_j + .5 + dx) / 2 + j) / w - .5, cx, ray_direction);
-							normalize(ray_direction);
+			#pragma omp for{
+				for (unsigned short j = 0; j < w; j++) {
+					//printf(" precessus %d, pixel : %d - %d   -----  ",rank,i,j);
+					printf("processus %d thread %d doing pixe %d of line %d \n", rank,omp_get_thread_num(),j,i);
+					/* calcule la luminance d'un pixel, avec sur-échantillonnage 2x2 */
+					double pixel_radiance[3] = {0, 0, 0};
+					for (int sub_i = 0; sub_i < 2; sub_i++) {
+						for (int sub_j = 0; sub_j < 2; sub_j++) {
+							double subpixel_radiance[3] = {0, 0, 0};
+							/* simulation de monte-carlo : on effectue plein de lancers de rayons et on moyenne */
+							for (int s = 0; s < samples; s++) { 
+								/* tire un rayon aléatoire dans une zone de la caméra qui correspond à peu près au pixel à calculer */
+								double r1 = 2 * erand48(PRNG_state);
+								double dx = (r1 < 1) ? sqrt(r1) - 1 : 1 - sqrt(2 - r1); 
+								double r2 = 2 * erand48(PRNG_state);
+								double dy = (r2 < 1) ? sqrt(r2) - 1 : 1 - sqrt(2 - r2);
+								double ray_direction[3];
+								copy(camera_direction, ray_direction);
+								axpy(((sub_i + .5 + dy) / 2 + i) / h - .5, cy, ray_direction);
+								axpy(((sub_j + .5 + dx) / 2 + j) / w - .5, cx, ray_direction);
+								normalize(ray_direction);
 
-							double ray_origin[3];
-							copy(camera_position, ray_origin);
-							axpy(140, ray_direction, ray_origin);
+								double ray_origin[3];
+								copy(camera_position, ray_origin);
+								axpy(140, ray_direction, ray_origin);
+								
+								/* estime la lumiance qui arrive sur la caméra par ce rayon */
+								double sample_radiance[3];
+								radiance(ray_origin, ray_direction, 0, PRNG_state, sample_radiance);
+								/* fait la moyenne sur tous les rayons */
+								axpy(1. / samples, sample_radiance, subpixel_radiance);
+							}
+							clamp(subpixel_radiance);
+							/* fait la moyenne sur les 4 sous-pixels */
+							axpy(0.25, subpixel_radiance, pixel_radiance);
 							
-							/* estime la lumiance qui arrive sur la caméra par ce rayon */
-							double sample_radiance[3];
-							radiance(ray_origin, ray_direction, 0, PRNG_state, sample_radiance);
-							/* fait la moyenne sur tous les rayons */
-							axpy(1. / samples, sample_radiance, subpixel_radiance);
 						}
-						clamp(subpixel_radiance);
-						/* fait la moyenne sur les 4 sous-pixels */
-						axpy(0.25, subpixel_radiance, pixel_radiance);
-						
 					}
+					copy(pixel_radiance, image + 3*w*i+ 3 * j); // <-- retournement vertical
 				}
-				copy(pixel_radiance, image + 3*w*i+ 3 * j); // <-- retournement vertical
+				printf( "proc %d did line %d thread %d\n",rank,i,omp_get_thread_num());
 			}
-			printf( "proc %d did line %d thread %d\n",rank,i,omp_get_thread_num());
-		}
+			}
 		}
 
 
