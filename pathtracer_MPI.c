@@ -2265,7 +2265,8 @@ void version4_openMP(int argc, char **argv){
 			unsigned short PRNG_state[3] = {0, 0, i*i*i};
 			#pragma omp parallel num_threads(4) 
 			{
-			#pragma omp for{
+			#pragma omp for
+			{
 				for (unsigned short j = 0; j < w; j++) {
 					//printf(" precessus %d, pixel : %d - %d   -----  ",rank,i,j);
 					printf("processus %d thread %d doing pixe %d of line %d \n", rank,omp_get_thread_num(),j,i);
