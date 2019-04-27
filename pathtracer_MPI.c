@@ -2268,7 +2268,7 @@ void version4_openMP(int argc, char **argv){
 			#pragma omp for
 				for (unsigned short j = 0; j < w; j++) {
 					//printf(" precessus %d, pixel : %d - %d   -----  ",rank,i,j);
-					printf("processus %d thread %d doing pixe %d of line %d \n", rank,omp_get_thread_num(),j,i);
+					//printf("processus %d thread %d doing pixe %d of line %d \n", rank,omp_get_thread_num(),j,i);
 					/* calcule la luminance d'un pixel, avec sur-échantillonnage 2x2 */
 					double pixel_radiance[3] = {0, 0, 0};
 					for (int sub_i = 0; sub_i < 2; sub_i++) {
