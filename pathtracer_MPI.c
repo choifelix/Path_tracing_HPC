@@ -2266,7 +2266,6 @@ void version4_openMP(int argc, char **argv){
 			#pragma omp parallel num_threads(4) 
 			{
 			#pragma omp for
-			{
 				for (unsigned short j = 0; j < w; j++) {
 					//printf(" precessus %d, pixel : %d - %d   -----  ",rank,i,j);
 					printf("processus %d thread %d doing pixe %d of line %d \n", rank,omp_get_thread_num(),j,i);
@@ -2307,7 +2306,6 @@ void version4_openMP(int argc, char **argv){
 					copy(pixel_radiance, image + 3*w*i+ 3 * j); // <-- retournement vertical
 				}
 				printf( "proc %d did line %d thread %d\n",rank,i,omp_get_thread_num());
-			}
 			}
 		}
 
