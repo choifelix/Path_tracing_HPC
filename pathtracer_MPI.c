@@ -2303,7 +2303,7 @@ void version4_openMP(int argc, char **argv){
 				}
 				copy(pixel_radiance, image + 3*w*i+ 3 * j); // <-- retournement vertical
 			}
-			printf( "proc %d did line %d \n",rank,i);
+			printf( "proc %d did line %d thread %d\n",rank,i,omp_get_thread_num());
 		}
 		}
 
@@ -2391,8 +2391,8 @@ int main(int argc, char **argv)
 	//version1_static(argc, argv);               // working fine 
 	//version2_beta_dynamic(argc, argv);         // not working
 	//version2_beta_dynamic_simple(argc, argv);  // working fine
-	version3_dynamic_ring_token(argc, argv);   // working fine 
-	//uiversion4_openMP(argc, argv);
+	//version3_dynamic_ring_token(argc, argv);   // working fine 
+	uiversion4_openMP(argc, argv);
 
 	return 0;
 
