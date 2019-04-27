@@ -2107,8 +2107,8 @@ void version4_openMP(int argc, char **argv){
 	printf("%d : MPI init DONE \n", rank);
 
 	/* Petit cas test (small, quick and dirty): */
-	int w = 320;
-	int h = 200;
+	int w = 32;
+	int h = 20;
 	int samples = 200;
 	bool work =true;
 	bool continuer = true;
