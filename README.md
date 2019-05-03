@@ -1,6 +1,6 @@
 # Path_tracing_HPC
 
-mpicc -o pathtracerMPI pathtracer_MPI.c -lm
+mpicc -o pathtracerMPI pathtracer_MPI.c -fopenmp -lm
 
 mpirun -n 3 -hostfile hostfile --map-by node ./pathtracerMPI
 
