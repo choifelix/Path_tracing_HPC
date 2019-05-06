@@ -2789,9 +2789,9 @@ int main(int argc, char **argv)
 	//version2_beta_dynamic(argc, argv);         // not working
 	//version2_beta_dynamic_simple(argc, argv);  // working fine
 	//version3_dynamic_ring_token(argc, argv);   // working fine 
-	version4_openMP(argc, argv);
+	//version4_openMP(argc, argv);
 	
-	//version5_openMP_com(argc, argv);
+	version5_openMP_com(argc, argv);
 	
 
 	return 0;
