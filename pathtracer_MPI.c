@@ -2485,7 +2485,7 @@ void version5_openMP_com(int argc, char **argv){
 
 
 	//while(continuer){
-	#pragma omp parallel num_threads(2)
+	#pragma omp parallel num_threads(2) shared(i,state,continuer,work)
 	{
 		
 		if(omp_get_thread_num()== 0){
