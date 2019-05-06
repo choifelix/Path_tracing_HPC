@@ -2377,7 +2377,9 @@ void version4_openMP(int argc, char **argv){
 	}
 	else{
 		printf("proc %d sending process \n",rank);
-		MPI_Send(image,3*w*h,MPI_DOUBLE,0,1,MPI_COMM_WORLD);
+		double * image_tmp;
+		image_tmp = image;
+		MPI_Send(image_tmp,3*w*h,MPI_DOUBLE,0,1,MPI_COMM_WORLD);
 		
 	}
 
