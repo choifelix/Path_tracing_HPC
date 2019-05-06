@@ -1721,10 +1721,10 @@ void version2_beta_dynamic_simple(int argc, char **argv){
 
 
 void traitement_token(int rank, int size,int token, bool work, int *state, bool *continuer, int *i, int work_limit){
-	//printf("proc %d entering token managment \n",rank);
+	printf("proc %d entering token managment \n",rank);
 	int *token_send;
 	if(token  == -2){
-		//printf("proc %d  case : -2\n",rank);
+		printf("proc %d  case : -2\n",rank);
 		int token_t = token;
 		int *token_tmp;
 		token_tmp = &token_t;
@@ -1734,11 +1734,11 @@ void traitement_token(int rank, int size,int token, bool work, int *state, bool 
 			MPI_Send(token_tmp,1,MPI_INT,0,2,MPI_COMM_WORLD);
 	}
 	else if(token >= 0){
-		//printf("proc %d  case : >=0\n",rank);
+		printf("proc %d  case : >=0\n",rank);
 		if(work){
 
 			// il y a du travail de dispo
-			//printf("proc %d there is work still %d line to do \n ",rank,work_limit - *i );
+			printf("proc %d there is work still %d line to do \n ",rank,work_limit - *i );
 			if(work_limit - *i > 1){
 				//si on est a la limite du travail dispo on donne pas
 				int line_left = work_limit - *i;
@@ -1762,7 +1762,7 @@ void traitement_token(int rank, int size,int token, bool work, int *state, bool 
 		}
 		else{
 			if(token == rank){
-				//printf("proc %d  token = rank\n",rank);
+				printf("proc %d  token = rank\n",rank);
 				// recieving his own message -> exit : token = -1
 				int token_t = -1;
 				int *token_tmp;
@@ -1771,31 +1771,31 @@ void traitement_token(int rank, int size,int token, bool work, int *state, bool 
 					MPI_Send(token_tmp,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
 				else
 					MPI_Send(token_tmp,1,MPI_INT,0,2,MPI_COMM_WORLD);
-				//printf("proc %d token -1 send will exit\n", rank);
+				printf("proc %d token -1 send will exit\n", rank);
 				*state = inactif;
 				*continuer = false;
 			}
 			else{
-				//printf("proc %d  token != rank\n",rank);
+				printf("proc %d  token != rank\n",rank);
 				// no work to give -> pass the token
 				int token_t = token;
 				int *token_tmp;
 				token_tmp = &token_t;
-				//printf("proc %d token_send value %d\n",rank,token_t);
+				printf("proc %d token_send value %d\n",rank,token_t);
 				if(rank < size-1){
-					//printf("proc %d  sending to %d token %d\n",rank,rank+1,token);
+					printf("proc %d  sending to %d token %d\n",rank,rank+1,token);
 					MPI_Send(token_tmp,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
 				}
 				else{
-					//printf("proc %d  sending to %d token %d\n",rank,0,token);
+					printf("proc %d  sending to %d token %d\n",rank,0,token);
 					MPI_Send(token_tmp,1,MPI_INT,0,2,MPI_COMM_WORLD);
 				}
 			}
 		}
-		//printf("proc %d  case : >=0 done\n",rank);
+		printf("proc %d  case : >=0 done\n",rank);
 	}
 	else if(token == -1){
-		//printf("proc %d  case : -1\n",rank);
+		printf("proc %d  case : -1\n",rank);
 		int token_t = token;
 		int *token_tmp;
 		token_tmp = &token_t;
