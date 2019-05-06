@@ -1825,13 +1825,6 @@ void version3_dynamic_ring_token(int argc, char **argv){
 	int w = 320;
 	int h = 200;
 	int samples = 200;
-
-	/* Gros cas test (big, slow and pretty): */
-	// int w = 3840; 
-	// int h = 2160; 
-	// int samples = 5000; 
-
-
 	bool work =true;
 	bool continuer = true;
 
@@ -1853,7 +1846,10 @@ void version3_dynamic_ring_token(int argc, char **argv){
 
 	printf("hello i am %d\n", rank);
 
-	
+	/* Gros cas test (big, slow and pretty): */
+	/* int w = 3840; */
+	/* int h = 2160; */
+	/* int samples = 5000;  */
 
 	if (argc == 2) 
 		samples = atoi(argv[1]) / 4;
@@ -1942,9 +1938,9 @@ void version3_dynamic_ring_token(int argc, char **argv){
 				int *token_tmp;
 				token_tmp = &token_t;
 				if(rank < size -1)
-					MPI_Bsend(token_tmp,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
+					MPI_Send(token_tmp,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
 				else
-					MPI_Bsend(token_tmp,1,MPI_INT,0,2,MPI_COMM_WORLD);
+					MPI_Send(token_tmp,1,MPI_INT,0,2,MPI_COMM_WORLD);
 
 				printf("proc %d  case -2 , send %d\n",rank, *token_tmp);
 
@@ -2087,7 +2083,7 @@ void version3_dynamic_ring_token(int argc, char **argv){
 	}
 	else{
 		printf("proc %d sending process \n",rank);
-		MPI_Bsend(image,3*w*h,MPI_DOUBLE,0,1,MPI_COMM_WORLD);
+		MPI_Send(image,3*w*h,MPI_DOUBLE,0,1,MPI_COMM_WORLD);
 		
 	}
 
@@ -2095,6 +2091,7 @@ void version3_dynamic_ring_token(int argc, char **argv){
 	free(image);
 	MPI_Finalize();
 }
+
 
 
 
