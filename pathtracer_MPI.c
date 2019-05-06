@@ -2485,6 +2485,7 @@ void version5_openMP_com(int argc, char **argv){
 
 
 	while(continuer){
+		
 		#pragma omp task
 		{
 			MPI_Iprobe(MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&flag,&status);
@@ -2687,7 +2688,13 @@ int main(int argc, char **argv)
 	//version2_beta_dynamic_simple(argc, argv);  // working fine
 	//version3_dynamic_ring_token(argc, argv);   // working fine 
 	//version4_openMP(argc, argv);
-	version5_openMP_com(argc, argv);
+	#pragma omp parallel
+	{
+		#pragma omp single
+		{
+			version5_openMP_com(argc, argv);
+		}
+	}
 
 	return 0;
 
