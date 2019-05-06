@@ -2486,8 +2486,7 @@ void version5_openMP_com(int argc, char **argv){
 
 	//while(continuer){
 		
-		#pragma omp task shared(i,work,state,continuer)
-		{
+		if(omp_get_num_thread()== 0){
 			while(continuer){
 				MPI_Iprobe(MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&flag,&status);
 
@@ -2558,8 +2557,7 @@ void version5_openMP_com(int argc, char **argv){
 
 
 
-		#pragma omp task shared(i,work,state,continuer)
-		{
+		else{
 			while(continuer){
 				if(state == actif){
 					unsigned short PRNG_state[3] = {0, 0, i*i*i};
@@ -2692,12 +2690,9 @@ int main(int argc, char **argv)
 	//version2_beta_dynamic_simple(argc, argv);  // working fine
 	//version3_dynamic_ring_token(argc, argv);   // working fine 
 	//version4_openMP(argc, argv);
-	#pragma omp parallel
+	#pragma omp parallel num_threads(2)
 	{
-		#pragma omp single
-		{
-			version5_openMP_com(argc, argv);
-		}
+		version5_openMP_com(argc, argv);
 	}
 
 	return 0;
