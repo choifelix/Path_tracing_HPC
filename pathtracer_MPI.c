@@ -2401,8 +2401,8 @@ void traitement_token_omp(int rank, int size,int token, bool work, int *state, b
 			MPI_Send(token_tmp,1,MPI_INT,0,2,MPI_COMM_WORLD);
 	}
 	else if(token >= 0){
-		#pragma omp critical
-		{
+		// #pragma omp critical
+		// {
 		//printf("proc %d  case : >=0\n",rank);
 			if(work){
 
@@ -2461,7 +2461,7 @@ void traitement_token_omp(int rank, int size,int token, bool work, int *state, b
 					}
 				}
 			}
-		}
+		// }
 		//printf("proc %d  case : >=0 done\n",rank);
 	}
 	else if(token == -1){
@@ -2791,7 +2791,7 @@ int main(int argc, char **argv)
 	//version3_dynamic_ring_token(argc, argv);   // working fine 
 	//version4_openMP(argc, argv);
 	
-	version5_openMP_com(argc, argv);
+	version5_openMP_com(argc, argv);			 // not working properly
 	
 
 	return 0;
