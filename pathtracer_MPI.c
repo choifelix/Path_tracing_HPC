@@ -2485,129 +2485,134 @@ void version5_openMP_com(int argc, char **argv){
 
 
 	while(continuer){
-		MPI_Iprobe(MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&flag,&status);
+		#pragma omp task
+		{
+			MPI_Iprobe(MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&flag,&status);
 
-		if(flag && !work){
-			printf("proc %d recieving msg\n",rank);
-			//int * i_tmp;
-			MPI_Recv(&i,1,MPI_INT,status.MPI_SOURCE,0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
-			//i = *i_tmp;
-			work = true;
-			state = actif;
-		}
-
-
-		if(!work){
-			printf("proc %d entering no work zone. \n",rank);
-			if(token == -10){
-				printf("proc %d no token, waiting for it\n",rank);
-				if(rank > 0)
-					MPI_Recv(&token,1,MPI_INT,rank-1,2,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
-				else
-					MPI_Recv(&token,1,MPI_INT,size-1,2,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+			if(flag && !work){
+				printf("proc %d recieving msg\n",rank);
+				//int * i_tmp;
+				MPI_Recv(&i,1,MPI_INT,status.MPI_SOURCE,0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+				//i = *i_tmp;
+				work = true;
+				state = actif;
 			}
-			printf("proc %d : token is here : %d\n",rank,token);
 
-			if(token == -2){
-				printf("proc %d  token -2 , sending\n",rank);
-				token = rank;
-				int token_t = token;
-				int *token_tmp;
-				token_tmp = &token_t;
-				if(rank < size -1)
-					MPI_Send(token_tmp,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
-				else
-					MPI_Send(token_tmp,1,MPI_INT,0,2,MPI_COMM_WORLD);
 
-				printf("proc %d  case -2 , send %d\n",rank, *token_tmp);
+			if(!work){
+				printf("proc %d entering no work zone. \n",rank);
+				if(token == -10){
+					printf("proc %d no token, waiting for it\n",rank);
+					if(rank > 0)
+						MPI_Recv(&token,1,MPI_INT,rank-1,2,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+					else
+						MPI_Recv(&token,1,MPI_INT,size-1,2,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+				}
+				printf("proc %d : token is here : %d\n",rank,token);
 
+				if(token == -2){
+					printf("proc %d  token -2 , sending\n",rank);
+					token = rank;
+					int token_t = token;
+					int *token_tmp;
+					token_tmp = &token_t;
+					if(rank < size -1)
+						MPI_Send(token_tmp,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
+					else
+						MPI_Send(token_tmp,1,MPI_INT,0,2,MPI_COMM_WORLD);
+
+					printf("proc %d  case -2 , send %d\n",rank, *token_tmp);
+
+					token = -10;
+				}
+				else{
+					printf("proc %d  token here , checking\n",rank);
+					traitement_token(rank, size, token, work, &state, &continuer, &i, work_limit);
+					token = -10;
+				}
+			}
+
+
+			if(token != -10){
+				traitement_token(rank, size, token, work, &state, &continuer, &i, work_limit);
 				token = -10;
 			}
 			else{
-				printf("proc %d  token here , checking\n",rank);
-				traitement_token(rank, size, token, work, &state, &continuer, &i, work_limit);
-				token = -10;
-			}
-		}
 
+				if(rank > 0)
+					MPI_Iprobe(rank -1,2,MPI_COMM_WORLD,&flag,&status);
+				else
+					MPI_Iprobe(size -1,2,MPI_COMM_WORLD,&flag,&status);
 
-		if(token != -10){
-			traitement_token(rank, size, token, work, &state, &continuer, &i, work_limit);
-			token = -10;
-		}
-		else{
-
-			if(rank > 0)
-				MPI_Iprobe(rank -1,2,MPI_COMM_WORLD,&flag,&status);
-			else
-				MPI_Iprobe(size -1,2,MPI_COMM_WORLD,&flag,&status);
-
-			if(flag){
-				MPI_Recv(&token,1,MPI_INT,status.MPI_SOURCE,2,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
-				traitement_token(rank, size, token, work, &state, &continuer, &i, work_limit);
-				token = -10;
-			}
-		}
-
-
-
-
-
-		if(state == actif){
-			unsigned short PRNG_state[3] = {0, 0, i*i*i};
-			for (unsigned short j = 0; j < w; j++) {
-				//printf(" precessus %d, pixel : %d - %d   -----  ",rank,i,j);
-				/* calcule la luminance d'un pixel, avec sur-échantillonnage 2x2 */
-				double pixel_radiance[3] = {0, 0, 0};
-				for (int sub_i = 0; sub_i < 2; sub_i++) {
-					for (int sub_j = 0; sub_j < 2; sub_j++) {
-						double subpixel_radiance[3] = {0, 0, 0};
-						/* simulation de monte-carlo : on effectue plein de lancers de rayons et on moyenne */
-						for (int s = 0; s < samples; s++) { 
-							/* tire un rayon aléatoire dans une zone de la caméra qui correspond à peu près au pixel à calculer */
-							double r1 = 2 * erand48(PRNG_state);
-							double dx = (r1 < 1) ? sqrt(r1) - 1 : 1 - sqrt(2 - r1); 
-							double r2 = 2 * erand48(PRNG_state);
-							double dy = (r2 < 1) ? sqrt(r2) - 1 : 1 - sqrt(2 - r2);
-							double ray_direction[3];
-							copy(camera_direction, ray_direction);
-							axpy(((sub_i + .5 + dy) / 2 + i) / h - .5, cy, ray_direction);
-							axpy(((sub_j + .5 + dx) / 2 + j) / w - .5, cx, ray_direction);
-							normalize(ray_direction);
-
-							double ray_origin[3];
-							copy(camera_position, ray_origin);
-							axpy(140, ray_direction, ray_origin);
-							
-							/* estime la lumiance qui arrive sur la caméra par ce rayon */
-							double sample_radiance[3];
-							radiance(ray_origin, ray_direction, 0, PRNG_state, sample_radiance);
-							/* fait la moyenne sur tous les rayons */
-							axpy(1. / samples, sample_radiance, subpixel_radiance);
-						}
-						clamp(subpixel_radiance);
-						/* fait la moyenne sur les 4 sous-pixels */
-						axpy(0.25, subpixel_radiance, pixel_radiance);
-						
-					}
+				if(flag){
+					MPI_Recv(&token,1,MPI_INT,status.MPI_SOURCE,2,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+					traitement_token(rank, size, token, work, &state, &continuer, &i, work_limit);
+					token = -10;
 				}
-				copy(pixel_radiance, image + 3*w*i+ 3 * j); // <-- retournement vertical
 			}
-			printf( "proc %d did line %d \n",rank,i);
 		}
 
 
 
-		if(i + 1 >= work_limit || i < work_limit - nb_line){
-			work = false;
-			state = inactif; 
-		}
-		else{
-			i++;
-		}
-		
 
-		iter++;
+		#pragma omp task
+		{
+			if(state == actif){
+				unsigned short PRNG_state[3] = {0, 0, i*i*i};
+				for (unsigned short j = 0; j < w; j++) {
+					//printf(" precessus %d, pixel : %d - %d   -----  ",rank,i,j);
+					/* calcule la luminance d'un pixel, avec sur-échantillonnage 2x2 */
+					double pixel_radiance[3] = {0, 0, 0};
+					for (int sub_i = 0; sub_i < 2; sub_i++) {
+						for (int sub_j = 0; sub_j < 2; sub_j++) {
+							double subpixel_radiance[3] = {0, 0, 0};
+							/* simulation de monte-carlo : on effectue plein de lancers de rayons et on moyenne */
+							for (int s = 0; s < samples; s++) { 
+								/* tire un rayon aléatoire dans une zone de la caméra qui correspond à peu près au pixel à calculer */
+								double r1 = 2 * erand48(PRNG_state);
+								double dx = (r1 < 1) ? sqrt(r1) - 1 : 1 - sqrt(2 - r1); 
+								double r2 = 2 * erand48(PRNG_state);
+								double dy = (r2 < 1) ? sqrt(r2) - 1 : 1 - sqrt(2 - r2);
+								double ray_direction[3];
+								copy(camera_direction, ray_direction);
+								axpy(((sub_i + .5 + dy) / 2 + i) / h - .5, cy, ray_direction);
+								axpy(((sub_j + .5 + dx) / 2 + j) / w - .5, cx, ray_direction);
+								normalize(ray_direction);
+
+								double ray_origin[3];
+								copy(camera_position, ray_origin);
+								axpy(140, ray_direction, ray_origin);
+								
+								/* estime la lumiance qui arrive sur la caméra par ce rayon */
+								double sample_radiance[3];
+								radiance(ray_origin, ray_direction, 0, PRNG_state, sample_radiance);
+								/* fait la moyenne sur tous les rayons */
+								axpy(1. / samples, sample_radiance, subpixel_radiance);
+							}
+							clamp(subpixel_radiance);
+							/* fait la moyenne sur les 4 sous-pixels */
+							axpy(0.25, subpixel_radiance, pixel_radiance);
+							
+						}
+					}
+					copy(pixel_radiance, image + 3*w*i+ 3 * j); // <-- retournement vertical
+				}
+				printf( "proc %d did line %d \n",rank,i);
+			}
+
+
+
+			if(i + 1 >= work_limit || i < work_limit - nb_line){
+				work = false;
+				state = inactif; 
+			}
+			else{
+				i++;
+			}
+			
+
+			iter++;
+		}
 	}
 
 	double t1 =my_gettimeofday();
@@ -2680,9 +2685,9 @@ int main(int argc, char **argv)
 	//version1_static(argc, argv);               // working fine 
 	//version2_beta_dynamic(argc, argv);         // not working
 	//version2_beta_dynamic_simple(argc, argv);  // working fine
-	version3_dynamic_ring_token(argc, argv);   // working fine 
+	//version3_dynamic_ring_token(argc, argv);   // working fine 
 	//version4_openMP(argc, argv);
-	//version5_openMP_com(argc, argv);
+	version5_openMP_com(argc, argv);
 
 	return 0;
 
