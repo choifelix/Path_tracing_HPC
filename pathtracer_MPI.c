@@ -2618,6 +2618,7 @@ void version5_openMP_com(int argc, char **argv){
 					
 
 					iter++;
+					}
 				}
 			}
 		}
