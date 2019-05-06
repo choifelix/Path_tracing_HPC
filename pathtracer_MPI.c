@@ -2486,7 +2486,7 @@ void version5_openMP_com(int argc, char **argv){
 
 	//while(continuer){
 		
-		if(omp_get_num_thread()== 0){
+		if(omp_get_thread_num()== 0){
 			while(continuer){
 				MPI_Iprobe(MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&flag,&status);
 
