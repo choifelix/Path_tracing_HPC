@@ -1762,7 +1762,7 @@ void traitement_token(int rank, int size,int token, bool work, int *state, bool 
 		}
 		else{
 			if(token == rank){
-				printf("proc %d  token = rank\n",rank);
+				//printf("proc %d  token = rank\n",rank);
 				// recieving his own message -> exit : token = -1
 				int token_t = -1;
 				int *token_tmp;
@@ -1771,23 +1771,23 @@ void traitement_token(int rank, int size,int token, bool work, int *state, bool 
 					MPI_Send(token_tmp,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
 				else
 					MPI_Send(token_tmp,1,MPI_INT,0,2,MPI_COMM_WORLD);
-				printf("proc %d token -1 send will exit\n", rank);
+				//printf("proc %d token -1 send will exit\n", rank);
 				*state = inactif;
 				*continuer = false;
 			}
 			else{
-				printf("proc %d  token != rank\n",rank);
+				//printf("proc %d  token != rank\n",rank);
 				// no work to give -> pass the token
 				int token_t = token;
 				int *token_tmp;
 				token_tmp = &token_t;
-				printf("proc %d token_send value %d\n",rank,token_t);
+				//printf("proc %d token_send value %d\n",rank,token_t);
 				if(rank < size-1){
-					printf("proc %d  sending to %d token %d\n",rank,rank+1,token);
+					//printf("proc %d  sending to %d token %d\n",rank,rank+1,token);
 					MPI_Send(token_tmp,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
 				}
 				else{
-					printf("proc %d  sending to %d token %d\n",rank,0,token);
+					//printf("proc %d  sending to %d token %d\n",rank,0,token);
 					MPI_Send(token_tmp,1,MPI_INT,0,2,MPI_COMM_WORLD);
 				}
 			}
@@ -1822,14 +1822,14 @@ void version3_dynamic_ring_token(int argc, char **argv){
 	printf("%d : MPI init DONE \n", rank);
 
 	/* Petit cas test (small, quick and dirty): */
-	// int w = 320;
-	// int h = 200;
-	// int samples = 200;
+	int w = 320;
+	int h = 200;
+	int samples = 200;
 
 	/* Gros cas test (big, slow and pretty): */
-	int w = 3840; 
-	int h = 2160; 
-	int samples = 5000; 
+	// int w = 3840; 
+	// int h = 2160; 
+	// int samples = 5000; 
 
 
 	bool work =true;
@@ -2493,7 +2493,7 @@ void version5_openMP_com(int argc, char **argv){
 				MPI_Iprobe(MPI_ANY_SOURCE,0,MPI_COMM_WORLD,&flag,&status);
 
 				if(flag && !work){
-					printf("proc %d recieving msg\n",rank);
+					//printf("proc %d recieving msg\n",rank);
 					//int * i_tmp;
 					MPI_Recv(&i,1,MPI_INT,status.MPI_SOURCE,0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
 					//i = *i_tmp;
@@ -2511,10 +2511,10 @@ void version5_openMP_com(int argc, char **argv){
 						else
 							MPI_Recv(&token,1,MPI_INT,size-1,2,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
 					}
-					printf("proc %d : token is here : %d\n",rank,token);
+					//printf("proc %d : token is here : %d\n",rank,token);
 
 					if(token == -2){
-						printf("proc %d  token -2 , sending\n",rank);
+						//printf("proc %d  token -2 , sending\n",rank);
 						token = rank;
 						int token_t = token;
 						int *token_tmp;
@@ -2524,12 +2524,12 @@ void version5_openMP_com(int argc, char **argv){
 						else
 							MPI_Send(token_tmp,1,MPI_INT,0,2,MPI_COMM_WORLD);
 
-						printf("proc %d  case -2 , send %d\n",rank, *token_tmp);
+						//printf("proc %d  case -2 , send %d\n",rank, *token_tmp);
 
 						token = -10;
 					}
 					else{
-						printf("proc %d  token here , checking\n",rank);
+						//printf("proc %d  token here , checking\n",rank);
 						traitement_token(rank, size, token, work, &state, &continuer, &i, work_limit);
 						token = -10;
 					}
@@ -2562,60 +2562,63 @@ void version5_openMP_com(int argc, char **argv){
 		else{
 			while(continuer){
 				if(state == actif){
-					unsigned short PRNG_state[3] = {0, 0, i*i*i};
-					for (unsigned short j = 0; j < w; j++) {
-						//printf(" precessus %d, pixel : %d - %d   -----  ",rank,i,j);
-						/* calcule la luminance d'un pixel, avec sur-échantillonnage 2x2 */
-						double pixel_radiance[3] = {0, 0, 0};
-						for (int sub_i = 0; sub_i < 2; sub_i++) {
-							for (int sub_j = 0; sub_j < 2; sub_j++) {
-								double subpixel_radiance[3] = {0, 0, 0};
-								/* simulation de monte-carlo : on effectue plein de lancers de rayons et on moyenne */
-								for (int s = 0; s < samples; s++) { 
-									/* tire un rayon aléatoire dans une zone de la caméra qui correspond à peu près au pixel à calculer */
-									double r1 = 2 * erand48(PRNG_state);
-									double dx = (r1 < 1) ? sqrt(r1) - 1 : 1 - sqrt(2 - r1); 
-									double r2 = 2 * erand48(PRNG_state);
-									double dy = (r2 < 1) ? sqrt(r2) - 1 : 1 - sqrt(2 - r2);
-									double ray_direction[3];
-									copy(camera_direction, ray_direction);
-									axpy(((sub_i + .5 + dy) / 2 + i) / h - .5, cy, ray_direction);
-									axpy(((sub_j + .5 + dx) / 2 + j) / w - .5, cx, ray_direction);
-									normalize(ray_direction);
+					#pragma omp critical
+					{
+						unsigned short PRNG_state[3] = {0, 0, i*i*i};
+						for (unsigned short j = 0; j < w; j++) {
+							//printf(" precessus %d, pixel : %d - %d   -----  ",rank,i,j);
+							/* calcule la luminance d'un pixel, avec sur-échantillonnage 2x2 */
+							double pixel_radiance[3] = {0, 0, 0};
+							for (int sub_i = 0; sub_i < 2; sub_i++) {
+								for (int sub_j = 0; sub_j < 2; sub_j++) {
+									double subpixel_radiance[3] = {0, 0, 0};
+									/* simulation de monte-carlo : on effectue plein de lancers de rayons et on moyenne */
+									for (int s = 0; s < samples; s++) { 
+										/* tire un rayon aléatoire dans une zone de la caméra qui correspond à peu près au pixel à calculer */
+										double r1 = 2 * erand48(PRNG_state);
+										double dx = (r1 < 1) ? sqrt(r1) - 1 : 1 - sqrt(2 - r1); 
+										double r2 = 2 * erand48(PRNG_state);
+										double dy = (r2 < 1) ? sqrt(r2) - 1 : 1 - sqrt(2 - r2);
+										double ray_direction[3];
+										copy(camera_direction, ray_direction);
+										axpy(((sub_i + .5 + dy) / 2 + i) / h - .5, cy, ray_direction);
+										axpy(((sub_j + .5 + dx) / 2 + j) / w - .5, cx, ray_direction);
+										normalize(ray_direction);
 
-									double ray_origin[3];
-									copy(camera_position, ray_origin);
-									axpy(140, ray_direction, ray_origin);
+										double ray_origin[3];
+										copy(camera_position, ray_origin);
+										axpy(140, ray_direction, ray_origin);
+										
+										/* estime la lumiance qui arrive sur la caméra par ce rayon */
+										double sample_radiance[3];
+										radiance(ray_origin, ray_direction, 0, PRNG_state, sample_radiance);
+										/* fait la moyenne sur tous les rayons */
+										axpy(1. / samples, sample_radiance, subpixel_radiance);
+									}
+									clamp(subpixel_radiance);
+									/* fait la moyenne sur les 4 sous-pixels */
+									axpy(0.25, subpixel_radiance, pixel_radiance);
 									
-									/* estime la lumiance qui arrive sur la caméra par ce rayon */
-									double sample_radiance[3];
-									radiance(ray_origin, ray_direction, 0, PRNG_state, sample_radiance);
-									/* fait la moyenne sur tous les rayons */
-									axpy(1. / samples, sample_radiance, subpixel_radiance);
 								}
-								clamp(subpixel_radiance);
-								/* fait la moyenne sur les 4 sous-pixels */
-								axpy(0.25, subpixel_radiance, pixel_radiance);
-								
 							}
+							copy(pixel_radiance, image + 3*w*i+ 3 * j); // <-- retournement vertical
 						}
-						copy(pixel_radiance, image + 3*w*i+ 3 * j); // <-- retournement vertical
+						printf( "proc %d did line %d \n",rank,i);
+					
+
+
+
+					if(i + 1 >= work_limit || i < work_limit - nb_line){
+						work = false;
+						state = inactif; 
 					}
-					printf( "proc %d did line %d \n",rank,i);
+					else{
+						i++;
+					}
+					
+
+					iter++;
 				}
-
-
-
-				if(i + 1 >= work_limit || i < work_limit - nb_line){
-					work = false;
-					state = inactif; 
-				}
-				else{
-					i++;
-				}
-				
-
-				iter++;
 			}
 		}
 	}
@@ -2658,7 +2661,7 @@ void version5_openMP_com(int argc, char **argv){
 		pass = getpwuid(getuid()); 
 		sprintf(nom_rep, "/nfs/home/sasl/eleves/main/3520621/Documents/HPC/Path_tracing_HPC/%s", pass->pw_name);
 		mkdir(nom_rep, S_IRWXU);
-		sprintf(nom_sortie, "%s/version3_image%d.ppm", nom_rep,size);
+		sprintf(nom_sortie, "%s/version5_image%d.ppm", nom_rep,size);
 		
 		FILE *f = fopen(nom_sortie, "w");
 		fprintf(f, "P3\n%d %d\n%d\n", w, h, 255); 
