@@ -2485,6 +2485,8 @@ void version5_openMP_com(int argc, char **argv){
 
 
 	//while(continuer){
+	#pragma omp parallel num_threads(2)
+	{
 		
 		if(omp_get_thread_num()== 0){
 			while(continuer){
@@ -2616,6 +2618,7 @@ void version5_openMP_com(int argc, char **argv){
 				iter++;
 			}
 		}
+	}
 	
 
 	double t1 =my_gettimeofday();
@@ -2690,10 +2693,9 @@ int main(int argc, char **argv)
 	//version2_beta_dynamic_simple(argc, argv);  // working fine
 	//version3_dynamic_ring_token(argc, argv);   // working fine 
 	//version4_openMP(argc, argv);
-	#pragma omp parallel num_threads(2)
-	{
+	
 		version5_openMP_com(argc, argv);
-	}
+	
 
 	return 0;
 
