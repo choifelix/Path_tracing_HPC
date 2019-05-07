@@ -2401,8 +2401,8 @@ void traitement_token_omp(int rank, int size,int token, bool work, int *state, b
 			MPI_Send(token_tmp,1,MPI_INT,0,2,MPI_COMM_WORLD);
 	}
 	else if(token >= 0){
-		// #pragma omp critical
-		// {
+		#pragma omp critical
+		{
 		//printf("proc %d  case : >=0\n",rank);
 			if(work){
 
@@ -2461,7 +2461,7 @@ void traitement_token_omp(int rank, int size,int token, bool work, int *state, b
 					}
 				}
 			}
-		// }
+		}
 		//printf("proc %d  case : >=0 done\n",rank);
 	}
 	else if(token == -1){
