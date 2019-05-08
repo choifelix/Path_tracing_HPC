@@ -424,7 +424,7 @@ int main(int argc, char **argv)
 							/* tire un rayon aléatoire dans une zone de la caméra qui correspond à peu près au pixel à calculer */
 							r1[s] = 2 * erand48(PRNG_state);
 							dx[s] = (r1[s] < 1) ? sqrt(r1[s]) - 1 : 1 - sqrt(2 - r1[s]); 
-							dr2[s] = 2 * erand48(PRNG_state);
+							r2[s] = 2 * erand48(PRNG_state);
 							dy[s] = (r2[s] < 1) ? sqrt(r2[s]) - 1 : 1 - sqrt(2 - r2[s]);
 							double ray_direction[3];
 							copy(camera_direction, ray_direction);
