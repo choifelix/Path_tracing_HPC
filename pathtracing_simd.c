@@ -411,7 +411,10 @@ int main(int argc, char **argv)
 					double subpixel_radiance[3] = {0, 0, 0};
 					/* simulation de monte-carlo : on effectue plein de lancers de rayons et on moyenne */
 					
-					double * r1,dx,r2,dy;
+					double * r1;
+					double * dx;
+					double * r2;
+					double * dy;
 					r1 = (double*)malloc(samples*sizeof(double));
 					dx = (double*)malloc(samples*sizeof(double));
 					r2 = (double*)malloc(samples*sizeof(double));
