@@ -412,10 +412,10 @@ int main(int argc, char **argv)
 					/* simulation de monte-carlo : on effectue plein de lancers de rayons et on moyenne */
 					
 					double * r1,dx,r2,dy;
-					r1 = malloc(samples*sizeof(double));
-					dx = malloc(samples*sizeof(double));
-					r2 = malloc(samples*sizeof(double));
-					ry = malloc(samples*sizeof(double));
+					r1 = (double*)malloc(samples*sizeof(double));
+					dx = (double*)malloc(samples*sizeof(double));
+					r2 = (double*)malloc(samples*sizeof(double));
+					ry = (double*)malloc(samples*sizeof(double));
 					#pragma omp simd 
 						for (int s = 0; s < samples; s++) { 
 							/* tire un rayon aléatoire dans une zone de la caméra qui correspond à peu près au pixel à calculer */
