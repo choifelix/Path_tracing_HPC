@@ -2764,9 +2764,9 @@ void traitement_token_omp(int rank, int size,int token, bool work, int *state, b
 		int *token_tmp;
 		token_tmp = &token_t;
 		if(rank < size -1)
-			MPI_Send(token_tmp,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
+			MPI_Bsend(token_tmp,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
 		else
-			MPI_Send(token_tmp,1,MPI_INT,0,2,MPI_COMM_WORLD);
+			MPI_Bsend(token_tmp,1,MPI_INT,0,2,MPI_COMM_WORLD);
 		#pragma omp critical
 		{
 			*state = inactif;
@@ -2914,9 +2914,9 @@ void version5_openMP_com(int argc, char **argv){
 						int *token_tmp;
 						token_tmp = &token_t;
 						if(rank < size -1)
-							MPI_Send(token_tmp,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
+							MPI_Bsend(token_tmp,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
 						else
-							MPI_Send(token_tmp,1,MPI_INT,0,2,MPI_COMM_WORLD);
+							MPI_Bsend(token_tmp,1,MPI_INT,0,2,MPI_COMM_WORLD);
 
 						//printf("proc %d  case -2 , send %d\n",rank, *token_tmp);
 
