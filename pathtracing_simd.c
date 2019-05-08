@@ -356,8 +356,10 @@ int toInt(double x)
 int main(int argc, char **argv)
 { 
 	/* Petit cas test (small, quick and dirty): */
-	int w = 160;
-	int h = 100;
+	// int w = 160;
+	// int h = 100;
+	int w = 320;
+	int h = 200;
 	int samples = 200;
 
 	/* Gros cas test (big, slow and pretty): */
