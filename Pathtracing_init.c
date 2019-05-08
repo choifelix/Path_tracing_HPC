@@ -336,6 +336,8 @@ void radiance(const double *ray_origin, const double *ray_direction, int depth, 
 	return;
 }
 
+
+
 double wtime()
 {
 	struct timeval ts;
@@ -396,7 +398,7 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
-	double t0 = my_gettimeofday();
+	double t0 = wtime();
 
 	for (int i = 0; i < h; i++) {
 		printf("line %d \n",i);
@@ -441,7 +443,7 @@ int main(int argc, char **argv)
 	}
 	fprintf(stderr, "\n");
 
-	double t1 = my_gettimeofday();
+	double t1 = wtime();
 	printf("--------------------------------------\n");
 	printf("              JOB FINISHED            \n");
 	printf("                time : %f             \n",t1-t0);
