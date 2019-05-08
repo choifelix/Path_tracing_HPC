@@ -18,6 +18,8 @@
 #include <sys/types.h> /* pour getpwuid */
 #include <pwd.h>       /* pour getpwuid */
 
+#include <omp.h>
+
 
 enum Refl_t {DIFF, SPEC, REFR};   /* types de matériaux (DIFFuse, SPECular, REFRactive) */
 
@@ -404,6 +406,8 @@ int main(int argc, char **argv)
 				for (int sub_j = 0; sub_j < 2; sub_j++) {
 					double subpixel_radiance[3] = {0, 0, 0};
 					/* simulation de monte-carlo : on effectue plein de lancers de rayons et on moyenne */
+					#pragma omp simd
+					{
 					for (int s = 0; s < samples; s++) { 
 						/* tire un rayon aléatoire dans une zone de la caméra qui correspond à peu près au pixel à calculer */
 						double r1 = 2 * erand48(PRNG_state);
@@ -429,6 +433,7 @@ int main(int argc, char **argv)
 					clamp(subpixel_radiance);
 					/* fait la moyenne sur les 4 sous-pixels */
 					axpy(0.25, subpixel_radiance, pixel_radiance);
+				}
 				}
 			}
 			copy(pixel_radiance, image + 3 * ((h - 1 - i) * w + j)); // <-- retournement vertical
