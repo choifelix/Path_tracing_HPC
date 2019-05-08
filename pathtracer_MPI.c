@@ -2361,7 +2361,7 @@ void version3_simd(int argc, char **argv){
 		pass = getpwuid(getuid()); 
 		sprintf(nom_rep, "/nfs/home/sasl/eleves/main/3520621/Documents/HPC/Path_tracing_HPC/%s", pass->pw_name);
 		mkdir(nom_rep, S_IRWXU);
-		sprintf(nom_sortie, "%s/version3_image%d.ppm", nom_rep,size);
+		sprintf(nom_sortie, "%s/version3_simd_image%d.ppm", nom_rep,size);
 		
 		FILE *f = fopen(nom_sortie, "w");
 		fprintf(f, "P3\n%d %d\n%d\n", w, h, 255); 
@@ -3088,8 +3088,8 @@ int main(int argc, char **argv)
 	//version1_static(argc, argv);               // working fine 
 	//version2_beta_dynamic(argc, argv);         // not working
 	//version2_beta_dynamic_simple(argc, argv);  // working fine
-	//version3_dynamic_ring_token(argc, argv);   // working fine 
-	version3_simd(argc, argv);
+	version3_dynamic_ring_token(argc, argv);   // working fine 
+	//version3_simd(argc, argv);
 	//version4_openMP(argc, argv);
 	
 	//version5_openMP_com(argc, argv);			 // not working properly
