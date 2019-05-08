@@ -398,6 +398,16 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
+
+	double * r1;
+	double * dx;
+	double * r2;
+	double * dy;
+	r1 = (double*)malloc(samples*sizeof(double));
+	dx = (double*)malloc(samples*sizeof(double));
+	r2 = (double*)malloc(samples*sizeof(double));
+	dy = (double*)malloc(samples*sizeof(double));
+
 	double t0 = wtime();
 
 	for (int i = 0; i < h; i++) {
@@ -411,15 +421,15 @@ int main(int argc, char **argv)
 					double subpixel_radiance[3] = {0, 0, 0};
 					/* simulation de monte-carlo : on effectue plein de lancers de rayons et on moyenne */
 					
-					double * r1;
-					double * dx;
-					double * r2;
-					double * dy;
-					r1 = (double*)malloc(samples*sizeof(double));
-					dx = (double*)malloc(samples*sizeof(double));
-					r2 = (double*)malloc(samples*sizeof(double));
-					dy = (double*)malloc(samples*sizeof(double));
-					#pragma omp simd 
+					// double * r1;
+					// double * dx;
+					// double * r2;
+					// double * dy;
+					// r1 = (double*)malloc(samples*sizeof(double));
+					// dx = (double*)malloc(samples*sizeof(double));
+					// r2 = (double*)malloc(samples*sizeof(double));
+					// dy = (double*)malloc(samples*sizeof(double));
+					#pragma omp simd aligned(r1:samples , r2:samples , dx:samples , dy:samples)
 						for (int s = 0; s < samples; s++) { 
 							/* tire un rayon aléatoire dans une zone de la caméra qui correspond à peu près au pixel à calculer */
 							r1[s] = 2 * erand48(PRNG_state);
@@ -445,10 +455,7 @@ int main(int argc, char **argv)
 					clamp(subpixel_radiance);
 					/* fait la moyenne sur les 4 sous-pixels */
 					axpy(0.25, subpixel_radiance, pixel_radiance);
-					free(r1);
-					free(r2);
-					free(dx);
-					free(dy);
+					
 				}
 			}
 			copy(pixel_radiance, image + 3 * ((h - 1 - i) * w + j)); // <-- retournement vertical
@@ -461,6 +468,11 @@ int main(int argc, char **argv)
 	printf("              JOB FINISHED            \n");
 	printf("                time : %f             \n",t1-t0);
 	printf("--------------------------------------\n");
+
+	free(r1);
+	free(r2);
+	free(dx);
+	free(dy);
 
 	/* stocke l'image dans un fichier au format NetPbm */
 	{
