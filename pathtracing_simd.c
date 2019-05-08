@@ -434,7 +434,7 @@ int main(int argc, char **argv)
 					// dx = (double*)malloc(samples*sizeof(double));
 					// r2 = (double*)malloc(samples*sizeof(double));
 					// dy = (double*)malloc(samples*sizeof(double));
-					#pragma omp for simd //aligned(r1:samples, r2:samples, dx:samples, dy:samples)
+					#pragma omp simd //aligned(r1:samples, r2:samples, dx:samples, dy:samples)
 						for (int s = 0; s < samples; s++) { 
 							/* tire un rayon aléatoire dans une zone de la caméra qui correspond à peu près au pixel à calculer */
 							r1[s] = 2 * erand48(PRNG_state);
