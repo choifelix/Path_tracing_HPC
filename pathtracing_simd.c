@@ -57,6 +57,7 @@ struct Sphere spheres[] = {
 
 
 /********** micro BLAS LEVEL-1 + quelques fonctions non-standard **************/
+#pragma omp declare simd aligned(x,y)
 static inline void copy(const double *x, double *y)
 {
 	for (int i = 0; i < 3; i++)
@@ -69,12 +70,14 @@ static inline void zero(double *x)
 		x[i] = 0;
 } 
 
+#pragma omp declare simd //reduction(+:sum)
 static inline void axpy(double alpha, const double *x, double *y)
 {
 	for (int i = 0; i < 3; i++)
 		y[i] += alpha * x[i];
 } 
 
+#pragma omp declare simd
 static inline void scal(double alpha, double *x)
 {
 	for (int i = 0; i < 3; i++)
@@ -97,7 +100,7 @@ static inline void mul(const double *x, const double *y, double *z)
 	for (int i = 0; i < 3; i++)
 		z[i] = x[i] * y[i];
 } 
-
+#pragma omp declare simd
 static inline void normalize(double *x)
 {
 	scal(1 / nrm2(x), x);
@@ -353,8 +356,8 @@ int toInt(double x)
 int main(int argc, char **argv)
 { 
 	/* Petit cas test (small, quick and dirty): */
-	int w = 320;
-	int h = 200;
+	int w = 160;
+	int h = 100;
 	int samples = 200;
 
 	/* Gros cas test (big, slow and pretty): */
