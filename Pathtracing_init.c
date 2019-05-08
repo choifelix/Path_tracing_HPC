@@ -396,6 +396,8 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
+	double t0 = my_gettimeofday();
+
 	for (int i = 0; i < h; i++) {
 		printf("line %d \n",i);
  		unsigned short PRNG_state[3] = {0, 0, i*i*i};
@@ -407,7 +409,6 @@ int main(int argc, char **argv)
 					double subpixel_radiance[3] = {0, 0, 0};
 					/* simulation de monte-carlo : on effectue plein de lancers de rayons et on moyenne */
 					#pragma omp simd 
-
 						for (int s = 0; s < samples; s++) { 
 							/* tire un rayon aléatoire dans une zone de la caméra qui correspond à peu près au pixel à calculer */
 							double r1 = 2 * erand48(PRNG_state);
@@ -433,13 +434,18 @@ int main(int argc, char **argv)
 						clamp(subpixel_radiance);
 						/* fait la moyenne sur les 4 sous-pixels */
 						axpy(0.25, subpixel_radiance, pixel_radiance);
-					
 				}
 			}
 			copy(pixel_radiance, image + 3 * ((h - 1 - i) * w + j)); // <-- retournement vertical
 		}
 	}
 	fprintf(stderr, "\n");
+
+	double t1 = my_gettimeofday();
+	printf("--------------------------------------\n");
+	printf("              JOB FINISHED            \n");
+	printf("                time : %f             \n",t1-t0);
+	printf("--------------------------------------\n");
 
 	/* stocke l'image dans un fichier au format NetPbm */
 	{
