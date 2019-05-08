@@ -2955,6 +2955,7 @@ void version5_openMP_com(int argc, char **argv){
 		else{
 			while(continuer){
 				if(state == actif){
+					int i_tmp = i;
 					#pragma omp critical
 					{
 						if(i + 1 >= work_limit || i < work_limit - nb_line){
@@ -2968,7 +2969,7 @@ void version5_openMP_com(int argc, char **argv){
 					
 
 
-					unsigned short PRNG_state[3] = {0, 0, i*i*i};
+					unsigned short PRNG_state[3] = {0, 0, i_tmp*i_tmp*i_tmp};
 					for (unsigned short j = 0; j < w; j++) {
 						//printf(" precessus %d, pixel : %d - %d   -----  ",rank,i,j);
 						/* calcule la luminance d'un pixel, avec sur-échantillonnage 2x2 */
@@ -3005,9 +3006,9 @@ void version5_openMP_com(int argc, char **argv){
 								
 							}
 						}
-						copy(pixel_radiance, image + 3*w*i+ 3 * j); // <-- retournement vertical
+						copy(pixel_radiance, image + 3*w*i_tmp+ 3 * j); // <-- retournement vertical
 					}
-					printf( "proc %d did line %d \n",rank,i);
+					printf( "proc %d did line %d \n",rank,i_tmp);
 				
 
 
