@@ -2883,7 +2883,7 @@ void version5_openMP_com(int argc, char **argv){
 
 
 	//while(continuer){
-	#pragma omp parallel num_threads(2) shared(i,state,continuer,work,iter)
+	#pragma omp parallel num_threads(2) //shared(i,state,continuer,work,iter)
 	{
 		
 		if(omp_get_thread_num()== 0){
@@ -2965,8 +2965,7 @@ void version5_openMP_com(int argc, char **argv){
 		else{
 			while(continuer){
 				if(state == actif){
-					#pragma omp critical
-					{
+					
 						unsigned short PRNG_state[3] = {0, 0, i*i*i};
 						for (unsigned short j = 0; j < w; j++) {
 							//printf(" precessus %d, pixel : %d - %d   -----  ",rank,i,j);
@@ -3010,7 +3009,8 @@ void version5_openMP_com(int argc, char **argv){
 					
 
 
-
+					#pragma omp critical
+					{
 					if(i + 1 >= work_limit || i < work_limit - nb_line){
 						work = false;
 						state = inactif; 
