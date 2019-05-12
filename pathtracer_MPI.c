@@ -2705,7 +2705,7 @@ void traitement_token_omp(int rank, int size,int token, bool work, int *state, b
 						// #pragma omp critical
 						// {
 						int line_left = work_limit - *i;
-						MPI_Bsend(i,1,MPI_INT,token,0,MPI_COMM_WORLD);
+						MPI_Send(i,1,MPI_INT,token,0,MPI_COMM_WORLD);
 						printf("...................................\n");
 						printf("proc %d SEND %d to proc %d for work\n",rank,*i,token);
 						printf("...................................\n");
