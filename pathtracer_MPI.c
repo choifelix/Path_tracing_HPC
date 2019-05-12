@@ -2736,11 +2736,11 @@ void traitement_token_omp(int rank, int size,int token, bool work, int *state, b
 					else
 						MPI_Send(token_tmp,1,MPI_INT,0,2,MPI_COMM_WORLD);
 					//printf("proc %d token -1 send will exit\n", rank);
-					#pragma omp critical
-					{
+					// #pragma omp critical
+					// {
 						*state = inactif;
 						*continuer = false;
-					}
+					// }
 				}
 				else{
 					//printf("proc %d  token != rank\n",rank);
