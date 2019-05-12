@@ -2889,14 +2889,14 @@ void version5_openMP_com(int argc, char **argv){
 				if(flag && !work){
 					//printf("proc %d recieving msg\n",rank);
 					//int * i_tmp;
-					#pragma omp critical
+					#pragma omp flush
 					{
 						MPI_Recv(&i,1,MPI_INT,status.MPI_SOURCE,0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+						printf("proc %d reciving work %d \n",rank,i);
 						//i = *i_tmp;
-						#pragma omp flush{
 							work = true;
 							state = actif;
-						}
+
 					}
 				}
 
