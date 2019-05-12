@@ -2698,31 +2698,30 @@ void traitement_token_omp(int rank, int size,int token, bool work, int *state, b
 			if(work){
 				#pragma omp critical
 				{
-
-				// il y a du travail de dispo
-				//printf("proc %d there is work still %d line to do \n ",rank,work_limit - *i );
-				if(work_limit - *i > 1){
-					//si on est a la limite du travail dispo on donne pas
-					// #pragma omp critical
-					// {
-					int line_left = work_limit - *i;
-					MPI_Bsend(i,1,MPI_INT,token,0,MPI_COMM_WORLD);
-					printf("...................................\n");
-					printf("proc %d SEND %d to proc %d for work\n",rank,*i,token);
-					printf("...................................\n");
+					// il y a du travail de dispo
+					//printf("proc %d there is work still %d line to do \n ",rank,work_limit - *i );
+					if(work_limit - *i > 1){
+						//si on est a la limite du travail dispo on donne pas
+						// #pragma omp critical
+						// {
+						int line_left = work_limit - *i;
+						MPI_Bsend(i,1,MPI_INT,token,0,MPI_COMM_WORLD);
+						printf("...................................\n");
+						printf("proc %d SEND %d to proc %d for work\n",rank,*i,token);
+						printf("...................................\n");
+						
+						*i = *i + 1;
+						//}
+					}
+					//envoyer un token vide, le token de demande est consommé
 					
-					*i = *i + 1;
-					//}
-				}
-				//envoyer un token vide, le token de demande est consommé
-				
-				int token_t = -2;
-				int *token_tmp;
-				token_tmp = &token_t;
-				if(rank < size -1)
-					MPI_Send(token_tmp,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
-				else
-					MPI_Send(token_tmp,1,MPI_INT,0,2,MPI_COMM_WORLD);
+					int token_t = -2;
+					int *token_tmp;
+					token_tmp = &token_t;
+					if(rank < size -1)
+						MPI_Send(token_tmp,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
+					else
+						MPI_Send(token_tmp,1,MPI_INT,0,2,MPI_COMM_WORLD);
 				}
 
 			}
@@ -2745,7 +2744,8 @@ void traitement_token_omp(int rank, int size,int token, bool work, int *state, b
 					// }
 				}
 				else{
-					#pragma omp critical{
+					#pragma omp critical
+					{
 					//printf("proc %d  token != rank\n",rank);
 					// no work to give -> pass the token
 					int token_t = token;
@@ -2775,6 +2775,7 @@ void traitement_token_omp(int rank, int size,int token, bool work, int *state, b
 			MPI_Bsend(token_tmp,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
 		else
 			MPI_Bsend(token_tmp,1,MPI_INT,0,2,MPI_COMM_WORLD);
+		
 		#pragma omp flush
 		{
 			*state = inactif;
