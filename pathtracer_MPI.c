@@ -2692,8 +2692,8 @@ void traitement_token_omp(int rank, int size,int token, bool work, int *state, b
 			MPI_Send(token_tmp,1,MPI_INT,0,2,MPI_COMM_WORLD);
 	}
 	else if(token >= 0){
-		// #pragma omp critical
-		// {
+		#pragma omp critical
+		{
 		//printf("proc %d  case : >=0\n",rank);
 			if(work){
 
@@ -2701,15 +2701,16 @@ void traitement_token_omp(int rank, int size,int token, bool work, int *state, b
 				//printf("proc %d there is work still %d line to do \n ",rank,work_limit - *i );
 				if(work_limit - *i > 1){
 					//si on est a la limite du travail dispo on donne pas
+					// #pragma omp critical
+					// {
 					int line_left = work_limit - *i;
 					MPI_Bsend(i,1,MPI_INT,token,0,MPI_COMM_WORLD);
 					printf("...................................\n");
 					printf("proc %d SEND %d to proc %d for work\n",rank,*i,token);
 					printf("...................................\n");
-					#pragma omp critical
-					{
+					
 					*i = *i + 1;
-					}
+					//}
 				}
 				//envoyer un token vide, le token de demande est consommé
 				
@@ -2758,7 +2759,7 @@ void traitement_token_omp(int rank, int size,int token, bool work, int *state, b
 					}
 				}
 			}
-		//}
+		}
 		//printf("proc %d  case : >=0 done\n",rank);
 	}
 	else if(token == -1){
@@ -2770,7 +2771,7 @@ void traitement_token_omp(int rank, int size,int token, bool work, int *state, b
 			MPI_Bsend(token_tmp,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
 		else
 			MPI_Bsend(token_tmp,1,MPI_INT,0,2,MPI_COMM_WORLD);
-		#pragma omp critical
+		#pragma omp flush
 		{
 			*state = inactif;
 			*continuer = false;
@@ -2892,9 +2893,10 @@ void version5_openMP_com(int argc, char **argv){
 					{
 						MPI_Recv(&i,1,MPI_INT,status.MPI_SOURCE,0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
 						//i = *i_tmp;
-					
-						work = true;
-						state = actif;
+						#pragma omp flush{
+							work = true;
+							state = actif;
+						}
 					}
 				}
 
