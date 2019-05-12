@@ -2692,10 +2692,12 @@ void traitement_token_omp(int rank, int size,int token, bool work, int *state, b
 			MPI_Send(token_tmp,1,MPI_INT,0,2,MPI_COMM_WORLD);
 	}
 	else if(token >= 0){
-		#pragma omp critical
-		{
+		// #pragma omp critical
+		// {
 		//printf("proc %d  case : >=0\n",rank);
 			if(work){
+				#pragma omp critical
+				{
 
 				// il y a du travail de dispo
 				//printf("proc %d there is work still %d line to do \n ",rank,work_limit - *i );
@@ -2721,7 +2723,7 @@ void traitement_token_omp(int rank, int size,int token, bool work, int *state, b
 					MPI_Send(token_tmp,1,MPI_INT,rank+1,2,MPI_COMM_WORLD);
 				else
 					MPI_Send(token_tmp,1,MPI_INT,0,2,MPI_COMM_WORLD);
-				
+				}
 
 			}
 			else{
@@ -2743,6 +2745,7 @@ void traitement_token_omp(int rank, int size,int token, bool work, int *state, b
 					// }
 				}
 				else{
+					#pragma omp critical{
 					//printf("proc %d  token != rank\n",rank);
 					// no work to give -> pass the token
 					int token_t = token;
@@ -2757,9 +2760,10 @@ void traitement_token_omp(int rank, int size,int token, bool work, int *state, b
 						//printf("proc %d  sending to %d token %d\n",rank,0,token);
 						MPI_Send(token_tmp,1,MPI_INT,0,2,MPI_COMM_WORLD);
 					}
+					}
 				}
 			}
-		}
+		//}
 		//printf("proc %d  case : >=0 done\n",rank);
 	}
 	else if(token == -1){
@@ -2777,7 +2781,6 @@ void traitement_token_omp(int rank, int size,int token, bool work, int *state, b
 			*continuer = false;
 		}
 	}
-	
 }
 
 
