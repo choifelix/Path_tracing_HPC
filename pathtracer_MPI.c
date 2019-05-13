@@ -2555,7 +2555,7 @@ void version4_openMP(int argc, char **argv){
 
 		if(state == actif){
 			unsigned short PRNG_state[3] = {0, 0, i*i*i};
-			#pragma omp parallel num_threads(4) 
+			#pragma omp parallel num_threads(2) 
 			{
 			#pragma omp for
 				for (unsigned short j = 0; j < w; j++) {
