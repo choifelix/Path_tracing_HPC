@@ -1822,9 +1822,9 @@ void version3_dynamic_ring_token(int argc, char **argv){
 	printf("%d : MPI init DONE \n", rank);
 
 	/* Petit cas test (small, quick and dirty): */
-	int w = 320;
-	int h = 200;
-	int samples = 200;
+	// int w = 320;
+	// int h = 200;
+	// int samples = 200;
 	bool work =true;
 	bool continuer = true;
 
@@ -1847,9 +1847,9 @@ void version3_dynamic_ring_token(int argc, char **argv){
 	printf("hello i am %d\n", rank);
 
 	/* Gros cas test (big, slow and pretty): */
-	/* int w = 3840; */
-	/* int h = 2160; */
-	/* int samples = 5000;  */
+	 int w = 3840; 
+	 int h = 2160; 
+	 int samples = 5000;  
 
 	if (argc == 2) 
 		samples = atoi(argv[1]) / 4;
